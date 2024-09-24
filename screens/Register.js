@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from 'react';
 
-export default function App() {
+export default function RegisterScreen() {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);
 

@@ -1,8 +1,10 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
-import RegisterScreen from './screens/Register';
+import  MainScreen from './screens/MainScreen.js';
+import RegisterScreen from './screens/Register.js';
+import testScreen from './screens/test.js';
 const App = () => {
-  return <RegisterScreen/>;
+  return <MainScreen/>;
 };
 
 export default App;
