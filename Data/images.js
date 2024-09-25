@@ -15,6 +15,5 @@ export const images = [
     { id: 14, src: require('../assets/Anh14.jpg') ,name: 'Tra Vinh'},
     { id: 15, src: require('../assets/Anh15.jpg') ,name: 'Nga Nam'},
     { id: 16, src: require('../assets/Anh16.jpg') ,name: 'Vinh Long'},
-
->>>>>>> Stashed changes
+    
   ];
