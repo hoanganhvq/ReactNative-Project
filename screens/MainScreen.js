@@ -1,29 +1,25 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions,ScrollView,FlatList  } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, ScrollView } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { images } from '../Data/images.js'; // Đảm bảo dữ liệu images được nhập chính xác
+import { images } from '../Data/images.js'; 
 import { MasonryFlashList } from '@shopify/flash-list';
 
-const width = Dimensions.get('window').width; // Lấy chiều rộng của màn hình
-const ITEM_WIDTH = width / 2 - 15; // Để có khoảng cách giữa các item
+const width = Dimensions.get('window').width;
+const ITEM_WIDTH = width / 2 - 15;
 
 export default function MainScreen() {
-  const [searchQuery, setSearchQuery] = useState(''); // Trạng thái cho truy vấn tìm kiếm
-  const updateSearch = (query) => setSearchQuery(query); // Cập nhật truy vấn tìm kiếm
+  const [searchQuery, setSearchQuery] = useState('');
+  const updateSearch = (query) => setSearchQuery(query);
 
-  const [isScrollingVertically, setIsScrollingVertically] = useState(false); // Trạng thái kiểm tra cuộn dọc
+  const [scrollY] = useState(new Animated.Value(0)); // Sử dụng Animated.Value để theo dõi vị trí cuộn
 
-  // Hàm gọi khi bắt đầu cuộn dọc
-  const handleScrollVertical = () => {
-    setIsScrollingVertically(true);
-  };
+  // Tạo một giá trị translateY dựa trên vị trí cuộn để ẩn dần chữ "Khám Phá"
+  const translateY = scrollY.interpolate({
+    inputRange: [0, 100], // Giới hạn cuộn (0 là ở trên cùng, 100 là khi đã cuộn xuống)
+    outputRange: [0, 100], // Tại vị trí 0, "Khám Phá" hiển thị bình thường, tại vị trí 100 nó ẩn đi
+    extrapolate: 'clamp',
+  });
 
-  // Hàm gọi khi kết thúc cuộn dọc
-  const handleScrollEnd = () => {
-    setIsScrollingVertically(false);
-  };
-
-  // Render item cho FlatList ngang
   const renderHorizontalItem = ({ item }) => (
     <View style={styles.horiziontalItem}>
       <Image source={item.src} style={styles.image}/>
@@ -31,7 +27,6 @@ export default function MainScreen() {
     </View>
   );
 
-  // Render item cho FlatList dọc
   const renderVerticalItem = ({ item }) => (
     <View style={styles.verticalItem}>
       <Image source={item.src} style={styles.image} /> 
@@ -55,43 +50,47 @@ export default function MainScreen() {
         inputStyle={styles.inputStyle}
       />
 
-      <View>
+      {/* Dùng Animated.View để làm tiêu đề "Khám Phá" ẩn khi cuộn */}
+      {/* <Animated.View style={[styles.headerContainer, { transform: [{ translateY }] }]}>
         <Text style={{ fontSize: 20 }}>Khám Phá</Text>
-      </View>
+      </Animated.View> */}
+
+     
 
       <Animated.ScrollView
-        onScrollBeginDrag={handleScrollVertical} // Bắt đầu cuộn
-        onScrollEndDrag={handleScrollEnd} // Kết thúc cuộn
-        scrollEventThrottle={16} // Tần suất cập nhật sự kiện cuộn
-      >
-        {!isScrollingVertically && (
-          <Animated.FlatList
-            data={images} 
-            renderItem={renderHorizontalItem} // Sử dụng hàm render cho item ngang
-            keyExtractor={item => item.id} // Khóa cho mỗi item
-            horizontal={true} // Thiết lập FlatList cuộn ngang
-            showsHorizontalScrollIndicator={false} // Ẩn thanh cuộn ngang
-            snapToInterval={ITEM_WIDTH}
-            snapToAlignment="start"
-           decelerationRate="fast"
-            style={styles.horizontalFlatlist}
-          />
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true } // Sử dụng Native Driver để cải thiện hiệu suất
         )}
-
+        scrollEventThrottle={16}
+      >
+         <Text style={{ fontSize: 20 }}>Khám Phá</Text>
+        <Animated.FlatList
+          data={images}
+          renderItem={renderHorizontalItem}
+          keyExtractor={item => item.id}
+          horizontal={true}
+          showsHorizontalScrollIndicator={false}
+          snapToInterval={ITEM_WIDTH}
+          snapToAlignment="start"
+          decelerationRate="fast"
+          style={styles.horizontalFlatlist}
+        />
+        
+        <Text style={{ fontSize: 20 }}>Nổi bật</Text>
+        
         <MasonryFlashList
           data={images}
-          renderItem={renderVerticalItem} // Sử dụng hàm render cho item dọc
-          keyExtractor={item => item.id} // Khóa cho mỗi item
-          showsVerticalScrollIndicator={false} // Ẩn thanh cuộn dọc
-          numColumns={2} // Thiết lập số cột cho FlatList
-          contentContainerStyle={styles.verticalFlatlist} // Style cho nội dung FlatList
-
+          renderItem={renderVerticalItem}
+          keyExtractor={item => item.id}
+          showsVerticalScrollIndicator={false}
+          numColumns={2}
+          contentContainerStyle={styles.verticalFlatlist}
         />
       </Animated.ScrollView>
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
   container: {
     flex: 1,
