@@ -6,18 +6,6 @@ export const images = [
     { id: 5, src: require('../assets/Anh5.jpg') ,name: 'Can Tho'},
     { id: 6, src: require('../assets/Anh6.jpg') ,name: 'Ha Noi'},
     { id: 7, src: require('../assets/Anh7.jpg') ,name: 'Da Nang'},
-<<<<<<< Updated upstream
-    { id: 8, src: require('../assets/Anh8.jpg'),name: 'TP HCM'},
-    { id: 9, src: require('../assets/Anh9.jpg') ,name: 'Can Tho'},
-    { id: 10, src: require('../assets/Anh10.jpg') ,name: 'Ha Noi'},
-    { id:11, src: require('../assets/Anh11.jpg') ,name: 'Da Nang'},
-    { id: 12, src: require('../assets/Anh12.jpg'),name: 'TP HCM'},
-    { id: 13, src: require('../assets/Anh13.jpg') ,name: 'Can Tho'},
-    { id: 14, src: require('../assets/Anh14.jpg') ,name: 'Ha Noi'},
-    { id: 15, src: require('../assets/Anh15.jpg') ,name: 'Da Nang'},
-    { id: 16, src: require('../assets/Anh16.jpg') ,name: 'Ha Noi'},
-    { id: 17, src: require('../assets/Anh17.jpg') ,name: 'Da Nang'},
-=======
     { id: 8, src: require('../assets/Anh8.jpg') ,name: 'Nha Trang'},
     { id: 9, src: require('../assets/Anh9.jpg') ,name: 'Ca Mau'},
     { id: 10, src: require('../assets/Anh10.jpg') ,name: 'Soc Trang'},
