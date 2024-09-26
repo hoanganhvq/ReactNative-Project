@@ -18,7 +18,7 @@ const RatingScreen = () => {
   const renderItem = ({ item }) => (
     <View style={styles.reviewContainer}>
       <Text style={styles.reviewTitle}>{item.title}</Text>
-      <Text style={styles.rating}>Rating: {item.rating} ⭐</Text>
+      <Text style={styles.rating}>R: {item.rating} ⭐</Text>
       <Text style={styles.reviewDate}>{item.date}</Text>
       <Text style={styles.reviewDescription}>{item.description}</Text>
       <View style={styles.authorContainer}>

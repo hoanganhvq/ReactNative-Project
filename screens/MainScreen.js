@@ -49,12 +49,6 @@ export default function MainScreen() {
         searchIcon={{ size: 24, color: 'gray' }}
         inputStyle={styles.inputStyle}
       />
-
-      {/* Dùng Animated.View để làm tiêu đề "Khám Phá" ẩn khi cuộn */}
-      {/* <Animated.View style={[styles.headerContainer, { transform: [{ translateY }] }]}>
-        <Text style={{ fontSize: 20 }}>Khám Phá</Text>
-      </Animated.View> */}
-
      
 
       <Animated.ScrollView
