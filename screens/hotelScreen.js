@@ -100,17 +100,17 @@ export default function HotelScreen() {
         </Animated.View>
       )}
 
-    <View style={styles.AmentitiesContainerContainer}>
-    <Text style={styles.AmentitiesContainer}>Tiện Nghi</Text>
-    <FlatList
-        data={hotelData.amenities}
-        renderItem={renderAmenities}
-        keyExtractor={(item) => item.toString()}
-        horizontal={true} // Để hiển thị theo hàng
-        showsHorizontalScrollIndicator={false} // Ẩn thanh cuộn ngang
-        contentContainerStyle={styles.amenitiesList} // Bố cục cho danh sách tiện nghi
-    />
+    <View style={styles.amenitiesContainer}>
+        <Text style={styles.amenitiesTitle}>Tiện Nghi</Text>
+        <FlatList
+            data={hotelData.amenities}
+            renderItem={renderAmenities}
+            keyExtractor={(item) => item.toString()}
+            contentContainerStyle={styles.amenitiesList} // Bố cục cho danh sách tiện nghi
+            scrollEnabled={true} // Bật cuộn
+        />
     </View>
+
 
     </SafeAreaView>
   );
@@ -250,8 +250,8 @@ const styles = StyleSheet.create({
     textAlign: 'center', // Căn giữa cho tiêu đề
     flex: 1, // Căn cho tiêu đề chiếm toàn bộ chiều rộng còn lại
   },
-  tienNghiContainer: {
-    padding: 15, // Khoảng cách bên trong
+ amenitiesContainer: {
+    padding: 10, // Giảm khoảng cách bên trong
     backgroundColor: '#f9f9f9', // Màu nền nhạt cho phần tiện nghi
     borderRadius: 10, // Bo góc cho khung
     margin: 10, // Khoảng cách giữa các thành phần
@@ -263,35 +263,24 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2, // Độ mờ của bóng
     shadowRadius: 4, // Đường kính của bóng
     elevation: 3, // Độ nổi trên Android
+    maxHeight: 200, // Giới hạn chiều cao tối đa
   },
-  tienNghiTitle: {
-    fontSize: 24, // Kích thước chữ tiêu đề
+  amenitiesTitle: {
+    fontSize: 20, // Kích thước chữ tiêu đề nhỏ hơn
     fontWeight: 'bold', // Chữ đậm
-    marginBottom: 10, // Khoảng cách dưới tiêu đề
+    marginBottom: 5, // Khoảng cách dưới tiêu đề
   },
   amenitiesList: {
-    flexDirection: 'row', // Sắp xếp theo hàng
     paddingVertical: 5, // Khoảng cách dọc cho danh sách
   },
   amenityContainer: {
-    flexDirection: 'row',
+    flexDirection: 'row', // Vẫn giữ hàng cho từng tiện nghi
     alignItems: 'center',
-    marginRight: 15, // Khoảng cách giữa các tiện nghi
-    padding: 10, // Khoảng cách bên trong
-    backgroundColor: '#ffffff', // Nền trắng cho mỗi tiện nghi
-    borderRadius: 8, // Bo góc cho khung tiện nghi
-    shadowColor: '#000', // Màu bóng
-    shadowOffset: {
-      width: 0,
-      height: 1,
-    },
-    shadowOpacity: 0.1, // Độ mờ của bóng
-    shadowRadius: 2, // Đường kính của bóng
-    elevation: 1, // Độ nổi trên Android
+    marginBottom: 5, // Giảm khoảng cách giữa các tiện nghi
   },
   amenity: {
-    marginLeft: 5, // Khoảng cách bên trái của tên tiện nghi
-    fontSize: 16, // Kích thước chữ cho tên tiện nghi
+    marginLeft: 5,
+    fontSize: 14, // Kích thước chữ cho tên tiện nghi nhỏ hơn
     color: '#333', // Màu chữ
   },
 });
