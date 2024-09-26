@@ -3,7 +3,7 @@ export const hotelData = {
   name: "Sheraton Can Tho",
   rating: 4.5,
   ratingScale: 5,
-  pricePerNight: 1200000,
+  pricePerNight: "12.000.000",
   currency: "VND",
   description: "Khách sạn Sheraton Can Tho tọa lạc bên bờ sông Hậu, mang đến cho du khách trải nghiệm nghỉ dưỡng đẳng cấp giữa lòng thành phố Cần Thơ. Với phong cách thiết kế hiện đại, khách sạn cung cấp 198 phòng nghỉ sang trọng, được trang bị đầy đủ tiện nghi và ban công riêng nhìn ra cảnh sông thơ mộng.",
   amenities: [
@@ -59,4 +59,5 @@ export const hotelData = {
       "Chuyển khoản"
     ]
   }
+
 };
