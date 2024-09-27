@@ -1,41 +1,61 @@
-import React, { useState, useRef } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, TouchableOpacity } from 'react-native';
 import { hotelData } from '../Data/hotelData.js';  
 
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = width * 0.45; 
 const imageAlbums = [
-    { id: 1, title: 'Khách sạn', images: hotelData.images.imageHotel ,first: hotelData.images.imageHotel[0]},
-    { id: 2, title: 'Phòng', images: hotelData.images.imagesRoom,first: hotelData.images.imagesRoom[0] },
-    { id: 3, title: 'Thức ăn', images: hotelData.images.imagesFood,first: hotelData.images.imagesAmenities[0]},
-    { id: 4, title: 'Tiện nghi', images: hotelData.images.imagesAmenities ,first: hotelData.images.imagesFood[0]},
+    { id: 1, title: 'Khách sạn', images: hotelData.images.imageHotel, first: hotelData.images.imageHotel[0] },
+    { id: 2, title: 'Phòng', images: hotelData.images.imagesRoom, first: hotelData.images.imagesRoom[0] },
+    { id: 3, title: 'Thức ăn', images: hotelData.images.imagesFood, first: hotelData.images.imagesFood[0] }, // Fix this
+    { id: 4, title: 'Tiện nghi', images: hotelData.images.imagesAmenities, first: hotelData.images.imagesAmenities[0] }, // Fix this
 ];
 
 export default function ImageScreen() {
     const [scrollY] = useState(new Animated.Value(0));
     const [showNav, setShowNav] = useState(false);
-    const [sectionOffsets, setSectionOffsets] = useState([]); // Thêm state để lưu vị trí các phần
+    const [sectionOffsets, setSectionOffsets] = useState([]); 
     const scrollViewRef = useRef(null); 
-    const sectionRefs = useRef([]); // Sử dụng ref cho từng section
+    const sectionRefs = useRef([]);
 
-    // Hàm lấy vị trí của các phần
+    const handleScroll = Animated.event(
+        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+        {
+            useNativeDriver: false, 
+            listener: (event) => {
+                setShowNav(event.nativeEvent.contentOffset.y > 150);
+            }
+        }
+    );
+
+    // Function to get section positions
     const getSectionPosition = () => {
-        const offsets = sectionRefs.current.map(ref => {
+        const offsets = [];
+        sectionRefs.current.forEach((ref, index) => {
             if (ref) {
-                return ref.measure((x, y, width, height, pageX, pageY) => {
-                    return pageY;
+                ref.measure((x, y, width, height, pageX, pageY) => {
+                    offsets[index] = pageY - 170; // Store the measured position
+                    if (index === sectionRefs.current.length - 1) {
+                        setSectionOffsets(offsets); // Set offsets after measuring all
+                    }
                 });
             }
-            return 0; // Nếu không có ref, trả về 0
         });
-        setSectionOffsets(offsets);
     };
 
+    // Scroll to a specific section
+    const scrollToSection = (index) => {
+        if (scrollViewRef.current && sectionOffsets[index] !== undefined) {
+            scrollViewRef.current.scrollTo({ y: sectionOffsets[index], animated: true });
+        }
+    };
+
+    // Render functions
     const renderImagesView = ({ item }) => (
-        <View style={styles.imageViewContainer}>
+        <TouchableOpacity style={styles.imageViewContainer} onPress={() => scrollToSection(item.id - 1)}>
             <Image source={item.first.src} style={styles.imageView} />
-            <Text style={styles.imageText}>{item.name}</Text>
-        </View>
+            <Text style={styles.imageText}>{item.title}</Text> 
+        </TouchableOpacity>
     );
 
     const renderImage = ({ item }) => (
@@ -47,7 +67,8 @@ export default function ImageScreen() {
     const renderAlbum = ({ item, index }) => (
         <View 
             style={styles.imageSectionContainer} 
-            ref={el => sectionRefs.current[index] = el} // Gán ref cho từng phần
+            ref={el => sectionRefs.current[index] = el} 
+            onLayout={getSectionPosition} 
         >
             <Text style={styles.sectionTitle}>{item.title}</Text>
             <FlatList
@@ -60,22 +81,9 @@ export default function ImageScreen() {
         </View>
     );
 
-    const handleScroll = Animated.event(
-        [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        {
-            useNativeDriver: true,
-            listener: (event) => {
-                setShowNav(event.nativeEvent.contentOffset.y > 150);
-            }
-        }
-    );
-
-    // Hàm cuộn đến vị trí cụ thể
-    const scrollToSection = (index) => {
-        if (scrollViewRef.current && sectionOffsets[index] !== undefined) {
-            scrollViewRef.current.scrollTo({ y: sectionOffsets[index], animated: true });
-        }
-    };
+    useEffect(() => {
+        getSectionPosition();
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -89,7 +97,6 @@ export default function ImageScreen() {
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 contentContainerStyle={styles.scrollViewContainer}
-                onLayout={getSectionPosition} // Gọi hàm để lấy vị trí khi layout thay đổi
             >
                 <View style={styles.overview}>
                     <Text style={styles.overviewText}>Tổng quan về chỗ nghỉ</Text>
@@ -216,24 +223,21 @@ const styles = StyleSheet.create({
         width: '100%',
         position: 'absolute',
         top: 115,
-        right: 20,
-        backgroundColor: '#fff',
+        right: 0,
+        backgroundColor: 'white',
         elevation: 5,
-        padding: 10,
+        padding: 5,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
     },
     navButton: {
         marginHorizontal: 10,
-        padding: 14,
+        padding: 10,
     },
     navText: {
         fontSize: 14,
         color: '#007bff',
     },
-    getPositionText: {
-        marginTop: 10,
-        color: '#007bff',
-    },
 });
+
