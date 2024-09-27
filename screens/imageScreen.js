@@ -1,30 +1,62 @@
-import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, TouchableOpacity,scrollViewRef } from 'react-native';
+import React, { useState, useRef } from 'react';
+import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, TouchableOpacity } from 'react-native';
 import { hotelData } from '../Data/hotelData.js';  
 
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = width * 0.45; 
-const imageData = [
-    { id: 1, image: hotelData.images.imageHotel[0], name: 'Khách sạn' },
-    { id: 2, image: hotelData.images.imagesRoom[0], name: 'Phòng' },
-    { id: 3, image: hotelData.images.imagesAmenities[0], name: 'Tiện nghi' },
-    { id: 4, image: hotelData.images.imagesFood[0], name: 'Thức ăn' },
+const imageAlbums = [
+    { id: 1, title: 'Khách sạn', images: hotelData.images.imageHotel ,first: hotelData.images.imageHotel[0]},
+    { id: 2, title: 'Phòng', images: hotelData.images.imagesRoom,first: hotelData.images.imagesRoom[0] },
+    { id: 3, title: 'Thức ăn', images: hotelData.images.imagesFood,first: hotelData.images.imagesAmenities[0]},
+    { id: 4, title: 'Tiện nghi', images: hotelData.images.imagesAmenities ,first: hotelData.images.imagesFood[0]},
 ];
 
 export default function ImageScreen() {
     const [scrollY] = useState(new Animated.Value(0));
     const [showNav, setShowNav] = useState(false);
+    const [sectionOffsets, setSectionOffsets] = useState([]); // Thêm state để lưu vị trí các phần
+    const scrollViewRef = useRef(null); 
+    const sectionRefs = useRef([]); // Sử dụng ref cho từng section
+
+    // Hàm lấy vị trí của các phần
+    const getSectionPosition = () => {
+        const offsets = sectionRefs.current.map(ref => {
+            if (ref) {
+                return ref.measure((x, y, width, height, pageX, pageY) => {
+                    return pageY;
+                });
+            }
+            return 0; // Nếu không có ref, trả về 0
+        });
+        setSectionOffsets(offsets);
+    };
 
     const renderImagesView = ({ item }) => (
         <View style={styles.imageViewContainer}>
-            <Image source={item.image.src} style={styles.imageView} />
+            <Image source={item.first.src} style={styles.imageView} />
             <Text style={styles.imageText}>{item.name}</Text>
         </View>
     );
 
-    const renderImages = ({ item }) => (
+    const renderImage = ({ item }) => (
         <View style={styles.roomImageContainer}>
             <Image source={item.src} style={styles.image} />
+        </View>
+    );
+
+    const renderAlbum = ({ item, index }) => (
+        <View 
+            style={styles.imageSectionContainer} 
+            ref={el => sectionRefs.current[index] = el} // Gán ref cho từng phần
+        >
+            <Text style={styles.sectionTitle}>{item.title}</Text>
+            <FlatList
+                data={item.images}
+                renderItem={renderImage}
+                keyExtractor={(imgItem) => imgItem.id.toString()} 
+                numColumns={2} 
+                contentContainerStyle={styles.flatListContainer}
+            />
         </View>
     );
 
@@ -33,28 +65,36 @@ export default function ImageScreen() {
         {
             useNativeDriver: true,
             listener: (event) => {
-                // Hiển thị thanh điều hướng khi cuộn xuống
                 setShowNav(event.nativeEvent.contentOffset.y > 150);
             }
         }
     );
 
+    // Hàm cuộn đến vị trí cụ thể
+    const scrollToSection = (index) => {
+        if (scrollViewRef.current && sectionOffsets[index] !== undefined) {
+            scrollViewRef.current.scrollTo({ y: sectionOffsets[index], animated: true });
+        }
+    };
+
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
-                <Text style={styles.title}>Ảnh ({imageData.length})</Text>
+                <Text style={styles.title}>Ảnh ({imageAlbums.length})</Text>
                 <Text style={styles.hotelName}>{hotelData.name}</Text>
             </View>
 
             <Animated.ScrollView
+                ref={scrollViewRef}
                 onScroll={handleScroll}
                 scrollEventThrottle={16}
                 contentContainerStyle={styles.scrollViewContainer}
+                onLayout={getSectionPosition} // Gọi hàm để lấy vị trí khi layout thay đổi
             >
                 <View style={styles.overview}>
                     <Text style={styles.overviewText}>Tổng quan về chỗ nghỉ</Text>
                     <FlatList
-                        data={imageData}
+                        data={imageAlbums}
                         renderItem={renderImagesView}
                         keyExtractor={(item) => item.id.toString()}
                         horizontal
@@ -62,80 +102,31 @@ export default function ImageScreen() {
                         contentContainerStyle={styles.flatListContainer}
                     />
                 </View>
-
-                <View style={styles.imageSectionContainer}>
-                    <Text style={styles.sectionTitle}>Hình ảnh khách sạn</Text>
-                    <FlatList
-                        data={hotelData.images.imageHotel}
-                        renderItem={renderImages}
-                        keyExtractor={(item) => item.id.toString()}
-                        numColumns={2} 
-                        contentContainerStyle={styles.flatListContainer}
-                    />
-                </View>
-
-                <View style={styles.imageSectionContainer}>
-                    <Text style={styles.sectionTitle}>Phòng</Text>
-                    <FlatList
-                        data={hotelData.images.imagesRoom}
-                        renderItem={renderImages}
-                        keyExtractor={(item) => item.id.toString()}
-                        numColumns={2} 
-                        contentContainerStyle={styles.flatListContainer}
-                    />
-                </View>
-
-                <View style={styles.imageSectionContainer}>
-                    <Text style={styles.sectionTitle}>Thức ăn</Text>
-                    <FlatList
-                        data={hotelData.images.imagesFood}
-                        renderItem={renderImages}
-                        keyExtractor={(item) => item.id.toString()}
-                        numColumns={2} 
-                        contentContainerStyle={styles.flatListContainer}
-                    />
-                </View>
-
-                <View style={styles.imageSectionContainer}>
-                    <Text style={styles.sectionTitle}>Tiện Nghi</Text>
-                    <FlatList
-                        data={hotelData.images.imagesAmenities}
-                        renderItem={renderImages}
-                        keyExtractor={(item) => item.id.toString()}
-                        numColumns={2} 
-                        contentContainerStyle={styles.flatListContainer}
-                    />
-                </View>
+                <FlatList
+                    data={imageAlbums}
+                    renderItem={renderAlbum}
+                    keyExtractor={(item) => item.id.toString()}
+                />
             </Animated.ScrollView>
 
             {showNav && (
                 <View style={styles.navContainer}>
-                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection('hotelImages')}>
+                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection(0)}>
                         <Text style={styles.navText}>Khách sạn</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection('roomImages')}>
+                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection(1)}>
                         <Text style={styles.navText}>Phòng</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection('foodImages')}>
+                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection(2)}>
                         <Text style={styles.navText}>Thức ăn</Text>
                     </TouchableOpacity>
-                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection('amenitiesImages')}>
+                    <TouchableOpacity style={styles.navButton} onPress={() => scrollToSection(3)}>
                         <Text style={styles.navText}>Tiện Nghi</Text>
                     </TouchableOpacity>
                 </View>
             )}
         </SafeAreaView>
     );
-
-    function scrollToSection(section) {
-        const offset = {
-            hotelImages: 0, // Thay đổi giá trị này cho phù hợp
-            roomImages: 300, // Thay đổi giá trị này cho phù hợp
-            foodImages: 600, // Thay đổi giá trị này cho phù hợp
-            amenitiesImages: 900, // Thay đổi giá trị này cho phù hợp
-        };
-        scrollViewRef.current.scrollTo({ y: offset[section], animated: true });
-    }
 }
 
 const styles = StyleSheet.create({
@@ -222,11 +213,11 @@ const styles = StyleSheet.create({
         color: '#343a40',
     },
     navContainer: {
+        width: '100%',
         position: 'absolute',
-        top: 20,
-        right: 15,
+        top: 115,
+        right: 20,
         backgroundColor: '#fff',
-        borderRadius: 15,
         elevation: 5,
         padding: 10,
         flexDirection: 'row',
@@ -234,11 +225,15 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     navButton: {
-        marginHorizontal: 5,
-        padding: 5,
+        marginHorizontal: 10,
+        padding: 14,
     },
     navText: {
         fontSize: 14,
+        color: '#007bff',
+    },
+    getPositionText: {
+        marginTop: 10,
         color: '#007bff',
     },
 });
