@@ -1,23 +1,22 @@
 import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity } from 'react-native';
-import Icon from 'react-native-vector-icons/FontAwesome'; // Import Icon đúng cách
+import Icon from 'react-native-vector-icons/FontAwesome'; 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import {hotelData} from '../Data/hotelData.js';
 
 const { width } = Dimensions.get('window');
-const ITEM_WIDTH = width; // Chiều rộng của từng mục ảnh
-const NOTIFICATION_HEIGHT = 500; // Chiều cao của notification
+const ITEM_WIDTH = width; 
+const NOTIFICATION_HEIGHT = 500;
 
 export default function HotelScreen() {
   const [showNotification, setShowNotification] = useState(false);
-  const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current; // Giá trị ban đầu nằm ngoài màn hình
+  const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current; 
   const fullDescription = hotelData.description;
-  const images = hotelData.images;
-  const [scrollY] = useState(new Animated.Value(0)); // Sử dụng Animated.Value để theo dõi vị trí cuộn
-
+  const images = hotelData.imagesHotel;
+  const [scrollY] = useState(new Animated.Value(0)); 
   const translateY = scrollY.interpolate({
-    inputRange: [0, 100], // Giới hạn cuộn (0 là ở trên cùng, 100 là khi đã cuộn xuống)
-    outputRange: [0, 100], // Tại vị trí 0, "Khám Phá" hiển thị bình thường, tại vị trí 100 nó ẩn đi
+    inputRange: [0, 100], 
+    outputRange: [0, 100], 
     extrapolate: 'clamp',
   });
 
@@ -32,7 +31,7 @@ export default function HotelScreen() {
 
   const handleHideNotification = () => {
     Animated.timing(animatedValue, {
-      toValue: NOTIFICATION_HEIGHT, // Di chuyển xuống ngoài màn hình
+      toValue: NOTIFICATION_HEIGHT, 
       duration: 300,
       useNativeDriver: true,
     }).start(() => setShowNotification(false));
@@ -62,7 +61,7 @@ export default function HotelScreen() {
         <Animated.ScrollView
         onScroll={Animated.event(
             [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true } // Sử dụng Native Driver để cải thiện hiệu suất
+            { useNativeDriver: true } 
           )}
           scrollEventThrottle={16}
         >
@@ -70,10 +69,10 @@ export default function HotelScreen() {
         <Animated.FlatList
           data={images}
           renderItem={renderImages}
-          keyExtractor={item => item.id.toString()} // Đảm bảo key là chuỗi
+          keyExtractor={item => item.id.toString()}
           horizontal={true}
           showsHorizontalScrollIndicator={false}
-          snapToInterval={ITEM_WIDTH} // Cuộn theo từng mục ảnh
+          snapToInterval={ITEM_WIDTH} 
           snapToAlignment="start"
           decelerationRate="fast"
           style={styles.horizontalFlatlist}
@@ -119,8 +118,8 @@ export default function HotelScreen() {
             data={hotelData.amenities}
             renderItem={renderAmenities}
             keyExtractor={(item) => item.toString()}
-            contentContainerStyle={styles.amenitiesList} // Bố cục cho danh sách tiện nghi
-            scrollEnabled={true} // Bật cuộn
+            contentContainerStyle={styles.amenitiesList} 
+            scrollEnabled={true} 
         />
     </View>
 
@@ -168,34 +167,34 @@ const styles = StyleSheet.create({
     flexDirection: 'row',
   },
   imageContainer: {
-    width: ITEM_WIDTH, // Đảm bảo chiều rộng của mỗi ảnh phù hợp với màn hình
+    width: ITEM_WIDTH, 
     justifyContent: 'center',
     alignItems: 'center',
   },
   image: {
-    width: '100%', // Chiếm 100% chiều rộng của container
+    width: '100%', 
     height: 200,
     borderRadius: 5,
   },
   imageText: {
     marginTop: 10,
-    position: 'absolute', // Đặt văn bản trên ảnh
-    bottom: 10, // Cách đáy của ảnh 10px
-    left: 10, // Cách trái của ảnh 10px
-    color: 'white', // Màu chữ trắng để nổi bật
+    position: 'absolute', 
+    bottom: 10, 
+    left: 10, 
+    color: 'white', 
     fontWeight: 'bold',
-    backgroundColor: 'rgba(128, 128, 128, 0.7)', // Nền xám mờ để dễ đọc hơn
-    paddingHorizontal: 15, // Khoảng trống ngang lớn hơn
-    paddingVertical: 8, // Khoảng trống dọc lớn hơn
-    borderRadius: 20, // Bo góc khung chữ để tạo khung tròn hơn
-    overflow: 'hidden', // Ẩn các phần bị tràn khỏi viền bo góc
+    backgroundColor: 'rgba(128, 128, 128, 0.7)',
+    paddingHorizontal: 15, 
+    paddingVertical: 8,
+    borderRadius: 20, 
+    overflow: 'hidden', 
   },
   feedbackContainer: {
-    padding: 20, // Khoảng cách bên trong
-    backgroundColor: 'white', // Nền trắng cho feedback
-    borderRadius: 10, // Bo góc cho khung feedback
-    margin: 10, // Khoảng cách giữa các thành phần
-    shadowColor: '#000', // Màu bóng
+    padding: 20, 
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    margin: 10, 
+    shadowColor: '#000', 
     shadowOffset: {
       width: 0,
       height: 2,
@@ -332,7 +331,7 @@ const styles = StyleSheet.create({
     padding: 20, // Khoảng cách bên trong
     backgroundColor: '#f8f9fa', // Nền màu sáng
     borderRadius: 10, // Bo góc cho khung
-    margin: 10, // Khoảng cách bên ngoài
+    margin: 10, 
     shadowColor: '#000', // Màu bóng
     shadowOffset: {
       width: 0,
@@ -350,7 +349,7 @@ const styles = StyleSheet.create({
   contactButton: {
     flexDirection: 'row',
     alignItems: 'center',
-    backgroundColor: '#007BFF', // Màu nền cho nút
+    backgroundColor: '#007BFF', 
     borderRadius: 5, // Bo góc cho nút
     padding: 10, // Khoảng cách bên trong nút
     width: '100%', // Chiều rộng của nút
@@ -361,7 +360,7 @@ const styles = StyleSheet.create({
     fontWeight: 'bold', // Chữ đậm
   },
   contactText: {
-    fontSize: 16, // Kích thước chữ cho các thông tin liên hệ
+    fontSize: 16, 
     color: '#333', // Màu chữ
     marginLeft: 10, // Khoảng cách bên trái cho chữ
   },
