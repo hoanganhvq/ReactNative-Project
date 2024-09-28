@@ -51,11 +51,14 @@ export default function ImageScreen() {
     const scrollViewRef = useRef(null); 
     const sectionRefs = useRef([]);
 
-    // State cho ImageViewing
+    // State for ImageViewing
     const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
     const [imagesForViewer, setImagesForViewer] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const fadeAnim = useRef(new Animated.Value(1)).current; // Độ mờ của hình ảnh
+    const fadeAnim = useRef(new Animated.Value(1)).current; // Opacity
+
+    // State for selected album
+    const [selectedAlbumId, setSelectedAlbumId] = useState(null);
 
     const handleShowImages = (item, index, albumIndex) => {
         const images = imageAlbums[albumIndex].images.map(img => ( img.src ));
@@ -85,7 +88,7 @@ export default function ImageScreen() {
         sectionRefs.current.forEach((ref, index) => {
             if (ref) {
                 ref.measure((x, y, width, height, pageX, pageY) => {
-                    offsets[index] = pageY - 170; // Store the measured position
+                    offsets[index] = pageY - 170; // Adjust if necessary
                     if (index === sectionRefs.current.length - 1) {
                         setSectionOffsets(offsets); // Set offsets after measuring all
                     }
@@ -100,10 +103,19 @@ export default function ImageScreen() {
         }
     };
 
+    const handleSelectAlbum = (item, index) => {
+        setSelectedAlbumId(item.id);
+        scrollToSection(index);
+    };
 
     // Render functions
     const renderImagesView = ({ item }) => (
-        <TouchableOpacity style={styles.imageViewContainer} onPress={() => scrollToSection(item.id - 1)}>
+        <TouchableOpacity 
+            style={[
+                styles.imageViewContainer, 
+            ]} 
+            onPress={() => handleSelectAlbum(item, item.id - 1)}
+        >
             <Image source={item.first.src} style={styles.imageView} />
             <Text style={styles.imageText}>{item.title}</Text> 
         </TouchableOpacity>
@@ -140,11 +152,15 @@ export default function ImageScreen() {
     };
 
     useEffect(() => {
-        getSectionPosition();
-    }, []);
+        // Optionally, select the first album by default
+        if (imageAlbums.length > 0 && selectedAlbumId === null) {
+            setSelectedAlbumId(imageAlbums[0].id);
+        }
+    }, [imageAlbums, selectedAlbumId]);
 
     useEffect(() => {
-    }, [imagesForViewer, currentImageIndex]);
+        getSectionPosition();
+    }, []);
 
     return (
         <SafeAreaView style={styles.container}>
@@ -182,10 +198,16 @@ export default function ImageScreen() {
                     {imageAlbums.map((album, index) => (
                         <TouchableOpacity 
                             key={album.id} 
-                            style={styles.navButton} 
-                            onPress={() => scrollToSection(index)}
+                            style={[
+                                styles.navButton, 
+                                selectedAlbumId === album.id && styles.selectedNavButton
+                            ]} 
+                            onPress={() => handleSelectAlbum(album, index)}
                         >
-                            <Text style={styles.navText}>{album.title}</Text>
+                            <Text style={[
+                                styles.navText, 
+                                selectedAlbumId === album.id && styles.selectedNavText
+                            ]}>{album.title}</Text>
                         </TouchableOpacity>
                     ))}
                 </View>
@@ -194,14 +216,13 @@ export default function ImageScreen() {
             {/* ImageViewing Component */}
             {isImageViewerVisible && (
                 <Animated.View style={{ opacity: fadeAnim }}>
-                    <ImageViewing
+                  <ImageViewing
                         images={imagesForViewer}
-                        imageIndex={currentImageIndex}
+                        imageIndex={currrentImageIndex}
                         visible={isImageViewerVisible}
                         onRequestClose={handleHideImages}
                         swipeToCloseEnabled={true}
                         doubleTapToZoomEnabled={true}
-
                         animationType='fade'
                     />
                 </Animated.View>
@@ -253,6 +274,16 @@ const styles = StyleSheet.create({
         elevation: 3,
         backgroundColor: '#fff',
         padding: 10,
+    },
+    selectedImageViewContainer: {
+        borderWidth: 2,
+        borderColor: '#007BFF',
+        transform: [{ scale: 1.05 }],
+        shadowColor: '#007BFF',
+        shadowOffset: { width: 0, height: 4 },
+        shadowOpacity: 0.3,
+        shadowRadius: 4,
+        elevation: 5,
     },
     imageView: {
         width: ITEM_WIDTH * 0.9,
@@ -306,9 +337,19 @@ const styles = StyleSheet.create({
     },
     navButton: {
         padding: 10,
+        justifyContent: 'center',
+    },
+    selectedNavButton: {
+        backgroundColor: '#007BFF',
+        borderRadius: 10,
+        padding: 8,
     },
     navText: {
         fontSize: 16,
         color: '#495057',
     },
-}); 
+    selectedNavText: {
+        color: '#fff',
+        fontWeight: 'bold',
+    },
+});

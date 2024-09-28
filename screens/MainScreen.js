@@ -1,12 +1,12 @@
 import React, { useState } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, ScrollView } from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { images } from '../Data/images.js'; 
+import { hotelData } from '../Data/hotelData.js'; 
 import { MasonryFlashList } from '@shopify/flash-list';
 
 const width = Dimensions.get('window').width;
 const ITEM_WIDTH = width / 2 - 15;
-
+const images = hotelData.images.imageHotel;
 export default function MainScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearch = (query) => setSearchQuery(query);

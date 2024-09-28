@@ -2,7 +2,8 @@ import React, { useRef, useState } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome'; 
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import {hotelData} from '../Data/hotelData.js';
+import { hotelData } from '../Data/hotelData.js';
+import { images } from '../Data/images.js';
 
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = width; 
@@ -12,7 +13,6 @@ export default function HotelScreen() {
   const [showNotification, setShowNotification] = useState(false);
   const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current; 
   const fullDescription = hotelData.description;
-  const images = hotelData.imagesHotel;
   const [scrollY] = useState(new Animated.Value(0)); 
   const translateY = scrollY.interpolate({
     inputRange: [0, 100], 
@@ -38,13 +38,11 @@ export default function HotelScreen() {
   };
   
   const renderAmenities = ({ item }) => (
-    <View style={styles.amenityContainer }>
-        <Icon name="check" size={15} color="green" />
-         <Text style={styles.amenity}>{item}</Text>
+    <View style={styles.amenityContainer}>
+      <Icon name="check" size={15} color="green" />
+      <Text style={styles.amenity}>{item}</Text>
     </View>
-   
-  )
-
+  );
 
   const renderImages = ({ item }) => (
     <View style={styles.imageContainer}>
@@ -58,46 +56,84 @@ export default function HotelScreen() {
 
   return (
     <SafeAreaView style={styles.container}>
-        <Animated.ScrollView
+      <Animated.ScrollView
         onScroll={Animated.event(
-            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-            { useNativeDriver: true } 
-          )}
-          scrollEventThrottle={16}
-        >
-             <View style={styles.scrollImages}>
-        <Animated.FlatList
-          data={images}
-          renderItem={renderImages}
-          keyExtractor={item => item.id.toString()}
-          horizontal={true}
-          showsHorizontalScrollIndicator={false}
-          snapToInterval={ITEM_WIDTH} 
-          snapToAlignment="start"
-          decelerationRate="fast"
-          style={styles.horizontalFlatlist}
-        />
-      </View>
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true } 
+        )}
+        scrollEventThrottle={16}
+      >
+        <View style={styles.scrollImages}>
+          <Animated.FlatList
+            data={images}
+            renderItem={renderImages}
+            keyExtractor={item => item.id.toString()}
+            horizontal={true}
+            showsHorizontalScrollIndicator={false}
+            snapToInterval={ITEM_WIDTH} 
+            snapToAlignment="start"
+            decelerationRate="fast"
+            style={styles.horizontalFlatlist}
+          />
+        </View>
 
-      <View style={styles.feedbackContainer}>
-        <Text style={styles.nameHotel}>{hotelData.name}</Text>
-        <View style={styles.ratingContainer}>
-          <Text style={styles.rating}>{hotelData.rating}/{hotelData.ratingScale}⭐</Text>
-          <Text style={styles.ratingSubtitle}>Đánh giá từ người thuê</Text>
+        <View style={styles.feedbackContainer}>
+          <Text style={styles.nameHotel}>{hotelData.name}</Text>
+          <View style={styles.ratingContainer}>
+            <Text style={styles.rating}>{hotelData.rating}/{hotelData.ratingScale}⭐</Text>
+            <Text style={styles.ratingSubtitle}>Đánh giá từ người thuê</Text>
+          </View>
         </View>
-      </View>
 
-      <View style={styles.descriptionContainer}>
-        <View style={styles.descriptionHeader}>
-          <Text style={styles.descriptionTitle}>Mô tả Khách Sạn</Text>
-          <Button style = {{}} title="Tìm hiểu thêm" onPress={handleShowDescription} />
+        <View style={styles.descriptionContainer}>
+          <View style={styles.descriptionHeader}>
+            <Text style={styles.descriptionTitle}>Mô tả Khách Sạn</Text>
+            <Button style={{ paddingLeft: 40}} title="Tìm hiểu thêm" onPress={handleShowDescription} />
+          </View>
+          
+          <View style={styles.descriptionTextContainer}>
+            <Text style={styles.descriptionText}>
+              {fullDescription.substring(0, 100) + '...'} 
+            </Text>
+          </View>
         </View>
-        
-        <View style={styles.descriptionTextContainer}>
-          <Text style={styles.descriptionText}>
-            {fullDescription.substring(0, 100) + '...'} 
-          </Text>
+
+        <View style={styles.amenitiesContainer}>
+          <Text style={styles.amenitiesTitle}>Tiện Nghi</Text>
+          <FlatList
+            data={hotelData.amenities}
+            renderItem={renderAmenities}
+            keyExtractor={(item) => item.toString()}
+            contentContainerStyle={styles.amenitiesList} 
+            scrollEnabled={true} 
+          />
         </View>
+
+        <View style={styles.contactContainer}>
+          <Text style={styles.headerContact}>Contact</Text>
+          <View style={styles.contactOption}>
+            <FontAwesome name="phone" size={24} color="green" />
+            <Text style={styles.contactText}>{hotelData.contact.phone}</Text>
+          </View>
+          <View style={styles.contactOption}>
+            <FontAwesome name="envelope" size={24} color="green" />
+            <Text style={styles.contactText}>{hotelData.contact.email}</Text>
+          </View>
+          <View style={styles.contactOption}>
+            <FontAwesome name="globe" size={24} color="green" />
+            <Text style={styles.contactText}>{hotelData.contact.website}</Text>
+          </View>
+        </View>
+      </Animated.ScrollView>
+      
+      <View style={styles.footerContainer}>
+        <View style={styles.priceContainer}>
+          <Text style={styles.startingPrice}>Khởi điểm:</Text>
+          <Text style={styles.priceText}>{hotelData.pricePerNight} {hotelData.currency}</Text>
+        </View>
+        <TouchableOpacity style={styles.button}>
+          <Text style={styles.buttonText}>Xem mọi phòng</Text>
+        </TouchableOpacity>
       </View>
 
       {showNotification && (
@@ -111,49 +147,6 @@ export default function HotelScreen() {
           </ScrollView>
         </Animated.View>
       )}
-
-    <View style={styles.amenitiesContainer}>
-        <Text style={styles.amenitiesTitle}>Tiện Nghi</Text>
-        <FlatList
-            data={hotelData.amenities}
-            renderItem={renderAmenities}
-            keyExtractor={(item) => item.toString()}
-            contentContainerStyle={styles.amenitiesList} 
-            scrollEnabled={true} 
-        />
-    </View>
-
-    <View style={styles.contactContainer}>
-        <Text style = {styles.headerContact}>Contact</Text>
-    <View style={styles.contactOption}>
-      <FontAwesome name="phone" size={24} color="green" />
-      <Text style={styles.contactText}>{hotelData.contact.phone}</Text>
-    </View>
-    <View style={styles.contactOption}>
-      <FontAwesome name="envelope" size={24} color="green" />
-      <Text style={styles.contactText}>{hotelData.contact.email}</Text>
-    </View>
-    <View style={styles.contactOption}>
-      <FontAwesome name="globe" size={24} color="green" />
-      <Text style={styles.contactText}>{hotelData.contact.website}</Text>
-    </View>
-  </View>
-
-    </Animated.ScrollView>
-     
-
-    <View style={styles.footerContainer}>
-        <View style={styles.priceContainer}>
-            <Text style={styles.startingPrice}>Khởi điểm:</Text>
-            <Text style={styles.priceText}>{hotelData.pricePerNight} {hotelData.currency}</Text>
-        </View>
-        <TouchableOpacity style={styles.button}>
-            <Text style={styles.buttonText}>Xem mọi phòng</Text>
-        </TouchableOpacity>
-    </View>
-
-
-  
     </SafeAreaView>
   );
 }
@@ -199,10 +192,10 @@ const styles = StyleSheet.create({
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.2, // Độ mờ của bóng
-    shadowRadius: 4, // Đường kính của bóng
-    elevation: 3, // Độ nổi trên Android
-    alignItems: 'flex-start', // Căn chỉnh các phần tử về bên trái
+    shadowOpacity: 0.2,
+    shadowRadius: 4, 
+    elevation: 3, 
+    alignItems: 'flex-start', 
   },
   nameHotel: {
     fontSize: 24,
@@ -212,44 +205,46 @@ const styles = StyleSheet.create({
   ratingContainer: {
     flexDirection: 'row',
     alignItems: 'center',
-    marginTop: 5, // Khoảng cách trên giữa tên khách sạn và đánh giá
+    marginTop: 5, 
   },
   rating: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#ffcc00', // Màu vàng cho đánh giá
+    color: '#ffcc00', 
     marginRight: 5,
   },
   ratingSubtitle: {
     fontSize: 14,
-    color: '#666', // Màu xám cho văn bản phụ
+    color: '#666', 
   },
   descriptionContainer: {
-    padding: 10, // Khoảng cách bên trong
-    backgroundColor: 'white', // Nền trắng cho feedback
-    borderRadius: 10, // Bo góc cho khung feedback
-    margin: 10, // Khoảng cách giữa các thành phần
-    shadowColor: '#000', // Màu bóng
+    padding: 10, 
+    backgroundColor: 'white', 
+    borderRadius: 10, 
+    margin: 10, 
+    shadowColor: '#000', 
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.2, // Độ mờ của bóng
-    shadowRadius: 4, // Đường kính của bóng
-    elevation: 3, // Độ nổi trên Android
-    alignItems: 'flex-start', // Căn chỉnh các phần tử về bên trái
+    shadowOpacity: 0.2, 
+    shadowRadius: 4, 
+    elevation: 3, 
+    alignItems: 'flex-start', 
   },
   descriptionHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between', // Tạo khoảng cách giữa tiêu đề và nút
-    alignItems: 'center', // Căn giữa theo chiều dọc
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+  
   },
   descriptionTitle: {
     fontSize: 20,
     fontWeight: 'bold',
+    paddingRight:60,
   },
   descriptionTextContainer: {
-    maxHeight: 80, // Giới hạn chiều cao của vùng văn bản
+    maxHeight: 80, 
   },
   descriptionText: {
     fontSize: 16,
@@ -262,152 +257,148 @@ const styles = StyleSheet.create({
     left: 0,
     right: 0,
     backgroundColor: '#ffffff',
-    borderTopLeftRadius: 20, // Bo góc trên trái
-    borderTopRightRadius: 20, // Bo góc trên phải
+    borderTopLeftRadius: 20, 
+    borderTopRightRadius: 20, 
     padding: 20,
-    shadowColor: '#000', // Màu bóng
+    shadowColor: '#000', 
     shadowOffset: {
       width: 0,
       height: -2,
     },
-    shadowOpacity: 0.2, // Độ mờ của bóng
-    shadowRadius: 4, // Đường kính của bóng
-    elevation: 5, // Độ nổi trên Android
+    shadowOpacity: 0.2, 
+    shadowRadius: 4, 
+    elevation: 5, 
     justifyContent: 'center',
   },
   notificationText: {
-    marginTop: 10, // Khoảng cách trên cho văn bản
+    marginTop: 10,
     color: '#333',
   },
   notificationHeader: {
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
-    marginBottom: 5, // Khoảng cách giữa tiêu đề và văn bản mô tả
+    marginBottom: 5, 
     width: '100%',
   },
   notificationTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    textAlign: 'center', // Căn giữa cho tiêu đề
-    flex: 1, // Căn cho tiêu đề chiếm toàn bộ chiều rộng còn lại
+    textAlign: 'center', 
+    flex: 1,
   },
- amenitiesContainer: {
-    padding: 10, // Giảm khoảng cách bên trong
-    backgroundColor: '#f9f9f9', // Màu nền nhạt cho phần tiện nghi
-    borderRadius: 10, // Bo góc cho khung
-    margin: 10, // Khoảng cách giữa các thành phần
-    shadowColor: '#000', // Màu bóng
+  amenitiesContainer: {
+    padding: 10, 
+    backgroundColor: '#f9f9f9', 
+    borderRadius: 10, 
+    margin: 10, 
+    shadowColor: '#000', 
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.2, // Độ mờ của bóng
-    shadowRadius: 4, // Đường kính của bóng
-    elevation: 3, // Độ nổi trên Android
-    maxHeight: 200, // Giới hạn chiều cao tối đa
+    shadowOpacity: 0.2, 
+    shadowRadius: 4, 
+    elevation: 3, 
+    maxHeight: 200, 
   },
   amenitiesTitle: {
-    fontSize: 20, // Kích thước chữ tiêu đề nhỏ hơn
-    fontWeight: 'bold', // Chữ đậm
-    marginBottom: 5, // Khoảng cách dưới tiêu đề
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    marginBottom: 5, 
   },
   amenitiesList: {
-    paddingVertical: 5, // Khoảng cách dọc cho danh sách
+    paddingVertical: 5, 
   },
   amenityContainer: {
-    flexDirection: 'row', // Vẫn giữ hàng cho từng tiện nghi
+    flexDirection: 'row', 
     alignItems: 'center',
-    marginBottom: 5, // Giảm khoảng cách giữa các tiện nghi
+    marginBottom: 5, 
   },
   amenity: {
     marginLeft: 5,
-    fontSize: 16, // Kích thước chữ cho tên tiện nghi nhỏ hơn
-    color: '#333', // Màu chữ
+    fontSize: 16, 
+    color: '#333', 
   },
-
   contactContainer: {
-    flexDirection: 'column', // Căn chỉnh theo cột
-    padding: 20, // Khoảng cách bên trong
-    backgroundColor: '#f8f9fa', // Nền màu sáng
-    borderRadius: 10, // Bo góc cho khung
+    flexDirection: 'column', 
+    padding: 20, 
+    backgroundColor: '#f8f9fa', 
+    borderRadius: 10, 
     margin: 10, 
-    shadowColor: '#000', // Màu bóng
+    shadowColor: '#000', 
     shadowOffset: {
       width: 0,
       height: 2,
     },
-    shadowOpacity: 0.2, // Độ mờ của bóng
-    shadowRadius: 4, // Đường kính của bóng
-    elevation: 3, // Độ nổi trên Android
+    shadowOpacity: 0.2, 
+    shadowRadius: 4, 
+    elevation: 3, 
   },
   contactOption: {
-    flexDirection: 'row', // Căn chỉnh icon và text theo hàng
+    flexDirection: 'row', 
     alignItems: 'center',
-    marginVertical: 10, // Khoảng cách dọc giữa các lựa chọn
+    marginVertical: 10, 
   },
   contactButton: {
     flexDirection: 'row',
     alignItems: 'center',
     backgroundColor: '#007BFF', 
-    borderRadius: 5, // Bo góc cho nút
-    padding: 10, // Khoảng cách bên trong nút
-    width: '100%', // Chiều rộng của nút
+    borderRadius: 5, 
+    padding: 10, 
+    width: '100%', 
   },
   contactButtonText: {
-    color: '#fff', // Màu chữ trắng
-    marginLeft: 5, // Khoảng cách bên trái cho chữ
-    fontWeight: 'bold', // Chữ đậm
+    color: '#fff', 
+    marginLeft: 5, 
+    fontWeight: 'bold', 
   },
   contactText: {
     fontSize: 16, 
-    color: '#333', // Màu chữ
-    marginLeft: 10, // Khoảng cách bên trái cho chữ
+    color: '#333', 
+    marginLeft: 10, 
   },
-  headerContact:{
+  headerContact: {
     fontSize: 20,
     fontWeight: 'bold',
   },
-
   footerContainer: {
     padding: 20,
-    backgroundColor: '#fff', // Nền trắng
-
-    flexDirection: 'row', // Sắp xếp theo hàng
-    justifyContent: 'space-between', // Tạo khoảng cách giữa các thành phần
-    alignItems: 'center', // Căn giữa theo chiều dọc
-    shadowColor: '#000', // Màu bóng
+    backgroundColor: '#fff', 
+    flexDirection: 'row', 
+    justifyContent: 'space-between', 
+    alignItems: 'center', 
+    shadowColor: '#000', 
     shadowOffset: {
-        width: 0,
-        height: -2,
+      width: 0,
+      height: -2,
     },
-    shadowOpacity: 0.2, // Độ mờ của bóng
-    shadowRadius: 4, // Đường kính của bóng
-    elevation: 5, // Độ nổi trên Android
+    shadowOpacity: 0.2, 
+    shadowRadius: 4, 
+    elevation: 5, 
+  },
+  priceContainer: {
+    // Added missing priceContainer style
   },
   startingPrice: {
-    fontSize: 14, // Kích thước chữ nhỏ hơn cho "Khởi điểm"
-    color: '#333', // Màu chữ tối
-},
-
-priceText: {
-    fontSize: 24, // Kích thước chữ lớn cho giá
+    fontSize: 14, 
+    color: '#333', 
+  },
+  priceText: {
+    fontSize: 24, 
     fontWeight: 'bold',
-    color: 'red', // Màu chữ đỏ
-},
-
-button: {
-    backgroundColor: '#007BFF', // Màu nền xanh cho nút
+    color: 'red', 
+  },
+  button: {
+    backgroundColor: '#007BFF', 
     borderRadius: 150,
     padding: 20,
     width: '45%', 
     alignItems: 'center',
-},
-
-buttonText: {
-    color: '#fff', // Màu chữ trắng
+  },
+  buttonText: {
+    color: '#fff', 
     fontWeight: 'bold',
-    fontSize:15,
-},
-
+    fontSize: 15,
+  },
 });

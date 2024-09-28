@@ -1,5 +1,16 @@
-import React from 'react';
-import { View, Text, StyleSheet, FlatList, Image, TouchableOpacity,SafeAreaView } from 'react-native';
+import React, { useState } from 'react';
+import { 
+  View, 
+  Text, 
+  StyleSheet, 
+  FlatList, 
+  Image, 
+  TouchableOpacity, 
+  SafeAreaView, 
+  ScrollView 
+} from 'react-native';
+import { hotelData } from '../Data/hotelData';
+import Icon from 'react-native-vector-icons/FontAwesome';
 
 const reviews = [
   {
@@ -9,120 +20,230 @@ const reviews = [
     date: '31 tháng 2, 2025',
     description: 'Không có cảm âm, trợ kính âm, sạch sẽ, view đẹp có thể nhìn bấm kính. Nhân viên nhiệt tình thực hiện mọi nhu cầu',
     author: 'Cường',
-    countryFlag: 'https://www.countryflags.io/vn/flat/64.png' // link ảnh lá cờ Việt Nam
+    countryFlag: 'https://www.countryflags.io/vn/flat/64.png', // Link ảnh lá cờ Việt Nam
   },
-  // Thêm nhiều đánh giá khác ở đây
+  {
+    id: '2',
+    title: 'Dịch vụ tốt',
+    rating: 4,
+    date: '28 tháng 2, 2025',
+    description: 'Phòng sạch sẽ và nhân viên phục vụ tận tình. Rất đáng để quay lại.',
+    author: 'Lan',
+    countryFlag: 'https://www.countryflags.io/vn/flat/64.png',
+  },
 ];
 
-const RatingScreen = () => {
+export default function RatingScreen() {
+  const [selectedRating, setSelectedRating] = useState(null);
+  const [filteredReviews, setFilteredReviews] = useState(reviews);
+
+  const handleStarPress = (rating) => {
+    setSelectedRating(rating);
+    if (rating === selectedRating) {
+      setFilteredReviews(reviews);
+      setSelectedRating(null);
+    } else {
+      const filtered = reviews.filter(review => review.rating === rating);
+      setFilteredReviews(filtered);
+    }
+  };
+
   const renderItem = ({ item }) => (
-    <View style={styles.reviewContainer}>
-      <Text style={styles.reviewTitle}>{item.title}</Text>
-      <Text style={styles.rating}>R: {item.rating} ⭐</Text>
+    <View style={styles.reviewCard}>
+      <View style={styles.reviewHeader}>
+        <Text style={styles.reviewTitle}>{item.title}</Text>
+        <View style={styles.ratingContainer}>
+          {Array.from({ length: 5 }, (_, index) => (
+            <Icon 
+              key={index} 
+              name="star" 
+              size={16} 
+              color={index < item.rating ? '#FFD700' : '#CCCCCC'} 
+              style={styles.starIcon}
+            />
+          ))}
+        </View>
+      </View>
       <Text style={styles.reviewDate}>{item.date}</Text>
       <Text style={styles.reviewDescription}>{item.description}</Text>
       <View style={styles.authorContainer}>
-        <Image source={{ uri: item.countryFlag }} style={styles.flagIcon} />
+        <Image 
+          source={{ uri: item.countryFlag }} 
+          style={styles.flagIcon} 
+        />
         <Text style={styles.author}>{item.author}</Text>
       </View>
     </View>
   );
 
+  const calculateAverageRating = () => {
+    const total = reviews.reduce((acc, review) => acc + review.rating, 0);
+    return (total / reviews.length).toFixed(1);
+  };
+
   return (
     <SafeAreaView style={styles.container}>
-      {/* Phần đánh giá tổng thể */}
-      <View style={styles.headerContainer}>
-        <Text style={styles.overallRating}>4.7/5⭐</Text>
-        <Text style={styles.ratingLabel}>Tuyệt vời</Text>
-        <Text style={styles.reviewCount}>6969 nhận xét</Text>
-      </View>
+      <ScrollView>
+        <View style={styles.headerContainer}>
+          <Text style={styles.headerTitle}>Đánh giá</Text>
+        </View>
 
-      {/* Nút chọn sao */}
-      <View style={styles.starFilterContainer}>
-        {Array.from({ length: 5 }, (_, index) => (
-          <TouchableOpacity key={index} style={styles.starButton}>
-            <Text style={styles.starText}>{index + 1} ⭐</Text>
-          </TouchableOpacity>
-        ))}
-      </View>
+        <View style={styles.overallRatingContainer}>
+          <Text style={styles.averageRating}>{hotelData.rating}/5</Text>
+          <View style={styles.starsContainer}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <Icon 
+                key={index} 
+                name="star" 
+                size={24} 
+                color={index < Math.round(calculateAverageRating()) ? '#FFD700' : '#CCCCCC'} 
+                style={styles.starIcon}
+              />
+            ))}
+          </View>
+          <Text style={styles.reviewCount}>{reviews.length} nhận xét</Text>
+        </View>
 
-      {/* Danh sách các đánh giá */}
-      <FlatList
-        data={reviews}
-        renderItem={renderItem}
-        keyExtractor={(item) => item.id}
-      />
+        <View style={styles.starFilterContainer}>
+          {Array.from({ length: 5 }, (_, index) => (
+            <TouchableOpacity
+              key={index}
+              style={[
+                styles.starButton, 
+                selectedRating === index + 1 && styles.selectedStarButton
+              ]}
+              onPress={() => handleStarPress(index + 1)}
+            >
+              <Icon 
+                name="star" 
+                size={24} 
+                color={selectedRating === index + 1 ? '#FFD700' : '#CCCCCC'} 
+              />
+              <Text style={styles.starLabel}>{index + 1} ⭐</Text>
+            </TouchableOpacity>
+          ))}
+        </View>
+
+        <FlatList
+          data={filteredReviews}
+          renderItem={renderItem}
+          keyExtractor={(item) => item.id}
+          contentContainerStyle={styles.reviewsList}
+          ListEmptyComponent={
+            <Text style={styles.noReviewsText}>
+              {selectedRating 
+                ? `Không có đánh giá nào với ${selectedRating} ⭐` 
+                : 'Không có đánh giá nào.'}
+            </Text>
+          }
+        />
+      </ScrollView>
     </SafeAreaView>
   );
-};
+}
 
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 16,
-    backgroundColor: '#fff',
+    backgroundColor: '#F5F5F5',
   },
   headerContainer: {
+    paddingVertical: 20,
     alignItems: 'center',
-    marginBottom: 16,
+    backgroundColor: '#fff',
+    shadowColor: '#000',
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.1,
+    shadowRadius: 4,
+    elevation: 2,
   },
-  overallRating: {
+  headerTitle: {
     fontSize: 24,
     fontWeight: 'bold',
     color: '#333',
   },
-  ratingLabel: {
-    fontSize: 16,
-    color: '#888',
+  overallRatingContainer: {
+    backgroundColor: '#fff',
+    padding: 20,
+    margin: 16,
+    borderRadius: 10,
+    alignItems: 'center',
+    elevation: 2,
+  },
+  averageRating: {
+    fontSize: 48,
+    fontWeight: 'bold',
+    color: '#FFD700',
+  },
+  starsContainer: {
+    flexDirection: 'row',
+    marginVertical: 8,
+  },
+  starIcon: {
+    marginHorizontal: 2,
   },
   reviewCount: {
-    fontSize: 14,
-    color: '#aaa',
+    fontSize: 16,
+    color: '#666',
   },
   starFilterContainer: {
     flexDirection: 'row',
     justifyContent: 'space-around',
-    marginBottom: 16,
+    marginHorizontal: 16,
+    marginVertical: 10,
+    backgroundColor: '#fff',
+    paddingVertical: 10,
+    borderRadius: 10,
+    elevation: 2,
   },
   starButton: {
-    padding: 10,
-    borderWidth: 1,
-    borderColor: '#ccc',
-    borderRadius: 5,
+    alignItems: 'center',
   },
-  starText: {
-    fontSize: 16,
-    color: '#555',
-  },
-  reviewContainer: {
-    padding: 16,
-    marginBottom: 16,
-    backgroundColor: '#f9f9f9',
+  selectedStarButton: {
+    backgroundColor: '#FFE58F',
     borderRadius: 10,
-    shadowColor: '#000',
-    shadowOpacity: 0.1,
-    shadowRadius: 10,
-    elevation: 5,
+    padding: 5,
+  },
+  starLabel: {
+    marginTop: 4,
+    fontSize: 14,
+    color: '#333',
+  },
+  reviewsList: {
+    paddingHorizontal: 16,
+    paddingBottom: 20,
+  },
+  reviewCard: {
+    backgroundColor: '#fff',
+    padding: 16,
+    marginVertical: 8,
+    borderRadius: 10,
+    elevation: 2,
+  },
+  reviewHeader: {
+    flexDirection: 'row',
+    justifyContent: 'space-between',
+    alignItems: 'center',
   },
   reviewTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    marginBottom: 8,
+    color: '#333',
+    flex: 1,
+    marginRight: 10,
   },
-  rating: {
-    fontSize: 16,
-    marginBottom: 8,
-    color: '#ffcc00',
+  ratingContainer: {
+    flexDirection: 'row',
   },
   reviewDate: {
     fontSize: 14,
-    marginBottom: 8,
-    color: '#888',
+    color: '#999',
+    marginVertical: 4,
   },
   reviewDescription: {
-    fontSize: 14,
-    marginBottom: 8,
+    fontSize: 16,
     color: '#555',
+    marginVertical: 8,
   },
   authorContainer: {
     flexDirection: 'row',
@@ -130,14 +251,22 @@ const styles = StyleSheet.create({
     marginTop: 10,
   },
   flagIcon: {
-    width: 20,
-    height: 20,
+    width: 24,
+    height: 24,
     marginRight: 8,
+    borderRadius: 12,
+    borderWidth: 1,
+    borderColor: '#ccc',
   },
   author: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#333',
+    fontWeight: '600',
+  },
+  noReviewsText: {
+    textAlign: 'center',
+    fontSize: 16,
+    color: '#999',
+    marginTop: 20,
   },
 });
-
-export default RatingScreen;
