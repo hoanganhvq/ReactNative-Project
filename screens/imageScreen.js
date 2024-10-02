@@ -218,7 +218,7 @@ export default function ImageScreen() {
                 <Animated.View style={{ opacity: fadeAnim }}>
                   <ImageViewing
                         images={imagesForViewer}
-                        imageIndex={currrentImageIndex}
+                        imageIndex={currentImageIndex}
                         visible={isImageViewerVisible}
                         onRequestClose={handleHideImages}
                         swipeToCloseEnabled={true}

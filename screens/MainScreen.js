@@ -48,6 +48,7 @@ export default function MainScreen() {
         inputContainerStyle={styles.searchBarInput}
         searchIcon={{ size: 24, color: 'gray' }}
         inputStyle={styles.inputStyle}
+        clearIcon={{ size: 24, color: 'gray' }}
       />
      
 

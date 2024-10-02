@@ -8,7 +8,7 @@ import RatingScreen from './screens/FeedBackScreen.jsx';
 import HotelScreen from './screens/hotelScreen.js';
 import ImageScreen from './screens/imageScreen.js';
 const App = () => {
-  return <ImageScreen/>;
+  return <MainScreen/>;
 
 };
 
