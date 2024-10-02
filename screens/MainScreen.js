@@ -7,16 +7,16 @@ import { MasonryFlashList } from '@shopify/flash-list';
 const width = Dimensions.get('window').width;
 const ITEM_WIDTH = width / 2 - 15;
 const images = hotelData.images.imageHotel;
+
 export default function MainScreen() {
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearch = (query) => setSearchQuery(query);
 
-  const [scrollY] = useState(new Animated.Value(0)); // Sử dụng Animated.Value để theo dõi vị trí cuộn
+  const [scrollY] = useState(new Animated.Value(0));
 
-  // Tạo một giá trị translateY dựa trên vị trí cuộn để ẩn dần chữ "Khám Phá"
   const translateY = scrollY.interpolate({
-    inputRange: [0, 100], // Giới hạn cuộn (0 là ở trên cùng, 100 là khi đã cuộn xuống)
-    outputRange: [0, 100], // Tại vị trí 0, "Khám Phá" hiển thị bình thường, tại vị trí 100 nó ẩn đi
+    inputRange: [0, 100],
+    outputRange: [0, 100],
     extrapolate: 'clamp',
   });
 
@@ -51,11 +51,10 @@ export default function MainScreen() {
         clearIcon={{ size: 24, color: 'gray' }}
       />
      
-
       <Animated.ScrollView
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true } // Sử dụng Native Driver để cải thiện hiệu suất
+          { useNativeDriver: true }
         )}
         scrollEventThrottle={16}
       >
@@ -86,6 +85,7 @@ export default function MainScreen() {
     </SafeAreaView>
   );
 }
+
 const styles = StyleSheet.create({
   container: {
     flex: 1,
@@ -132,8 +132,8 @@ const styles = StyleSheet.create({
     height: 200,  
     resizeMode: 'cover',
     borderRadius: 10,
-    marginHorizontal: 8, // Khoảng cách giữa các item
-    alignItems: 'center', // Căn giữa nội dung trong item
+    marginHorizontal: 8,
+    alignItems: 'center',
     justifyContent: 'center',
   },
   imageIndex: {
@@ -143,27 +143,26 @@ const styles = StyleSheet.create({
   },
   horizontalFlatList: {
     height: 100, 
-    marginBottom: 20, // Khoảng cách dưới FlatList ngang
+    marginBottom: 20,
   },
   horizontalItem: {
-    width: width * 0.8, // Chiều rộng item ngang
-    height: 80, // Chiều cao item ngang
-    backgroundColor: '#f9c2ff', // Màu nền cho item ngang
-    marginHorizontal: 10, // Khoảng cách giữa các item ngang
-    justifyContent: 'center', // Căn giữa nội dung trong item
-    alignItems: 'center', // Căn giữa nội dung trong item
-    borderRadius: 10, // Bo góc cho item ngang
+    width: width * 0.8,
+    height: 80,
+    backgroundColor: '#f9c2ff',
+    marginHorizontal: 10,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
   },
   verticalFlatList: {
-    paddingHorizontal: 20, // Padding cho FlatList dọc
+    paddingHorizontal: 20,
   },
-verticalItem: {
-     flex: 1, // Tự động điều chỉnh chiều cao
-    backgroundColor: '#d3f9c2', // Màu nền cho item dọc
-    margin: 5, // Khoảng cách giữa các item dọc
-    justifyContent: 'center', // Căn giữa nội dung trong item
-    alignItems: 'center', // Căn giữa nội dung trong item
-    borderRadius: 10, // Bo góc cho item dọc
-},
-
+  verticalItem: {
+    flex: 1,
+    backgroundColor: '#d3f9c2',
+    margin: 5,
+    justifyContent: 'center',
+    alignItems: 'center',
+    borderRadius: 10,
+  },
 });

@@ -51,13 +51,11 @@ export default function ImageScreen() {
     const scrollViewRef = useRef(null); 
     const sectionRefs = useRef([]);
 
-    // State for ImageViewing
     const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
     const [imagesForViewer, setImagesForViewer] = useState([]);
     const [currentImageIndex, setCurrentImageIndex] = useState(0);
-    const fadeAnim = useRef(new Animated.Value(1)).current; // Opacity
+    const fadeAnim = useRef(new Animated.Value(1)).current;
 
-    // State for selected album
     const [selectedAlbumId, setSelectedAlbumId] = useState(null);
 
     const handleShowImages = (item, index, albumIndex) => {
@@ -82,15 +80,14 @@ export default function ImageScreen() {
         }
     );
 
-    // Function to get section positions
     const getSectionPosition = () => {
         const offsets = [];
         sectionRefs.current.forEach((ref, index) => {
             if (ref) {
                 ref.measure((x, y, width, height, pageX, pageY) => {
-                    offsets[index] = pageY - 170; // Adjust if necessary
+                    offsets[index] = pageY - 170;
                     if (index === sectionRefs.current.length - 1) {
-                        setSectionOffsets(offsets); // Set offsets after measuring all
+                        setSectionOffsets(offsets);
                     }
                 });
             }
@@ -108,7 +105,6 @@ export default function ImageScreen() {
         scrollToSection(index);
     };
 
-    // Render functions
     const renderImagesView = ({ item }) => (
         <TouchableOpacity 
             style={[
@@ -152,7 +148,6 @@ export default function ImageScreen() {
     };
 
     useEffect(() => {
-        // Optionally, select the first album by default
         if (imageAlbums.length > 0 && selectedAlbumId === null) {
             setSelectedAlbumId(imageAlbums[0].id);
         }
@@ -213,7 +208,6 @@ export default function ImageScreen() {
                 </View>
             )}
 
-            {/* ImageViewing Component */}
             {isImageViewerVisible && (
                 <Animated.View style={{ opacity: fadeAnim }}>
                   <ImageViewing
@@ -351,5 +345,16 @@ const styles = StyleSheet.create({
     selectedNavText: {
         color: '#fff',
         fontWeight: 'bold',
+    },
+    deleteButton: {
+        marginTop: 10,
+        backgroundColor: '#dc3545',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+        borderRadius: 5,
+    },
+    deleteButtonText: {
+        color: '#fff',
+        fontSize: 14,
     },
 });
