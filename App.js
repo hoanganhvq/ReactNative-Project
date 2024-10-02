@@ -1,10 +1,6 @@
-// App.js
+import ImageScreen from "./screens/imageScreen";
 
-import React from 'react';
-import AppNavigator from './src/navigation/AppNavigator';
-
-const App = () => {
-  return <AppNavigator />;
-};
-
-export default App;
+export default function App() {
+  return <ImageScreen />;
+}
+   
