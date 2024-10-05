@@ -86,7 +86,7 @@ export default function ImageScreen() {
         sectionRefs.current.forEach((ref, index) => {
             if (ref) {
                 ref.measure((x, y, width, height, pageX, pageY) => {
-                    offsets[index] = pageY - 170;
+                    offsets[index] = pageY - 170
                     if (index === sectionRefs.current.length - 1) {
                         setSectionOffsets(offsets);
                     }
@@ -197,7 +197,7 @@ export default function ImageScreen() {
                             style={[
                                 styles.navButton, 
                                 selectedAlbumId === album.id && styles.selectedNavButton
-                            ]} 
+                            ]} //Xu ly them khi luot len thi hien thi qua tung muc
                             onPress={() => handleSelectAlbum(album, index)}
                         >
                             <Text style={[
@@ -229,7 +229,7 @@ export default function ImageScreen() {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#f5f5f5',
+        backgroundColor: '#fff',
         padding: 15,
     },
     header: {
@@ -322,7 +322,7 @@ const styles = StyleSheet.create({
     navContainer: {
         width: '100%',
         position: 'absolute',
-        top: 115,
+        top: 100,
         left: 0,
         backgroundColor: '#ffffff',
         elevation: 5,

@@ -2,8 +2,9 @@ import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, TextInput } 
 import Feather from '@expo/vector-icons/Feather';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/native-stack';
-const avImg = require('./assets/avt.png');
-function EditProfile({Navigation}) {
+import avImg from '../assets/avt.png';
+
+function EditProfile({navigation}) {
     return (
         <View style={styles.container}>
             <View style={styles.avatarUser}>

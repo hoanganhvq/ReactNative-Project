@@ -85,7 +85,7 @@ const RoomModal = ({
   );
 };
 
-const BookingScreen = () => {
+const BookingScreen = (navigation) => {
   // Date Picker States
   const [checkInDate, setCheckInDate] = useState(new Date());
   const [checkOutDate, setCheckOutDate] = useState(new Date());
@@ -314,7 +314,7 @@ const BookingScreen = () => {
             onSnapToItem={(index) => setActiveIndex(index)}
             loop={true}
           />
-          <ImageViewing
+          <FlatList
             images={imgData.map((img) => ({ uri: img.uri }))}
             imageIndex={selectedImageIndex}
             visible={isViewerVisible}
@@ -433,7 +433,7 @@ const BookingScreen = () => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-    backgroundColor: "#f2f1ff",
+    backgroundColor: '#fff',
   },
   container: {
     alignItems: "center",
@@ -537,7 +537,9 @@ const styles = StyleSheet.create({
   counterText: {
     color: "gray",
     fontSize: 14,
-    fontWeight: "400"
+    fontWeight: "400",
+    alignContent:'flex-start',
+    justifyContent:'flex-start'
   },
   applyButton: {
     backgroundColor: "#4b47f2",
@@ -585,18 +587,19 @@ const styles = StyleSheet.create({
     marginBottom: 20,
   },
   roomTitle: {
-    fontSize: 20,
-    fontWeight: "bold",
-    marginBottom: 10,
+    fontSize: 20, 
+    fontWeight: 'bold', 
+    marginBottom: 5, 
   },
   roomInfoRow: {
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
     marginBottom: 10,
+
   },
   roomInfoText: {
-    fontSize: 14,
+    fontSize: 12.5,
     fontWeight: "600",
   },
   divider: {

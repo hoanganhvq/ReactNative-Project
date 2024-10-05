@@ -1,15 +1,14 @@
 import React, { useState } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, ScrollView } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, ScrollView ,TouchableOpacity} from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import { hotelData } from '../Data/hotelData.js'; 
 import { MasonryFlashList } from '@shopify/flash-list';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/native-stack';
+
 const width = Dimensions.get('window').width;
 const ITEM_WIDTH = width / 2 - 15;
 const images = hotelData.images.imageHotel;
 
-export default function MainScreen() {
+export default function MainScreen({navigation}) {
   const [searchQuery, setSearchQuery] = useState('');
   const updateSearch = (query) => setSearchQuery(query);
 
@@ -29,9 +28,11 @@ export default function MainScreen() {
   );
 
   const renderVerticalItem = ({ item }) => (
-    <View style={styles.verticalItem}>
-      <Image source={item.src} style={styles.image} /> 
+  <TouchableOpacity onPress={() => navigation.navigate('Hotel', { image: item })}>
+      <View style={styles.verticalItem}>
+      <Image source={item.src} style={styles.image} resizeMode="cover" />
     </View>
+  </TouchableOpacity>
   );
 
   return (
@@ -91,6 +92,7 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     padding: 20,
+    backgroundColor:'#fff'
   },
   row: {
     flexDirection: 'row',

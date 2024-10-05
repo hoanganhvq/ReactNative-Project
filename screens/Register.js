@@ -20,7 +20,7 @@ export default function RegisterScreen() {
   };
 
   return (
-    <SafeAreaView>
+    <SafeAreaView style = {styles.container}>
       <View style={styles.TopContainer}>
         <Text style={styles.Title}>Đăng Kí</Text>
         <Text style={styles.script}>Có tài khoản? Đăng nhập tại đây</Text>
@@ -62,6 +62,11 @@ export default function RegisterScreen() {
 }
 
 const styles = StyleSheet.create({
+  container: {
+    flex: 1,
+    padding: 20,
+    backgroundColor:'#fff'
+  },
   TopContainer: {
     alignItems: 'center',
     marginBottom: 20,

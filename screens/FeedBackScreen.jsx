@@ -146,7 +146,7 @@ export default function RatingScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#F5F5F5',
+    backgroundColor: '#fff',
   },
   headerContainer: {
     paddingVertical: 20,

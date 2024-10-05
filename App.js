@@ -1,31 +1,34 @@
 import React from 'react';
-import { StatusBar } from 'expo-status-bar';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/native-stack';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import MainScreen from './screens/MainScreen';
 import RegisterScreen from './screens/Register';
 import SignInScreen from './screens/SignIn';
 import SignUpScreen from './screens/SignUp';
-import RatingScreen from './screens/FeedBackScreen';
+import FeedBackScreen from './screens/FeedBackScreen';
 import HotelScreen from './screens/hotelScreen';
 import ImageScreen from './screens/imageScreen';
 import BookingScreen from './screens/BookingScreen';
-
-const Stack = createStackNavigator();
-
+import AppNavigation from './navigation/AppNavigator'
+const Stack = createNativeStackNavigator();
 export default function App() {
   return (
     <NavigationContainer>
-      <Stack.Navigator initialRouteName="SignIn">
+      <Stack.Navigator initialRouteName="Main">
         <Stack.Screen name="Main" component={MainScreen} />
         <Stack.Screen name="Register" component={RegisterScreen} />
-        <Stack.Screen name="Main" component={MainScreen} />
+        <Stack.Screen name="SignIn" component={SignInScreen} />
         <Stack.Screen name="SignUp" component={SignUpScreen} />
-        <Stack.Screen name="Rating" component={RatingScreen} />
+        <Stack.Screen name="FeedBack" component={FeedBackScreen} />
         <Stack.Screen name="Hotel" component={HotelScreen} />
-        <Stack.Screen name="Image" component={ImageScreen} />
+        <Stack.Screen name="Image" component={ImageScreen} options={{headerShown:false}}/>
         <Stack.Screen name="Booking" component={BookingScreen} />
       </Stack.Navigator>
     </NavigationContainer>
+    
+   
   );
+
+
 }

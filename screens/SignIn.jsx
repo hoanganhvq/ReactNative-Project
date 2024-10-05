@@ -15,13 +15,13 @@ function SignIn({navigation}) {
                 <Feather name="lock" size={24} color="black" style={{ marginLeft: 5 }} />
                 <TextInput placeholder="Password" secureTextEntry={true} style={{ fontSize: 16, marginLeft: 10, width: 280, height: 40 }} />
             </View>
-            <TouchableOpacity style={styles.signBox}>
+            <TouchableOpacity style={styles.signBox} onPress={()=>navigation.navigate('Main')}>
                     <Text style={{color:'#fff',fontSize:18,fontWeight:'bold'}}>Đăng nhập</Text>
             </TouchableOpacity>
             <TouchableOpacity style={{marginTop:12,}} onPress={()=>navigation.navigate('SignUp')}>
-            <Text style={{ color: '#8f8e8e' }}>
-                    Chưa có tài khoản đăng ký tại đây
-                </Text>
+                <Text style={{ color: '#8f8e8e' }}>
+                        Chưa có tài khoản đăng ký tại đây
+                    </Text>
             </TouchableOpacity>
             </Pressable>
     )

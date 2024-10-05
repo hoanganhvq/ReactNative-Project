@@ -1,7 +1,7 @@
 import { View, StyleSheet, Text, Image, TouchableOpacity } from "react-native";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/native-stack';
-const avImg = require('./assets/avt.png');
+import avImg from '../assets/avt.png';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AntDesign from '@expo/vector-icons/AntDesign';
 import Entypo from '@expo/vector-icons/Entypo';

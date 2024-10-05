@@ -11,7 +11,7 @@ const { width } = Dimensions.get('window');
 const ITEM_WIDTH = width; 
 const NOTIFICATION_HEIGHT = 500;
 
-export default function HotelScreen() {
+export default function HotelScreen({navigation}) {
   const [showNotification, setShowNotification] = useState(false);
   const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current; 
   const fullDescription = hotelData.description;
@@ -47,13 +47,13 @@ export default function HotelScreen() {
   );
 
   const renderImages = ({ item }) => (
-    <View style={styles.imageContainer}>
+    <TouchableOpacity style={styles.imageContainer} onPress={() => navigation.navigate('Image', { image: item })}>
       <Image
         source={item.src}
         style={styles.image}
       />
       <Text style={styles.imageText}>{item.id}/{images.length}</Text>
-    </View>
+    </TouchableOpacity>
   );
 
   return (
@@ -81,10 +81,10 @@ export default function HotelScreen() {
 
         <View style={styles.feedbackContainer}>
           <Text style={styles.nameHotel}>{hotelData.name}</Text>
-          <View style={styles.ratingContainer}>
+          <TouchableOpacity style={styles.ratingContainer} onPress={()=>{navigation.navigate("FeedBack")}}>
             <Text style={styles.rating}>{hotelData.rating}/{hotelData.ratingScale}⭐</Text>
             <Text style={styles.ratingSubtitle}>Đánh giá từ người thuê</Text>
-          </View>
+          </TouchableOpacity>
         </View>
 
         <View style={styles.descriptionContainer}>
@@ -133,7 +133,7 @@ export default function HotelScreen() {
           <Text style={styles.startingPrice}>Khởi điểm:</Text>
           <Text style={styles.priceText}>{hotelData.pricePerNight} {hotelData.currency}</Text>
         </View>
-        <TouchableOpacity style={styles.button}>
+        <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking')}>
           <Text style={styles.buttonText}>Xem mọi phòng</Text>
         </TouchableOpacity>
       </View>
@@ -291,7 +291,7 @@ const styles = StyleSheet.create({
   },
   amenitiesContainer: {
     padding: 10, 
-    backgroundColor: '#f9f9f9', 
+    backgroundColor: 'white', 
     borderRadius: 10, 
     margin: 10, 
     shadowColor: '#000', 
@@ -325,7 +325,7 @@ const styles = StyleSheet.create({
   contactContainer: {
     flexDirection: 'column', 
     padding: 20, 
-    backgroundColor: '#f8f9fa', 
+    backgroundColor: 'white', 
     borderRadius: 10, 
     margin: 10, 
     shadowColor: '#000', 
