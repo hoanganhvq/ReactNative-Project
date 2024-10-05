@@ -1,4 +1,6 @@
 import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 function SignUp({navigation}) {
     return (
         <View style={styles.container}>

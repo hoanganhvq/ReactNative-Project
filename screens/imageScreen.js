@@ -12,7 +12,8 @@ import {
 } from 'react-native';
 import ImageViewing from 'react-native-image-viewing'; 
 import { hotelData } from '../Data/hotelData.js';  
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 const { width } = Dimensions.get('window');
 const ITEM_WIDTH = width * 0.45; 
 const IMAGE_NOTIFICATION_HEIGHT = 500;

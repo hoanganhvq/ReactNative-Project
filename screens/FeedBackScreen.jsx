@@ -11,7 +11,8 @@ import {
 } from 'react-native';
 import { hotelData } from '../Data/hotelData';
 import Icon from 'react-native-vector-icons/FontAwesome';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 const reviews = [
   {
     id: '1',

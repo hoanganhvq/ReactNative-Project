@@ -3,7 +3,8 @@ import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, Scro
 import { SearchBar } from 'react-native-elements';
 import { hotelData } from '../Data/hotelData.js'; 
 import { MasonryFlashList } from '@shopify/flash-list';
-
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 const width = Dimensions.get('window').width;
 const ITEM_WIDTH = width / 2 - 15;
 const images = hotelData.images.imageHotel;

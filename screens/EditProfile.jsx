@@ -1,5 +1,7 @@
 import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, TextInput } from "react-native";
 import Feather from '@expo/vector-icons/Feather';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/stack';
 const avImg = require('./assets/avt.png');
 function EditProfile({Navigation}) {
     return (
