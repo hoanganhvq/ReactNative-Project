@@ -1,7 +1,7 @@
 import React from 'react';
 import { StatusBar } from 'expo-status-bar';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/native-stack';
 import MainScreen from './screens/MainScreen';
 import RegisterScreen from './screens/Register';
 import SignInScreen from './screens/SignIn';

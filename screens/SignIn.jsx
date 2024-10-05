@@ -2,7 +2,7 @@ import { View,Text,StyleSheet, TextInput, TouchableOpacity, Pressable, Keyboard 
 import { useState } from "react";
 import Feather from '@expo/vector-icons/Feather';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/native-stack';
 function SignIn({navigation}) {
     return (
         <Pressable style={styles.container} onPress={Keyboard.dismiss}>

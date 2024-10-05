@@ -2,7 +2,7 @@
 import React, { useEffect, useState } from 'react';
 import { ActivityIndicator, View } from 'react-native';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/native-stack';
 import { Provider, useDispatch, useSelector } from 'react-redux';
 import store from '../store/store';
 
@@ -13,7 +13,7 @@ import MainScreen from '../screens/MainScreen';
 import ImageScreen from '../screens/imageScreen';
 import EditProfile from '../screens/EditProfile';
 import FeedBackScreen from '../screens/FeedBackScreen';
-import HotelScreen from '../screens/HotelScreen';
+import HotelScreen from '../screens/hotelScreen';
 import UserProfile from '../screens/UserProfile';
 
 const AuthStack = createStackNavigator();

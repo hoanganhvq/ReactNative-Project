@@ -4,7 +4,7 @@ import { SafeAreaView } from 'react-native';
 import DateTimePicker from '@react-native-community/datetimepicker';
 import { useState } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/native-stack';
 export default function RegisterScreen() {
   const [date, setDate] = useState(new Date());
   const [show, setShow] = useState(false);

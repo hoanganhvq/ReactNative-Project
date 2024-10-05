@@ -21,7 +21,7 @@ import DateTimePicker from "@react-native-community/datetimepicker";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
 import Feather from "@expo/vector-icons/Feather";
 import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/stack';
+import { createStackNavigator } from '@react-navigation/native-stack';
 import imgData from "../Data/imgData.js";
 import vdtData from "../Data/vdtData.js";
 import dtData from "../Data/dtData.js";
