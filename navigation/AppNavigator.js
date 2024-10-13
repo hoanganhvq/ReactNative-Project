@@ -1,83 +1,89 @@
 
-// import React, { useEffect, useState } from 'react';
-// import { ActivityIndicator, View } from 'react-native';
-// import { NavigationContainer } from '@react-navigation/native';
-// import { createNativeStackNavigator } from '@react-navigation/native-stack';
-// import { Provider, useDispatch, useSelector } from 'react-redux';
+import React, { createContext, useContext, useEffect, useState } from 'react';
+import { ActivityIndicator, View } from 'react-native';
+import { NavigationContainer } from '@react-navigation/native';
+import { createNativeStackNavigator } from '@react-navigation/native-stack';
+import { onAuthStateChanged } from 'firebase/auth';
+import { auth } from '../config/firebase';
 
-// import SignIn from '../screens/SignIn';
-// import SignUp from '../screens/SignUp';
-// import Register from '../screens/Register';
-// import MainScreen from '../screens/MainScreen';
-// import ImageScreen from '../screens/imageScreen';
-// import EditProfile from '../screens/EditProfile';
-// import FeedBackScreen from '../screens/FeedBackScreen';
-// import HotelScreen from '../screens/hotelScreen';
-// import UserProfile from '../screens/UserProfile';
+import Booking from "../screens/BookingScreen"
+import SignIn from '../screens/SignIn';
+import SignUp from '../screens/SignUp';
+import MainScreen from '../screens/MainScreen';
+import ImageScreen from '../screens/imageScreen';
+import EditProfile from '../screens/EditProfile';
+import FeedBackScreen from '../screens/FeedBackScreen';
+import HotelScreen from '../screens/hotelScreen';
+import UserProfile from '../screens/UserProfile';
+import HomeScreen from '../screens/HomeScreen';
 
-// const AuthStack = createNativeStackNavigator();
-// const AppStack = createNativeStackNavigator();
 
-// const AuthStackNavigator = () => (
-//   <AuthStack.Navigator
-//     initialRouteName="SignIn"
-//     screenOptions={{
-//       headerShown: false,
-//     }}
-//   >
-//     <AuthStack.Screen name="SignIn" component={SignIn} />
-//     <AuthStack.Screen name="SignUp" component={SignUp} />
-//     <AuthStack.Screen name="Register" component={Register} />
-//   </AuthStack.Navigator>
-// );
+const Stack = createNativeStackNavigator();
+const AuthenticatedUserContext = createContext({});
 
-// const AppStackNavigator = () => (
-//   <AppStack.Navigator
-//     initialRouteName="Main"
-//     screenOptions={{
-//       headerShown: false,
-//     }}
-//   >
-//     <AppStack.Screen name="Main" component={MainScreen} />
-//     <AppStack.Screen name="Image" component={ImageScreen} />
-//     <AppStack.Screen name="EditProfile" component={EditProfile} />
-//     <AppStack.Screen name="FeedBack" component={FeedBackScreen} />
-//     <AppStack.Screen name="Hotel" component={HotelScreen} />
-//     <AppStack.Screen name="UserProfile" component={UserProfile} />
-//   </AppStack.Navigator>
-// );
+const AuthenticatedUserContextProvider = ({ children }) => {
+    const [user, setUser] = useState(null);
+    return (
+        <AuthenticatedUserContext.Provider value={{ user, setUser }}>
+            {children}
+        </AuthenticatedUserContext.Provider>
+    );
+};
 
-// const RootNavigator = () => {
-//   const [isLoading, setIsLoading] = useState(true);
-//   const user = useSelector(state => state.auth.user);
+const AppStackNavigator = () => (
+    <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="HomeScreen" component={HomeScreen} />
+        <Stack.Screen name="Main" component={MainScreen} />
+        <Stack.Screen name="Image" component={ImageScreen} />
+        <Stack.Screen name="EditProfile" component={EditProfile} />
+        <Stack.Screen name="Hotel" component={HotelScreen} />
+        <Stack.Screen name="FeedBack" component={FeedBackScreen} />
+        <Stack.Screen name="UserProfile" component={UserProfile} />
+        <Stack.Screen name="Booking" component={Booking} />
 
-//   useEffect(() => {
-//     const checkLoginStatus = async () => {
-   
-//       setIsLoading(false);
-//     };
-//     checkLoginStatus();
-//   }, []);
+    </Stack.Navigator>
+);
 
-//   if (isLoading) {
-//     return (
-//       <View style={{flex:1, justifyContent:'center', alignItems:'center'}}>
-//         <ActivityIndicator size="large" color="#0000ff" />
-//       </View>
-//     );
-//   }
+const AuthStackNavigator = () => (
+    <Stack.Navigator initialRouteName="SignIn" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="SignIn" component={SignIn} />
+        <Stack.Screen name="SignUp" component={SignUp} />
+    </Stack.Navigator>
+);
 
-//   return (
-//     <NavigationContainer>
-//       {user ? <AppStackNavigator /> : <AuthStackNavigator />}
-//     </NavigationContainer>
-//   );
-// };
+const RootNavigator = () => {
+    const { user, setUser } = useContext(AuthenticatedUserContext);
+    const [loading, setLoading] = useState(true);
 
-// const AppNavigator = () => (
-//   <Provider >
-//     <RootNavigator />
-//   </Provider>
-// );
+    useEffect(() => {
+        const unsubscribe = onAuthStateChanged(auth, (authenticatedUser) => {
+            authenticatedUser ? setUser(authenticatedUser) : setUser(null);
+            setLoading(false);
+        });
 
-// export default AppNavigator;
+        return () => unsubscribe();
+    }, [setUser]);
+
+    if (loading) {
+        return (
+            <View>
+                <ActivityIndicator size='large' color="#0000ff" />
+            </View>
+        );
+    }
+
+    return (
+        <NavigationContainer>
+            
+            {user ? <AppStackNavigator /> : <AuthStackNavigator />}
+        </NavigationContainer>
+    );
+};
+
+const AppNavigator = () => (
+    <AuthenticatedUserContextProvider>
+        <RootNavigator />
+    </AuthenticatedUserContextProvider>
+);
+
+export default AppNavigator;

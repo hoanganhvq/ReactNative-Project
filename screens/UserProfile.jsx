@@ -13,7 +13,7 @@ function User({navigation}) {
             </View>
             <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>Shamim Hossain</Text>
             <Text style={{ color: 'gray', fontSize: 15 }}>@ShamimGraphics</Text>
-            <TouchableOpacity style={styles.editBox} onPress={() => navigation.navigate('Edit')}>
+            <TouchableOpacity style={styles.editBox} onPress={() => navigation.navigate('EditProfile')}>
                 <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>Edit Profile</Text>
             </TouchableOpacity>
             <View style={{marginTop: 15,height: 1,width:500,backgroundColor: '#ebeced'}}></View>

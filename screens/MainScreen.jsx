@@ -135,7 +135,7 @@ export default function MainScreen({ navigation }) {
             </View>
           </TouchableOpacity>
         ) : (
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
             <View style={styles.row}>
               <Image
                 source={{ uri: `https://github.com/JINO25/IMG/raw/master/user/${photo}` }}
