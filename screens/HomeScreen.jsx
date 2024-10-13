@@ -81,7 +81,7 @@ export default function HomeScreen() {
             textAlign: 'center', }
         })}
       >
-        <Tab.Screen name="Trang chủ" component={MainScreen} />
+        <Tab.Screen name="Trang chủ" component={MainScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Chuyến đi của tôi" component={MyTripScreen} />
         <Tab.Screen name="Xe đẩy hàng" component={CartScreen} />
         <Tab.Screen name="Thêm" component={UserProfile} />

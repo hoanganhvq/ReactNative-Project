@@ -58,6 +58,8 @@ export default function MainScreen({ navigation }) {
   }, []);
 
 
+
+
   const updateSearch = (text) => {
     let search = text.nativeEvent.text;
     console.log('Searching for:', search);
@@ -149,7 +151,7 @@ export default function MainScreen({ navigation }) {
 
         <SearchBar
           placeholder="Tìm kiếm..."
-          autoFocus={true}
+          autoFocus={false}
           onChange={(text) => setSearchQuery(text)}
           value={searchQuery}
           onSubmitEditing={updateSearch}
