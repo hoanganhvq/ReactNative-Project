@@ -2,6 +2,7 @@ import React, { useRef, useState, useEffect } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity, LogBox, ActivityIndicator,Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
+import Carousel from "react-native-reanimated-carousel";
 import { hotelData } from '../Data/hotelData.js';
 import { images } from '../Data/images.js';
 import { NavigationContainer } from '@react-navigation/native';
@@ -20,7 +21,8 @@ export default function HotelScreen({ navigation, route }) {
   const [hotel, setHotel] = useState(null);
   const { hotelId } = route.params;
   const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(1);
+  const [currentIndex, setCurrentIndex] = useState(0);
+
 
   const getData = async () => {
     try {
@@ -61,18 +63,24 @@ export default function HotelScreen({ navigation, route }) {
     </View>
   );
 
-  const renderImages = ({ item }) => (
-    <TouchableOpacity style={styles.imageContainer} onPress={() => navigation.navigate('Image', { image: hotel.images, room: hotel.rooms })}>
-      <Image
-        source={{
-          uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item}`
-        }}
-        style={styles.image}
-        resizeMode="cover"
-      />
-      <Text style={styles.imageText}>{currentIndex}/{hotel.images.length}</Text>
-    </TouchableOpacity>
-  );
+  const renderImages = ({ item }) => {
+    return (
+      <TouchableOpacity
+        style={styles.imageContainer}
+        onPress={() =>
+          navigation.navigate('Image', { image: hotel.images, room: hotel.rooms })
+        }
+      >
+        <Image
+          source={{
+            uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item}`
+          }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+      </TouchableOpacity>
+    );
+  };
 
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
@@ -96,7 +104,6 @@ export default function HotelScreen({ navigation, route }) {
       rating = hotel.ratingsAverage.toString().slice(0, 3);
     }
 
-
     return (
       <><Animated.ScrollView
         onScroll={Animated.event(
@@ -106,18 +113,21 @@ export default function HotelScreen({ navigation, route }) {
         scrollEventThrottle={16}
       >
         <View style={styles.scrollImages}>
-          <Animated.FlatList
-            data={hotel.images}
-            estimatedItemSize={255}
-            renderItem={renderImages}
-            keyExtractor={(item, index) => index.toString()}
-            horizontal={true}
-            showsHorizontalScrollIndicator={false}
-            snapToInterval={ITEM_WIDTH}
-            snapToAlignment="start"
-            decelerationRate="fast"
-            onViewableItemsChanged={onViewableItemsChanged.current}
-            style={styles.horizontalFlatlist} />
+                <Carousel
+                data={hotel.images}
+                renderItem={renderImages}
+                sliderWidth={width} 
+                itemWidth={width} 
+                autoplay={true}
+                autoplayInterval={3000}
+                onSnapToItem={(index) => setCurrentIndex(index)}
+                loop={true}
+                />
+            <View style={styles.carouselCounter}>
+              <Text style={styles.counterText}>
+                {currentIndex + 1}/{hotel.images.length}
+              </Text>
+            </View>
         </View>
 
         <View style={styles.feedbackContainer}>

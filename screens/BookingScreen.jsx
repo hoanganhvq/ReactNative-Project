@@ -177,12 +177,13 @@ const BookingScreen = ({ navigation, route }) => {
               onSnapToItem={(index) => setActiveIndex(index)}
               loop={true}
             />
-            <FlatList
+            {/* <FlatList
               images={imgData.map((img) => ({ uri: img.uri }))}
               imageIndex={selectedImageIndex}
               visible={isViewerVisible}
               onRequestClose={() => setIsViewerVisible(false)}
-            />
+            /> */}
+            
             <View style={styles.carouselCounter}>
               <Text style={styles.counterText}>
                 {activeIndex + 1}/{item.images.length}
