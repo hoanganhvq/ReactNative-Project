@@ -7,6 +7,7 @@ import { hotelData } from '../Data/hotelData.js';
 import { MasonryFlashList } from '@shopify/flash-list';
 import { home } from '../handleAPI/viewAPI.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // import { NetworkInfo } from "react-native-network-info"
 
@@ -21,6 +22,7 @@ export default function MainScreen({ navigation }) {
   const [searchQuery, setSearchQuery] = useState('');
   const [delaySearch, setDelaySearch] = useState("");
   const [data, setData] = useState(null);
+  const [user, setUser] = useState(null);
   const getData = async () => {
     try {
       const data = await home();
@@ -41,25 +43,42 @@ export default function MainScreen({ navigation }) {
     const storedToken = await AsyncStorage.getItem('userToken');
     const storedPhoto = await AsyncStorage.getItem('userPhoto');
     const storedName = await AsyncStorage.getItem('userName');
-
+    const storedUser = await AsyncStorage.getItem('user');
+    
     setToken(storedToken);
     setPhoto(storedPhoto);
     setName(storedName);
+    setUser(storedUser);
   };
 
   React.useEffect(() => {
-    navigation.addListener('focus', () => {
-      fetchToken();
-    })
+    
+      navigation.addListener('focus', () => {
+        fetchToken();
+      })
+
   }, []);
 
-  useLayoutEffect(() => {
-    fetchData();
-  }, []);
 
+  // useEffect(() => {
+  //   const clearAsyncStorage = async () => {
+  //     try {
+  //       await AsyncStorage.clear(); // Clear AsyncStorage when the component mounts
+  //       console.log('AsyncStorage cleared');
+  //     } catch (error) {
+  //       console.error('Error clearing AsyncStorage:', error);
+  //     }
+  //   };
 
+  //   clearAsyncStorage(); // Call the function to clear AsyncStorage
+  // },[]);
 
+  // useLayoutEffect(() => {
+  //   fetchData();
+  //   console.log(user);
+  // }, []);
 
+ 
   const updateSearch = (text) => {
     let search = text.nativeEvent.text;
     console.log('Searching for:', search);
@@ -130,12 +149,13 @@ export default function MainScreen({ navigation }) {
 
     return (
       <>
-        {!token ? (
+        {!token  ? (
           <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
             <View style={styles.row}>
               <Text style={styles.text}>Login</Text>
             </View>
           </TouchableOpacity>
+
         ) : (
           <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
             <View style={styles.row}>
@@ -286,6 +306,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     marginVertical: 16,
+    borderBlockColor: 'white',
   },
   searchBarInput: {
     backgroundColor: '#f0f0f0',

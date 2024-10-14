@@ -14,43 +14,6 @@ import UserProfile from "./UserProfile";
 // Bottom Tab Navigator
 const Tab = createBottomTabNavigator();
 
-// Top Tab Navigator
-const TopTab = createMaterialTopTabNavigator();
-
-// chuyến đi sắp tới
-const UpcomingTripsScreen = () => (
-  <View style={styles.centeredContainer}>
-    <Icon name="globe" size={80} color="#999" />
-    <Text style={styles.infoText}>Chào abc,</Text>
-    <Text style={styles.infoText}>Quý khách không có đặt chỗ sắp tới nào.</Text>
-    <Text style={styles.subText}>Lên kế hoạch cho chuyến đi tiếp theo.</Text>
-  </View>
-);
-
-// hoàn tất
-const CompletedTripsScreen = () => (
-  <View style={styles.centeredContainer}>
-    <Text style={styles.infoText}>Chuyến đi đã hoàn tất</Text>
-  </View>
-);
-
-//Đã hủy
-const CanceledTripsScreen = () => (
-  <View style={styles.centeredContainer}>
-    <Text style={styles.infoText}>Chuyến đi đã hủy</Text>
-  </View>
-);
-
-
-// Search Screen
-const SearchScreen = () => (
-  <View style={styles.centeredContainer}>
-    <Text style={styles.homeText}>Search Screen</Text>
-  </View>
-);
-
-
-
 export default function HomeScreen() {
   return (
       <Tab.Navigator

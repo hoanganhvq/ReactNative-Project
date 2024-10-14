@@ -33,6 +33,7 @@ export default function HotelScreen({ navigation, route }) {
   const fetchData = async () => {
     const res = await getData();
     setHotel(res);
+    console.log()
   };
 
   useEffect(() => {

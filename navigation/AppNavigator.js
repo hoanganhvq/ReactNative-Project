@@ -17,9 +17,10 @@ import HotelScreen from '../screens/hotelScreen';
 import UserProfile from '../screens/UserProfile';
 import HomeScreen from '../screens/HomeScreen';
 import Searching from '../screens/SearchScreen';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
-const AuthenticatedUserContext = createContext({});
+const AuthenticatedUserContext = createContext({AsyncStorage: null});
 
 const AuthenticatedUserContextProvider = ({ children }) => {
     const [user, setUser] = useState(null);
@@ -43,8 +44,6 @@ const AppStackNavigator = () => (
         <Stack.Screen name="Searching" component={Searching} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
-
-
     </Stack.Navigator>
 );
 
@@ -58,7 +57,6 @@ const AuthStackNavigator = () => (
         <Stack.Screen name="FeedBack" component={FeedBackScreen} />
         <Stack.Screen name="Booking" component={Booking} />
         <Stack.Screen name="Searching" component={Searching} />
-
     </Stack.Navigator>
 );
 
@@ -85,7 +83,6 @@ const RootNavigator = () => {
 
     return (
         <NavigationContainer>
-            
             {user ? <AppStackNavigator /> : <AuthStackNavigator />}
         </NavigationContainer>
     );

@@ -42,10 +42,7 @@ function SignIn({ navigation }) {
         try {
             let tokenUser;
             validateEmail(email);
-
             await findEmail(email);
-
-
             await signInWithEmailAndPassword(auth, email, password)
                 .then((rs) => {
                     AsyncStorage.setItem('tokenFirebase', tokenUser);
