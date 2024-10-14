@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity, LogBox, ActivityIndicator } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity, LogBox, ActivityIndicator,Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { hotelData } from '../Data/hotelData.js';
@@ -7,17 +7,20 @@ import { images } from '../Data/images.js';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/native-stack';
 import { hotelDetail } from '../handleAPI/viewAPI.js';
+import EvilIcons from "@expo/vector-icons/EvilIcons";
 
 
-const { width } = Dimensions.get('window');
+
+const { width ,height} = Dimensions.get('window');
 const ITEM_WIDTH = width;
-const NOTIFICATION_HEIGHT = 500;
 
 export default function HotelScreen({ navigation, route }) {
   LogBox.ignoreAllLogs(true);
-
+  const [scrollY] = useState(new Animated.Value(0));
   const [hotel, setHotel] = useState(null);
   const { hotelId } = route.params;
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(1);
 
   const getData = async () => {
     try {
@@ -30,19 +33,17 @@ export default function HotelScreen({ navigation, route }) {
     }
   };
 
-  const fetchData = async () => {
-    const res = await getData();
-    setHotel(res);
-    console.log()
-  };
+  
 
   useEffect(() => {
+    const fetchData = async () => {
+      const res = await getData();
+      setHotel(res);
+      console.log()
+    };
     fetchData();
   }, [])
 
-  const [showNotification, setShowNotification] = useState(false);
-  const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current;
-  const [scrollY] = useState(new Animated.Value(0));
   const translateY = scrollY.interpolate({
     inputRange: [0, 100],
     outputRange: [0, 100],
@@ -50,20 +51,7 @@ export default function HotelScreen({ navigation, route }) {
   });
 
   const handleShowDescription = () => {
-    setShowNotification(true);
-    Animated.timing(animatedValue, {
-      toValue: 0,
-      duration: 300,
-      useNativeDriver: true,
-    }).start();
-  };
-
-  const handleHideNotification = () => {
-    Animated.timing(animatedValue, {
-      toValue: NOTIFICATION_HEIGHT,
-      duration: 300,
-      useNativeDriver: true,
-    }).start(() => setShowNotification(false));
+    setDetailModalVisible(true);
   };
 
   const renderAmenities = ({ item }) => (
@@ -86,10 +74,9 @@ export default function HotelScreen({ navigation, route }) {
     </TouchableOpacity>
   );
 
-  const [currentIndex, setCurrentIndex] = useState(1);
   const onViewableItemsChanged = useRef(({ viewableItems }) => {
     if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index + 1); // Set currentIndex based on the visible item
+      setCurrentIndex(viewableItems[0].index + 1); 
     }
   }).current;
 
@@ -197,19 +184,35 @@ export default function HotelScreen({ navigation, route }) {
           </TouchableOpacity>
         </View>
 
-        {
-          showNotification && (
-            <Animated.View style={[styles.notificationContainer, { transform: [{ translateY: animatedValue }] }]}>
-              <View style={styles.notificationHeader}>
-                <Button title="x" onPress={handleHideNotification} color="#FF6347" />
-                <Text style={styles.notificationTitle}>Mô tả khách sạn</Text>
-              </View>
-              <ScrollView style={styles.notificationText}>
-                <Text>{hotel.description}</Text>
-              </ScrollView>
-            </Animated.View>
-          )
-        }
+        <Modal
+        animationType="fade" // Changed to 'fade' for a smoother appearance
+        transparent={true}
+        visible={detailModalVisible}
+        onRequestClose={() => setDetailModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            {/* Header */}
+            <View style={styles.modalHeader}>
+              <Text style={styles.modalTitle}>Mô tả phòng</Text>
+              <TouchableOpacity
+                style={styles.modalCloseButton}
+                onPress={() => setDetailModalVisible(false)}
+                accessibilityLabel="Close description modal"
+              >
+                <EvilIcons name="close" size={28} color="#333" />
+              </TouchableOpacity>
+            </View>
+
+            <View style={styles.modalDivider} />
+
+            <ScrollView contentContainerStyle={styles.modalBody}>
+              <Text style={styles.modalDescription}>{hotel.description}</Text>
+            </ScrollView>
+          </View>
+        </View>
+      </Modal>
+   
       </>
     )
   }
@@ -334,41 +337,53 @@ const styles = StyleSheet.create({
     lineHeight: 24,
     color: '#333',
   },
-  notificationContainer: {
-    position: 'absolute',
-    bottom: 0,
-    left: 0,
-    right: 0,
-    backgroundColor: '#ffffff',
-    borderTopLeftRadius: 20,
-    borderTopRightRadius: 20,
+  modalOverlay: {
+    flex: 1,
+    backgroundColor: "rgba(0, 0, 0, 0.6)", 
+    justifyContent: "center",
+    alignItems: "center",
     padding: 20,
-    shadowColor: '#000',
+  },
+  modalContent: {
+    width: width * 0.95, 
+    maxHeight: height * 0.95, 
+    backgroundColor: "#fff",
+    borderRadius: 15,
+    padding: 20,
+    shadowColor: "#000",
     shadowOffset: {
       width: 0,
-      height: -2,
+      height: 5,
     },
-    shadowOpacity: 0.2,
-    shadowRadius: 4,
-    elevation: 5,
-    justifyContent: 'center',
+    shadowOpacity: 0.3,
+    shadowRadius: 7,
+    elevation: 15, // Increased elevation for Android shadow
   },
-  notificationText: {
-    marginTop: 10,
-    color: '#333',
+  modalHeader: {
+    flexDirection: "row",
+    justifyContent: "space-between",
+    alignItems: "center",
   },
-  notificationHeader: {
-    flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
-    marginBottom: 5,
-    width: '100%',
+  modalTitle: {
+    fontSize: 22,
+    fontWeight: "bold",
+    color: "#333",
   },
-  notificationTitle: {
-    fontSize: 20,
-    fontWeight: 'bold',
-    textAlign: 'center',
-    flex: 1,
+  modalCloseButton: {
+    padding: 5,
+  },
+  modalDivider: {
+    backgroundColor: "#e0e0e0",
+    height: 1,
+    marginVertical: 15,
+  },
+  modalBody: {
+    paddingBottom: 10,
+  },
+  modalDescription: {
+    fontSize: 16,
+    color: "#555",
+    lineHeight: 22,
   },
   amenitiesContainer: {
     padding: 10,

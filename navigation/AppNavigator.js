@@ -39,7 +39,7 @@ const AppStackNavigator = () => (
         <Stack.Screen name="Image" component={ImageScreen} />
         <Stack.Screen name="EditProfile" component={EditProfile} />
         <Stack.Screen name="Hotel" component={HotelScreen} />
-        <Stack.Screen name="FeedBack" component={FeedBackScreen} />
+        <Stack.Screen name="FeedBack" component={FeedBackScreen}/>
         <Stack.Screen name="UserProfile" component={UserProfile} />
         <Stack.Screen name="Booking" component={Booking} />
         <Stack.Screen name="Searching" component={Searching} />

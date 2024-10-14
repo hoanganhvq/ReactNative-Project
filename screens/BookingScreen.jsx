@@ -98,7 +98,6 @@ const BookingScreen = ({ navigation, route }) => {
 
   // Modal States
   const [isRoomModalVisible, setRoomModalVisible] = useState(false);
-  const [isGuestModalVisible, setGuestModalVisible] = useState(false);
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
 
   // Guest Counts
@@ -133,11 +132,6 @@ const BookingScreen = ({ navigation, route }) => {
     setCurrentPicker(pickerType);
   };
 
-  // Handlers for Guest Modals
-  const increment = (setter, count) => setter(count + 1);
-  const decrement = (setter, count) => {
-    if (count > 0) setter(count - 1);
-  };
 
   // Render Functions
   const renderVdtItem = ({ item }) => (
@@ -151,16 +145,6 @@ const BookingScreen = ({ navigation, route }) => {
     <Text style={styles.detailText}>{item}</Text>
   );
 
-  const renderDtItem = ({ item }) => (
-    <View style={styles.detailContainer}>
-      <Text style={styles.detailTitle}>Tiện ích</Text>
-      <FlatList
-        data={item}
-        renderItem={renderDetailItem}
-        keyExtractor={(detail, index) => index.toString()}
-      />
-    </View>
-  );
 
   const renderImageItem = ({ item, index }) => (
     <TouchableOpacity
