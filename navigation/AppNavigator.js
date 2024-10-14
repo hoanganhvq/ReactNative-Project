@@ -17,6 +17,7 @@ import HotelScreen from '../screens/hotelScreen';
 import UserProfile from '../screens/UserProfile';
 import HomeScreen from '../screens/HomeScreen';
 import Searching from '../screens/SearchScreen';
+import MyTrip from '../screens/MyTrip';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const Stack = createNativeStackNavigator();
@@ -44,6 +45,7 @@ const AppStackNavigator = () => (
         <Stack.Screen name="Searching" component={Searching} />
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
+        <Stack.Screen name="MyTrip" component={MyTrip} options={{headerShown: true}}/>
     </Stack.Navigator>
 );
 

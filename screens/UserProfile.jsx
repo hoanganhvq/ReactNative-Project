@@ -55,12 +55,12 @@ function User({navigation}) {
                 <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>Edit Profile</Text>
             </TouchableOpacity>
             <View style={{marginTop: 15,height: 1,width:500,backgroundColor: '#ebeced'}}></View>
-            <TouchableOpacity style={styles.funItem}>
+            <TouchableOpacity style={styles.funItem}  onPress={()=>navigation.navigate('MyTrip')}>
             <View style={styles.iconBox}>
-            <Ionicons name="settings-sharp" size={24} color="#7998D7" />
+            <Ionicons name="airplane-outline" size={24} color="#7998D7" />
             </View>
                 <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "gray" }}>
-                    Settings
+                    My Trip
                 </Text>
             </TouchableOpacity>
             <TouchableOpacity style={styles.funItem}>

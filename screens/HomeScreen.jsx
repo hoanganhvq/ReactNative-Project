@@ -24,9 +24,6 @@ export default function HomeScreen() {
               case 'Trang chủ':
                 iconName = 'home';
                 break;
-              case 'Chuyến đi của tôi':
-                iconName = 'suitcase';
-                break;
               case 'Xe đẩy hàng':
                 iconName = 'shopping-cart';
                 break;
@@ -45,7 +42,6 @@ export default function HomeScreen() {
         })}
       >
         <Tab.Screen name="Trang chủ" component={MainScreen} options={{ headerShown: false }} />
-        <Tab.Screen name="Chuyến đi của tôi" component={MyTripScreen} />
         <Tab.Screen name="Xe đẩy hàng" component={CartScreen} />
         <Tab.Screen name="Thêm" component={UserProfile} />
         

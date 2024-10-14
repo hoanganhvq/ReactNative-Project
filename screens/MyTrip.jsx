@@ -10,19 +10,9 @@ import CanceledTripsScreen from "./MyTrip/CanceledTripsScreen";
 const TripScreen = () => {
     
         return (
-            <TopTab.Navigator
-              screenOptions={{
-                tabBarActiveTintColor: 'tomato',
-                tabBarInactiveTintColor: 'gray',
-                tabBarIndicatorStyle: { backgroundColor: 'tomato' },
-                tabBarLabelStyle: { fontSize: 14, fontWeight: 'bold' },
-                tabBarStyle: { backgroundColor: '#f7f7f7' }
-              }}
-            >
-              <TopTab.Screen name="Sắp tới" component={UpComingTripScreen} />
-              <TopTab.Screen name="Hoàn tất" component={CompletedTripsScreen} />
-              <TopTab.Screen name="Đã hủy" component={CanceledTripsScreen} />
-            </TopTab.Navigator>
+            <View style = {styles.container}>
+              <Text>My Upcoming Trip</Text>
+            </View>
           );
 }
 

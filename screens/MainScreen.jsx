@@ -73,10 +73,10 @@ export default function MainScreen({ navigation }) {
   //   clearAsyncStorage(); // Call the function to clear AsyncStorage
   // },[]);
 
-  // useLayoutEffect(() => {
-  //   fetchData();
-  //   console.log(user);
-  // }, []);
+  useLayoutEffect(() => {
+    fetchData();
+    console.log(user);
+  }, []);
 
  
   const updateSearch = (text) => {
