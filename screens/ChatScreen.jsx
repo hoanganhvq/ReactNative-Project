@@ -12,7 +12,7 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { getRoomId } from '../utils/getId'
-import { ActivityIndicator } from 'react-native';
+import { ActivityIndicator, Text, View } from 'react-native';
 
 export default function Chat({ route }) {
     const { hotelierId } = route.params;
@@ -81,9 +81,17 @@ export default function Chat({ route }) {
     const Content = () => {
         if (!user) {
             return (
-                <View style={styles.loadingContainer}>
+                <View style={{
+                    flex: 1,
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                }}>
                     <ActivityIndicator size="large" color="#0000ff" />
-                    <Text style={styles.loadingText}>Loading...</Text>
+                    <Text style={{
+                        marginTop: 10,
+                        fontSize: 16,
+                        color: '#000',
+                    }}>Loading...</Text>
                 </View>
             );
         }

@@ -1,37 +1,20 @@
 import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity, LogBox, ActivityIndicator } from 'react-native';
-import React, { useRef, useState, useEffect } from 'react';
-import {
-  StyleSheet,
-  Text,
-  View,
-  Image,
-  SafeAreaView,
-  Animated,
-  Dimensions,
-  FlatList,
-  Button,
-  ScrollView,
-  TouchableOpacity,
-  LogBox,
-  ActivityIndicator,
-  Modal,
-} from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity, LogBox, ActivityIndicator, Modal } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
-import Carousel from 'react-native-reanimated-carousel';
 import { hotelData } from '../Data/hotelData.js';
-import { images } from '../Data/images.js';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/native-stack';
+import EvilIcons from '@expo/vector-icons/EvilIcons';
+
 import { hotelDetail } from '../handleAPI/viewAPI.js';
 import { auth, db } from '../config/firebase.js';
 import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import EvilIcons from '@expo/vector-icons/EvilIcons';
+import Carousel from 'react-native-reanimated-carousel';
+
 
 const { width, height } = Dimensions.get('window');
 const ITEM_WIDTH = width;
+const NOTIFICATION_HEIGHT = 500;
 
 export default function HotelScreen({ navigation, route }) {
   LogBox.ignoreAllLogs(true);
@@ -39,25 +22,24 @@ export default function HotelScreen({ navigation, route }) {
   const { hotelId } = route.params;
   // const [hotelier, setHotelier] = useState('');
   const [hotelierId, setHotelierId] = useState('');
-  const [scrollY] = useState(new Animated.Value(0));
   const [hotel, setHotel] = useState(null);
   const [tokenUser, setToken] = useState(null);
+  const [detailModalVisible, setDetailModalVisible] = useState(false);
+  const [currentIndex, setCurrentIndex] = useState(0);
 
   const checkToken = async () => {
     const Token = await AsyncStorage.getItem('userToken');
     setToken(Token);
 
   };
-  const { hotelId } = route.params;
-  const [detailModalVisible, setDetailModalVisible] = useState(false);
-  const [currentIndex, setCurrentIndex] = useState(0);
 
   const getData = async () => {
     try {
       const data = await hotelDetail(hotelId);
       return data.data.doc;
+
     } catch (error) {
-      console.error('Error fetching data:', error);
+      console.error("Error fetching data:", error);
       return null;
     }
   };
@@ -69,45 +51,34 @@ export default function HotelScreen({ navigation, route }) {
   };
 
   useEffect(() => {
-    useEffect(() => {
-      const fetchData = async () => {
-        const res = await getData();
-        setHotel(res);
-      };
-      fetchData();
-    }, [])
+    fetchData();
+  }, [])
 
-    useEffect(() => {
-      checkToken();
-    }, [checkToken]);
+  useEffect(() => {
+    checkToken();
+  }, [checkToken]);
 
-    //get user from firebase
-    const getHotelier = async (email) => {
-      try {
-        const hotelierRef = collection(db, 'users');
-        const q = query(hotelierRef, where('email', '==', email))
-        const querySnapshot = await getDocs(q);
+  //get user from firebase
+  const getHotelier = async (email) => {
+    try {
+      const hotelierRef = collection(db, 'users');
+      const q = query(hotelierRef, where('email', '==', email))
+      const querySnapshot = await getDocs(q);
 
-        querySnapshot.forEach((doc) => {
-          // console.log('Token: ', doc.data());
-          setHotelierId(doc.data());
-        })
+      querySnapshot.forEach((doc) => {
+        // console.log('Token: ', doc.data());
+        setHotelierId(doc.data());
+      })
 
-      } catch (error) {
-        console.log('Error from firebase: ', error);
+    } catch (error) {
+      console.log('Error from firebase: ', error);
 
-      }
     }
-
-    const [showNotification, setShowNotification] = useState(false);
-    const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current;
-    const [scrollY] = useState(new Animated.Value(0));
-  }, []);
-
-  const renderImage = ({ item, index }) => {
-
   }
 
+  const [showNotification, setShowNotification] = useState(false);
+  const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current;
+  const [scrollY] = useState(new Animated.Value(0));
   const translateY = scrollY.interpolate({
     inputRange: [0, 100],
     outputRange: [0, 100],
@@ -118,12 +89,39 @@ export default function HotelScreen({ navigation, route }) {
     setDetailModalVisible(true);
   };
 
+  const handleHideNotification = () => {
+    Animated.timing(animatedValue, {
+      toValue: NOTIFICATION_HEIGHT,
+      duration: 300,
+      useNativeDriver: true,
+    }).start(() => setShowNotification(false));
+  };
+
   const renderAmenities = ({ item }) => (
     <View style={styles.amenityContainer}>
       <Icon name="check" size={15} color="green" />
       <Text style={styles.amenity}>{item}</Text>
     </View>
   );
+
+  const renderImages = ({ item }) => (
+    <TouchableOpacity style={styles.imageContainer} onPress={() => navigation.navigate('Image', { image: hotel.images, room: hotel.rooms })}>
+      <Image
+        source={{
+          uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item}`
+        }}
+        style={styles.image}
+        resizeMode="cover"
+      />
+      <Text style={styles.imageText}>{currentIndex}/{hotel.images.length}</Text>
+    </TouchableOpacity>
+  );
+
+  const onViewableItemsChanged = useRef(({ viewableItems }) => {
+    if (viewableItems.length > 0) {
+      setCurrentIndex(viewableItems[0].index + 1); // Set currentIndex based on the visible item
+    }
+  }).current;
 
   const Content = () => {
     if (!hotel) {
@@ -134,163 +132,91 @@ export default function HotelScreen({ navigation, route }) {
         </View>
       );
     }
+    let rating;
+    if (!hotel.ratingsAverage) {
+      rating = 0;
+    } else {
+      rating = hotel.ratingsAverage.toString().slice(0, 3);
+    }
 
-    let rating = hotel.ratingsAverage
-      ? hotel.ratingsAverage.toString().slice(0, 3)
-      : '0';
 
     return (
-      <>
-        <ScrollView
-        // onScroll={Animated.event(
-        //   [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-        //   { useNativeDriver: true }
-        // )}
-        // scrollEventThrottle={16}
-        >
-          <View style={styles.scrollImages}>
-            <Carousel
-              loop
-              width={width}
-              height={200}
-              autoPlay={false}
-              data={hotel.images}
-              onSnapToItem={(index) => setCurrentIndex(index)}
-              scrollAnimationDuration={1000}
-              renderItem={({ item, index }) => (
-                <TouchableOpacity
-                  style={styles.imageContainer}
-                  onPress={() =>
-                    navigation.navigate('Image', {
-                      image: hotel.images,
-                      room: hotel.rooms,
-                    })
-                  }
-                >
-                  <Image
-                    source={{
-                      uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item}`,
-                    }}
-                    style={styles.image}
-                    resizeMode="cover"
-                  />
-                </TouchableOpacity>
-              )}
-            />
-            <View style={styles.imageIndicator}>
-              <Text style={styles.imageText}>
-                {currentIndex + 1}/{hotel.images.length}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.feedbackContainer}>
-            <Text style={styles.nameHotel}>{hotel.name}</Text>
-            {tokenUser ? (
+      <><Animated.ScrollView
+        onScroll={Animated.event(
+          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+          { useNativeDriver: true }
+        )}
+        scrollEventThrottle={16}
+      >
+        <View style={styles.scrollImages}>
+          <Carousel
+            loop
+            width={width}
+            height={200}
+            autoPlay={false}
+            data={hotel.images}
+            onSnapToItem={(index) => setCurrentIndex(index)}
+            scrollAnimationDuration={1000}
+            renderItem={({ item, index }) => (
               <TouchableOpacity
-                style={styles.chatButton}
-                onPress={() => navigation.navigate('ChatRoom', { hotelierId })}>
-                <FontAwesome name="comments" size={24} color="#fff" />
-              </TouchableOpacity>
-            ) : (
-              <TouchableOpacity
-                style={styles.chatButton}
-                onPress={() => navigation.navigate('SignIn')}>
-                <FontAwesome name="comments" size={24} color="#fff" />
+                style={styles.imageContainer}
+                onPress={() =>
+                  navigation.navigate('Image', {
+                    image: hotel.images,
+                    room: hotel.rooms,
+                  })
+                }
+              >
+                <Image
+                  source={{
+                    uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item}`,
+                  }}
+                  style={styles.image}
+                  resizeMode="cover"
+                />
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews }); }}>
-              <Text style={styles.rating}>{rating}/{hotelData.ratingScale}⭐</Text>
-              <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>
-            </TouchableOpacity>
-          </View>
-          <View style={styles.feedbackContainer}>
-            <Text style={styles.nameHotel}>{hotel.name}</Text>
-            <TouchableOpacity
-              style={styles.chatButton}
-              onPress={() => navigation.navigate('ChatScreen')}
-            >
-              <FontAwesome name="comments" size={24} color="#fff" />
-            </TouchableOpacity>
-            <TouchableOpacity
-              style={styles.ratingContainer}
-              onPress={() => {
-                navigation.navigate('FeedBack', { reviews: hotel.reviews });
-              }}
-            >
-              <Text style={styles.rating}>
-                {rating}/{hotelData.ratingScale}⭐
-              </Text>
-              <Text style={styles.ratingSubtitle}>
-                ({hotel.ratingsQuantity})
-              </Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.descriptionContainer}>
-            <View style={styles.descriptionHeader}>
-              <Text style={styles.descriptionTitle}>Mô tả Khách Sạn</Text>
-              <Button
-                style={{ paddingLeft: 40 }}
-                title="Tìm hiểu thêm"
-                onPress={handleShowDescription}
-              />
-            </View>
-
-            <View style={styles.descriptionTextContainer}>
-              <Text style={styles.descriptionText}>
-                {hotel.description.substring(0, 100) + '...'}
-              </Text>
-            </View>
-          </View>
-
-          <View style={styles.amenitiesContainer}>
-            <Text style={styles.amenitiesTitle}>Tiện Nghi</Text>
-            <FlatList
-              data={hotel.utilities}
-              renderItem={renderAmenities}
-              keyExtractor={(item) => item.toString()}
-              contentContainerStyle={styles.amenitiesList}
-              scrollEnabled={true}
-            />
-          </View>
-
-          <View style={styles.contactContainer}>
-            <Text style={styles.headerContact}>Contact</Text>
-            <View style={styles.contactOption}>
-              <FontAwesome name="phone" size={24} color="green" />
-              <Text style={styles.contactText}>{hotel.phone}</Text>
-            </View>
-            <View style={styles.contactOption}>
-              <FontAwesome name="envelope" size={24} color="green" />
-              <Text style={styles.contactText}>{hotel.hotelier.email}</Text>
-            </View>
-            <View style={styles.contactOption}>
-              <FontAwesome name="location-arrow" size={24} color="green" />
-              <Text style={styles.contactText}>{hotel.address}</Text>
-            </View>
-          </View>
-        </ScrollView>
-
-        {/* Footer Section */}
-        <View style={styles.footerContainer}>
-          <View style={styles.priceContainer}>
-            <Text style={styles.startingPrice}>Khởi điểm:</Text>
-            <Text style={styles.priceText}>
-              {hotel.price} {hotelData.currency}
+          />
+          <View style={styles.imageIndicator}>
+            <Text style={styles.imageText}>
+              {currentIndex + 1}/{hotel.images.length}
             </Text>
           </View>
-          <TouchableOpacity
-            style={styles.button}
-            onPress={() =>
-              navigation.navigate('Booking', { rooms: hotel.rooms })
-            }
-          >
-            <Text style={styles.buttonText}>Xem mọi phòng</Text>
+        </View>
+
+        <View style={styles.feedbackContainer}>
+          <Text style={styles.nameHotel}>{hotel.name}</Text>
+          {tokenUser ? (
+            <TouchableOpacity
+              style={styles.chatButton}
+              onPress={() => navigation.navigate('ChatRoom', { hotelierId })}>
+              <FontAwesome name="comments" size={24} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.chatButton}
+              onPress={() => navigation.navigate('SignIn')}>
+              <FontAwesome name="comments" size={24} color="#fff" />
+            </TouchableOpacity>
+          )}
+          <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews }); }}>
+            <Text style={styles.rating}>{rating}/{hotelData.ratingScale}⭐</Text>
+            <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>
           </TouchableOpacity>
         </View>
 
-        {/* Description Modal */}
+        <View style={styles.descriptionContainer}>
+          <View style={styles.descriptionHeader}>
+            <Text style={styles.descriptionTitle}>Mô tả Khách Sạn</Text>
+            <Button style={{ paddingLeft: 40 }} title="Tìm hiểu thêm" onPress={handleShowDescription} />
+          </View>
+
+          <View style={styles.descriptionTextContainer}>
+            <Text style={styles.descriptionText}>
+              {hotel.description.substring(0, 100) + '...'}
+            </Text>
+          </View>
+        </View>
         <Modal
           animationType="fade"
           transparent={true}
@@ -319,9 +245,61 @@ export default function HotelScreen({ navigation, route }) {
             </View>
           </View>
         </Modal>
+
+        <View style={styles.amenitiesContainer}>
+          <Text style={styles.amenitiesTitle}>Tiện Nghi</Text>
+          <FlatList
+            data={hotel.utilities}
+            renderItem={renderAmenities}
+            keyExtractor={(item) => item.toString()}
+            estimatedItemSize={255}
+            contentContainerStyle={styles.amenitiesList}
+            scrollEnabled={true} />
+        </View>
+
+        <View style={styles.contactContainer}>
+          <Text style={styles.headerContact}>Contact</Text>
+          <View style={styles.contactOption}>
+            <FontAwesome name="phone" size={24} color="green" />
+            <Text style={styles.contactText}>{hotel.phone}</Text>
+          </View>
+          <View style={styles.contactOption}>
+            <FontAwesome name="envelope" size={24} color="green" />
+            <Text style={styles.contactText}>{hotel.hotelier.email}</Text>
+          </View>
+          <View style={styles.contactOption}>
+            <FontAwesome name="location-arrow" size={24} color="green" />
+            <Text style={styles.contactText}>{hotel.address}</Text>
+          </View>
+        </View>
+
+      </Animated.ScrollView>
+        <View style={styles.footerContainer}>
+          <View style={styles.priceContainer}>
+            <Text style={styles.startingPrice}>Khởi điểm:</Text>
+            <Text style={styles.priceText}>{hotel.price} {hotelData.currency}</Text>
+          </View>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { rooms: hotel.rooms })}>
+            <Text style={styles.buttonText}>Xem mọi phòng</Text>
+          </TouchableOpacity>
+        </View>
+
+        {
+          showNotification && (
+            <Animated.View style={[styles.notificationContainer, { transform: [{ translateY: animatedValue }] }]}>
+              <View style={styles.notificationHeader}>
+                <Button title="x" onPress={handleHideNotification} color="#FF6347" />
+                <Text style={styles.notificationTitle}>Mô tả khách sạn</Text>
+              </View>
+              <ScrollView style={styles.notificationText}>
+                <Text>{hotel.description}</Text>
+              </ScrollView>
+            </Animated.View>
+          )
+        }
       </>
-    );
-  };
+    )
+  }
 
   return (
     <SafeAreaView style={styles.container}>
@@ -329,6 +307,7 @@ export default function HotelScreen({ navigation, route }) {
     </SafeAreaView>
   );
 }
+
 
 const styles = StyleSheet.create({
   chatButton: {
