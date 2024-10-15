@@ -24,13 +24,12 @@
       "favicon": "./assets/favicon.png"
     },
     "extra": {
-      "apiKey": "AIzaSyCnhUXMh1jzLMbnLes68SYwY1EpKYVUKKs",
-      "authDomain": "chatapptest-f62b3.firebaseapp.com",
-      "projectId": "chatapptest-f62b3",
-      "storageBucket": "chatapptest-f62b3.appspot.com",
-      "messagingSenderId": "56576013200",
-      "appId": "1:56576013200:web:e1d14f692be36f16fd7915",
-      "measurementId": "G-ZXZ7RBHQP"
+      "apiKey": "AIzaSyDYtmxtFR3eqw_24D3RfoVCQy7h6wSrdoQ",
+      "authDomain": "react-app-f2378.firebaseapp.com",
+      "projectId": "react-app-f2378",
+      "storageBucket": "react-app-f2378.appspot.com",
+      "messagingSenderId": "799735898051",
+      "appId": "1:799735898051:web:45015ccf3681c263fca776"
     }
   }
 }

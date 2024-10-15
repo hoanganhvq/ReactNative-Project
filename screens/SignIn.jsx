@@ -20,6 +20,18 @@ function SignIn({ navigation }) {
         setIsValid(emailRegex.test(text));
     };
 
+    useEffect(() => {
+        const clearAsyncStorage = async () => {
+          try {
+            await AsyncStorage.clear(); // Clear AsyncStorage when the component mounts
+            console.log('AsyncStorage cleared');
+          } catch (error) {
+            console.error('Error clearing AsyncStorage:', error);
+          }
+        };
+    
+        clearAsyncStorage(); // Call the function to clear AsyncStorage
+      },[]);
 
     const onHandleLogin = async () => {
 
@@ -30,10 +42,7 @@ function SignIn({ navigation }) {
         try {
             let tokenUser;
             validateEmail(email);
-
             await findEmail(email);
-
-
             await signInWithEmailAndPassword(auth, email, password)
                 .then((rs) => {
                     tokenUser = rs._tokenResponse.idToken;
@@ -71,7 +80,7 @@ function SignIn({ navigation }) {
             AsyncStorage.setItem('userToken', token);
             AsyncStorage.setItem('userPhoto', photo);
             AsyncStorage.setItem('userName', name);
-            navigation.navigate('Main');
+            navigation.navigate('HomeScreen');
             // AsyncStorage.setItem('userRole', role);
         } catch (error) {
             console.log(error.status);
@@ -95,7 +104,7 @@ function SignIn({ navigation }) {
                     autoCapitalize="none"
                     keyboardType="email-address"
                     textContentType="emailAddress"
-                    autoFocus={true}
+                    autoFocus={false}
                     value={email}
                     onChangeText={validateEmail}
                 />

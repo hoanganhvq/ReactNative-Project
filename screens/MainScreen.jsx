@@ -7,6 +7,7 @@ import { hotelData } from '../Data/hotelData.js';
 import { MasonryFlashList } from '@shopify/flash-list';
 import { home } from '../handleAPI/viewAPI.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { onAuthStateChanged } from 'firebase/auth';
 
 // import { NetworkInfo } from "react-native-network-info"
 
@@ -20,6 +21,7 @@ export default function MainScreen({ navigation }) {
   const [name, setName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState(null);
+  const [user, setUser] = useState(null);
   const [standoutDestination, setStandoutDestination] = useState(null);
   const getData = async () => {
     try {
@@ -44,20 +46,39 @@ export default function MainScreen({ navigation }) {
     const storedToken = await AsyncStorage.getItem('userToken');
     const storedPhoto = await AsyncStorage.getItem('userPhoto');
     const storedName = await AsyncStorage.getItem('userName');
+    const storedUser = await AsyncStorage.getItem('user');
 
     setToken(storedToken);
     setPhoto(storedPhoto);
     setName(storedName);
+    setUser(storedUser);
   };
 
   React.useEffect(() => {
+
     navigation.addListener('focus', () => {
       fetchToken();
     })
+
   }, []);
+
+
+  // useEffect(() => {
+  //   const clearAsyncStorage = async () => {
+  //     try {
+  //       await AsyncStorage.clear(); // Clear AsyncStorage when the component mounts
+  //       console.log('AsyncStorage cleared');
+  //     } catch (error) {
+  //       console.error('Error clearing AsyncStorage:', error);
+  //     }
+  //   };
+
+  //   clearAsyncStorage(); // Call the function to clear AsyncStorage
+  // },[]);
 
   useLayoutEffect(() => {
     fetchData();
+    console.log(user);
   }, []);
 
 
@@ -137,8 +158,9 @@ export default function MainScreen({ navigation }) {
               <Text style={styles.text}>Login</Text>
             </View>
           </TouchableOpacity>
+
         ) : (
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+          <TouchableOpacity onPress={() => navigation.navigate('UserProfile')}>
             <View style={styles.row}>
               <Image
                 source={{ uri: `https://github.com/JINO25/IMG/raw/master/user/${photo}` }}
@@ -152,7 +174,7 @@ export default function MainScreen({ navigation }) {
 
         <SearchBar
           placeholder="Tìm kiếm..."
-          autoFocus={true}
+          autoFocus={false}
           onChange={(text) => setSearchQuery(text)}
           value={searchQuery}
           onSubmitEditing={updateSearch}
@@ -288,6 +310,7 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     marginVertical: 16,
+    borderBlockColor: 'white',
   },
   searchBarInput: {
     backgroundColor: '#f0f0f0',

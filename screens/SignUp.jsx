@@ -73,7 +73,7 @@ function SignUp({ navigation }) {
                 name: name,
             });
 
-            navigation.navigate('Main');
+            navigation.navigate('SignIn');
         } catch (error) {
             console.log(error);
             if (error.status == '400') {
@@ -93,6 +93,7 @@ function SignUp({ navigation }) {
                     placeholder="Tên"
                     style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
                     value={name}
+                    autoCapitalize="words"
                     onChangeText={(text) => setName(text)}
                 />
             </View>
@@ -100,6 +101,7 @@ function SignUp({ navigation }) {
             <View style={styles.txtBox}>
                 <TextInput
                     placeholder="00000-00000"
+                    keyboardType="phone-pad"
                     style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
                     value={phone}
                     onChangeText={(text) => setPhone(text)}
@@ -111,6 +113,7 @@ function SignUp({ navigation }) {
                     placeholder="hello@reallygreatsite.com"
                     style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
                     value={email}
+                    keyboardType="email-address"
                     autoCapitalize="none"
                     onChangeText={validateEmail}
                 />
