@@ -36,7 +36,7 @@ export const hotelData = {
 
   images: {
     imageHotel: [
-      { id: 1, src: require("../assets/Anh1.jpg"), name: "Da Lat" },
+      { id: 1, src: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/hotel_1.1.jpg`, name: "Da Lat" },
       { id: 2, src: require("../assets/Anh2.jpg"), name: "Vung Tau" },
       { id: 3, src: require("../assets/Anh3.jpg"), name: "Nha Trang" },
       { id: 4, src: require("../assets/Anh4.jpg"), name: "TP HCM" },
@@ -46,7 +46,7 @@ export const hotelData = {
       { id: 8, src: require("../assets/Anh8.jpg"), name: "Nha Trang" },
     ],
     imagesRoom: [
-      { id: 9, src: require("../assets/Anh9.jpg"), name: "Ca Mau" },
+      { id: 9, src: 'https://raw.githubusercontent.com/JINO25/IMG/master/Room/room_1.1.jpg', name: "Ca Mau" },
       { id: 10, src: require("../assets/Anh10.jpg"), name: "Soc Trang" },
       { id: 11, src: require("../assets/Anh11.jpg"), name: "Bac Lieu" },
       { id: 12, src: require("../assets/Anh12.jpg"), name: "Kien Giang" },
@@ -56,7 +56,7 @@ export const hotelData = {
       { id: 16, src: require("../assets/Anh16.jpg"), name: "Vinh Long" }
     ],
     imagesAmenities: [
-      { id: 17, src: require("../assets/Anh17.jpg"), name: "Ca Mau" },
+      { id: 17, src: 'https://raw.githubusercontent.com/JINO25/IMG/master/utility/room_1.1.jpg', name: "Ca Mau" },
       { id: 18, src: require("../assets/Anh18.jpg"), name: "Soc Trang" },
       { id: 19, src: require("../assets/Anh19.jpg"), name: "Bac Lieu" },
       { id: 20, src: require("../assets/Anh20.jpg"), name: "Kien Giang" },
@@ -66,7 +66,7 @@ export const hotelData = {
       { id: 24, src: require("../assets/Anh24.jpg"), name: "Vinh Long" }
     ],
     imagesFood: [
-      { id: 25, src: require("../assets/Anh25.jpg"), name: "Ca Mau" },
+      { id: 25, src : 'https://raw.githubusercontent.com/JINO25/IMG/master/food/room_1.1.jpg', name: "Ca Mau" },
       { id: 26, src: require("../assets/Anh26.jpg"), name: "Soc Trang" },
       { id: 27, src: require("../assets/Anh27.jpg"), name: "Bac Lieu" },
       { id: 28, src: require("../assets/Anh28.jpg"), name: "Kien Giang" },

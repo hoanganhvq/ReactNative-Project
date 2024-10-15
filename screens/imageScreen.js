@@ -111,35 +111,48 @@ export default function ImageScreen({ route }) {
         scrollToSection(index);
     };
 
-    const RenderImagesView = ({ item }) => (
-        <TouchableOpacity
+    // const RenderImagesView = ({ item }) => (
+    //     <TouchableOpacity
+    //         style={[
+    //             styles.imageViewContainer,
+    //         ]}
+    //         onPress={() => handleSelectAlbum(item, item.id - 1)}
+    //     >
+    //         <Image
+    //             source={{
+    //                 uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item[0]}`
+    //             }}
+    //             style={styles.imageView} />
+    //         <Text style={styles.imageText}>Khách Sạn</Text>
+    //     </TouchableOpacity>
+    // );
+
+    // const RenderImagesViewRoom = ({ room }) => (
+    //     <TouchableOpacity
+    //         style={[
+    //             styles.imageViewContainer,
+    //         ]}
+    //         onPress={() => handleSelectAlbum(room, room.id - 1)}
+    //     >
+    //         <Image
+    //             source={{
+    //                 uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Room/${room.images[0]}`
+    //             }}
+    //             style={styles.imageView} />
+    //         <Text style={styles.imageText}>Phòng</Text>
+    //     </TouchableOpacity>
+    // );
+
+    
+ const renderImagesView = ({ item }) => (
+        <TouchableOpacity 
             style={[
-                styles.imageViewContainer,
-            ]}
+                styles.imageViewContainer, 
+            ]} 
             onPress={() => handleSelectAlbum(item, item.id - 1)}
         >
-            <Image
-                source={{
-                    uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item[0]}`
-                }}
-                style={styles.imageView} />
-            <Text style={styles.imageText}>Khách Sạn</Text>
-        </TouchableOpacity>
-    );
-
-    const RenderImagesViewRoom = ({ room }) => (
-        <TouchableOpacity
-            style={[
-                styles.imageViewContainer,
-            ]}
-            onPress={() => handleSelectAlbum(room, room.id - 1)}
-        >
-            <Image
-                source={{
-                    uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Room/${room.images[0]}`
-                }}
-                style={styles.imageView} />
-            <Text style={styles.imageText}>Phòng</Text>
+            <Image source={{uri :item.first.src}} style={styles.imageView} />
+            <Text style={styles.imageText}>{item.title}</Text> 
         </TouchableOpacity>
     );
 
@@ -196,10 +209,16 @@ export default function ImageScreen({ route }) {
                 scrollEventThrottle={16}
                 contentContainerStyle={styles.scrollViewContainer}
             >
-                <Text style={styles.overviewText}>Tổng quan về chỗ nghỉ</Text>
                 <View style={styles.overview}>
-                    <RenderImagesView item={image} />
-                    <RenderImagesViewRoom room={room[0]} />
+                    <Text style={styles.overviewText}>Tổng quan về chỗ nghỉ</Text>
+                    <FlatList
+                        data={imageAlbums}
+                        renderItem={renderImagesView}
+                        keyExtractor={(item) => item.id.toString()}
+                        horizontal
+                        showsHorizontalScrollIndicator={false}
+                        contentContainerStyle={styles.flatListContainer}
+                    />
                 </View>
                 <FlatList
                     data={imageAlbums}
@@ -267,7 +286,7 @@ const styles = StyleSheet.create({
     },
     overview: {
         marginBottom: 20,
-        flexDirection: 'row'
+       
     },
     overviewText: {
         fontSize: 18,
