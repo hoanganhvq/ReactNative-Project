@@ -28,8 +28,13 @@ function EditProfile({ navigation }) {
     }, [])
 
     const handleLogOut = async () => {
-        await AsyncStorage.multiRemove(['userToken', 'userPhoto', 'user', 'userName']);
+        await AsyncStorage.multiRemove(['userToken', 'userPhoto', 'user', 'userName', 'tokenFirebase']);
         navigation.navigate('Main');
+    }
+
+    const handleSaveInf = async () => {
+        console.log('save');
+
     }
 
     const Content = () => {
@@ -68,6 +73,12 @@ function EditProfile({ navigation }) {
                 <Text style={styles.txtShow}>Year Birth</Text>
                 <View style={styles.txtBox}>
                     <TextInput placeholder={birth.toString()} style={{ fontSize: 20, width: 300 }}></TextInput>
+                </View>
+
+                <View style={styles.saveBox}>
+                    <TouchableOpacity style={{ width: 100, height: 35, alignItems: "center", justifyContent: "center" }} onPress={handleSaveInf} >
+                        <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>SAVE</Text>
+                    </TouchableOpacity>
                 </View>
                 <View style={{ flexDirection: "row", marginTop: 40, alignItems: "center", columnGap: 90 }}>
                     <Text style={{ fontSize: 12, fontWeight: 500 }}>Joined 04 March 2022</Text>
@@ -142,6 +153,15 @@ const styles = StyleSheet.create({
         backgroundColor: "#f2f5fe",
         justifyContent: "center",
         alignItems: "center",
+        borderRadius: 10
+    },
+    saveBox: {
+        marginTop: 10,
+        width: 100,
+        height: 35,
+        backgroundColor: "#4da6ff",
+        justifyContent: "flex-start",
+        // alignItems: "center",
         borderRadius: 10
     }
 })

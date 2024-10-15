@@ -1,4 +1,4 @@
-import React, { useRef, useState, useEffect } from 'react';
+import React, { useRef, useState, useEffect, useLayoutEffect } from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, FlatList, Button, ScrollView, TouchableOpacity, LogBox, ActivityIndicator } from 'react-native';
 import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
@@ -7,6 +7,9 @@ import { images } from '../Data/images.js';
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/native-stack';
 import { hotelDetail } from '../handleAPI/viewAPI.js';
+import { auth, db } from '../config/firebase.js';
+import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 
 const { width } = Dimensions.get('window');
@@ -15,9 +18,18 @@ const NOTIFICATION_HEIGHT = 500;
 
 export default function HotelScreen({ navigation, route }) {
   LogBox.ignoreAllLogs(true);
-
-  const [hotel, setHotel] = useState(null);
+  const user = auth.currentUser;
   const { hotelId } = route.params;
+  // const [hotelier, setHotelier] = useState('');
+  const [hotelierId, setHotelierId] = useState('');
+  const [hotel, setHotel] = useState(null);
+  const [tokenUser, setToken] = useState(null);
+
+  const checkToken = async () => {
+    const Token = await AsyncStorage.getItem('userToken');
+    setToken(Token);
+
+  };
 
   const getData = async () => {
     try {
@@ -33,11 +45,34 @@ export default function HotelScreen({ navigation, route }) {
   const fetchData = async () => {
     const res = await getData();
     setHotel(res);
+    await getHotelier(res.hotelier.email);
   };
 
   useEffect(() => {
     fetchData();
   }, [])
+
+  useEffect(() => {
+    checkToken();
+  }, [checkToken]);
+
+  //get user from firebase
+  const getHotelier = async (email) => {
+    try {
+      const hotelierRef = collection(db, 'users');
+      const q = query(hotelierRef, where('email', '==', email))
+      const querySnapshot = await getDocs(q);
+
+      querySnapshot.forEach((doc) => {
+        // console.log('Token: ', doc.data());
+        setHotelierId(doc.data());
+      })
+
+    } catch (error) {
+      console.log('Error from firebase: ', error);
+
+    }
+  }
 
   const [showNotification, setShowNotification] = useState(false);
   const animatedValue = useRef(new Animated.Value(NOTIFICATION_HEIGHT)).current;
@@ -134,11 +169,19 @@ export default function HotelScreen({ navigation, route }) {
 
         <View style={styles.feedbackContainer}>
           <Text style={styles.nameHotel}>{hotel.name}</Text>
-          <TouchableOpacity
-            style={styles.chatButton}
-            onPress={() => navigation.navigate('ChatScreen')}>
-            <FontAwesome name="comments" size={24} color="#fff" />
-          </TouchableOpacity>
+          {tokenUser ? (
+            <TouchableOpacity
+              style={styles.chatButton}
+              onPress={() => navigation.navigate('ChatRoom', { hotelierId })}>
+              <FontAwesome name="comments" size={24} color="#fff" />
+            </TouchableOpacity>
+          ) : (
+            <TouchableOpacity
+              style={styles.chatButton}
+              onPress={() => navigation.navigate('SignIn')}>
+              <FontAwesome name="comments" size={24} color="#fff" />
+            </TouchableOpacity>
+          )}
           <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews }); }}>
             <Text style={styles.rating}>{rating}/{hotelData.ratingScale}⭐</Text>
             <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>

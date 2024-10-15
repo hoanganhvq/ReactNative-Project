@@ -19,8 +19,8 @@ export default function MainScreen({ navigation }) {
   const [photo, setPhoto] = useState('');
   const [name, setName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
-  const [delaySearch, setDelaySearch] = useState("");
   const [data, setData] = useState(null);
+  const [standoutDestination, setStandoutDestination] = useState(null);
   const getData = async () => {
     try {
       const data = await home();
@@ -34,7 +34,10 @@ export default function MainScreen({ navigation }) {
   const fetchData = async () => {
     const res = await getData();
     const data = res.data.data.hotel
+    const dataStandoutDestination = res.data.data.standoutDestination;
+
     setData(data)
+    setStandoutDestination(dataStandoutDestination);
   };
 
   const fetchToken = async () => {
@@ -60,7 +63,6 @@ export default function MainScreen({ navigation }) {
 
   const updateSearch = (text) => {
     let search = text.nativeEvent.text;
-    console.log('Searching for:', search);
 
     setSearchQuery(search);
 
@@ -71,8 +73,6 @@ export default function MainScreen({ navigation }) {
     if (timeoutId) {
       clearTimeout(timeoutId);
     }
-
-    // setDelaySearch(search);
 
     const timeoutId = setTimeout(() => {
       navigation.navigate("Searching", { searching: search });
@@ -89,18 +89,21 @@ export default function MainScreen({ navigation }) {
   });
 
   const renderHorizontalItem = ({ item }) => (
-    <View style={styles.horiziontalItem}>
-      <Image
-        source={{ uri: `https://github.com/JINO25/IMG/raw/master/Hotel/${item.imgCover}` }}
-        style={styles.image}
-        resizeMode="cover"
-      />
-      <View style={styles.viewText}>
-        <EvilIcons name="location" size={25} color="green" style={{ marginRight: 0 }} />
-        <Text style={styles.text}>{item.city}</Text>
-      </View>
+    <TouchableOpacity onPress={() => navigation.navigate('Searching', { searching: item.city })}>
+      <View style={styles.horiziontalItem}>
+        <Image
+          source={{ uri: `https://github.com/JINO25/IMG/raw/master/Hotel/${item.imgCover}` }}
+          style={styles.image}
+          resizeMode="cover"
+        />
+        <View style={styles.viewText}>
+          <EvilIcons name="location" size={25} color="green" style={{ marginRight: 0 }} />
+          <Text style={styles.text}>{item.city}</Text>
+        </View>
 
-    </View>
+      </View>
+    </TouchableOpacity>
+
   );
 
   const renderVerticalItem = ({ item }) => (
@@ -193,7 +196,7 @@ export default function MainScreen({ navigation }) {
         >
           <Text style={{ fontSize: 20 }}>Khám Phá</Text>
           <Animated.FlatList
-            data={data}
+            data={standoutDestination}
             renderItem={renderHorizontalItem}
             keyExtractor={item => item.id}
             horizontal={true}
@@ -281,6 +284,7 @@ const styles = StyleSheet.create({
     padding: 10,
   },
   searchBarContainer: {
+    borderColor: 'white',
     backgroundColor: 'transparent',
     borderWidth: 0,
     marginVertical: 16,

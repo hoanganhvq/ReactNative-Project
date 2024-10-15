@@ -36,6 +36,9 @@ function SignIn({ navigation }) {
 
             await signInWithEmailAndPassword(auth, email, password)
                 .then((rs) => {
+                    tokenUser = rs._tokenResponse.idToken;
+                    console.log(tokenUser);
+
                     AsyncStorage.setItem('tokenFirebase', tokenUser);
                     handleLoginSuccessfully(email);
                 })

@@ -38,7 +38,8 @@ const SearchScreen = ({ navigation, route }) => {
         fetchHotel();
     }, [searchDelay]);
 
-    const updateSearch = async (search) => {
+    const updateSearch = async (text) => {
+        let search = text.nativeEvent.text;
 
         if (!search.trim()) {
             return;
@@ -88,8 +89,16 @@ const SearchScreen = ({ navigation, route }) => {
 
                     <SearchBar
                         placeholder="Tìm kiếm..."
-                        onChangeText={updateSearch}
+                        // onChangeText={updateSearch}
+                        // value={search}
+                        // containerStyle={styles.searchBarContainer}
+                        // inputContainerStyle={styles.searchBarInput}
+                        // searchIcon={{ size: 24, color: 'gray' }}
+                        // inputStyle={styles.inputStyle}
+                        // clearIcon={{ size: 24, color: 'gray' }}
+                        onChange={(text) => setSearch(text)}
                         value={search}
+                        onSubmitEditing={updateSearch}
                         containerStyle={styles.searchBarContainer}
                         inputContainerStyle={styles.searchBarInput}
                         searchIcon={{ size: 24, color: 'gray' }}
@@ -103,17 +112,25 @@ const SearchScreen = ({ navigation, route }) => {
 
         return (
             <SafeAreaView style={styles.container}>
-                <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
+                {/* <TouchableOpacity onPress={() => navigation.navigate('Profile')}>
                     <View style={styles.row}>
                         <Image source={require('../assets/Avatar.jpg')} style={styles.avatar} />
                         <Text style={styles.text}>Test</Text>
                     </View>
-                </TouchableOpacity>
+                </TouchableOpacity> */}
 
                 <SearchBar
                     placeholder="Tìm kiếm..."
-                    onChangeText={updateSearch}
+                    // onChangeText={updateSearch}
+                    // value={search}
+                    // containerStyle={styles.searchBarContainer}
+                    // inputContainerStyle={styles.searchBarInput}
+                    // searchIcon={{ size: 24, color: 'gray' }}
+                    // inputStyle={styles.inputStyle}
+                    // clearIcon={{ size: 24, color: 'gray' }}
+                    onChange={(text) => setSearch(text)}
                     value={search}
+                    onSubmitEditing={updateSearch}
                     containerStyle={styles.searchBarContainer}
                     inputContainerStyle={styles.searchBarInput}
                     searchIcon={{ size: 24, color: 'gray' }}
@@ -126,6 +143,7 @@ const SearchScreen = ({ navigation, route }) => {
                     keyExtractor={item => item._id}
                     showsVerticalScrollIndicator={false}
                     numColumns={2}
+                    estimatedItemSize={255}
                     contentContainerStyle={styles.verticalFlatlist}
                 />
             </SafeAreaView>
@@ -161,6 +179,7 @@ const styles = StyleSheet.create({
         padding: 10,
     },
     searchBarContainer: {
+        borderColor: 'white',
         backgroundColor: 'transparent',
         borderWidth: 0,
         // marginVertical: 16,
