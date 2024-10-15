@@ -7,7 +7,6 @@ import { View, Text, StyleSheet, TurboModuleRegistry } from 'react-native';
 import MainScreen from './MainScreen';
 
 
-import MyTripScreen from './MyTrip';
 import CartScreen from "./CartScreen";
 import UserProfile from "./UserProfile";
 

@@ -78,7 +78,6 @@ export default function MainScreen({ navigation }) {
 
   useLayoutEffect(() => {
     fetchData();
-    console.log(user);
   }, []);
 
 

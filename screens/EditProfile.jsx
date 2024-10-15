@@ -13,6 +13,7 @@ function EditProfile({ navigation }) {
     const fetchUser = async () => {
         setIsLoading(true);
         try {
+
             const token = await AsyncStorage.getItem('userToken');
             const rs = await getMe(token);
             setUser(rs.data);
@@ -22,13 +23,24 @@ function EditProfile({ navigation }) {
             setIsLoading(false);
         }
     }
+    const clearAsync = async () => {
+           
+        try {
+          await AsyncStorage.clear();
+          console.log('AsyncStorage đã được xóa thành công.');
+        } catch (error) {
+          console.error('Lỗi khi xóa AsyncStorage:', error);
+        }
+      };
     useEffect(() => {
         fetchUser();
 
     }, [])
 
     const handleLogOut = async () => {
+        //CLear của m bị hư nè
         await AsyncStorage.multiRemove(['userToken', 'userPhoto', 'user', 'userName', 'tokenFirebase']);
+        clearAsync();
         navigation.navigate('Main');
     }
 

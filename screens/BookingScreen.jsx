@@ -253,9 +253,7 @@ const BookingScreen = ({ navigation, route }) => {
               style={styles.vdtList}
             />
 
-            <TouchableOpacity>
-              <Text style={styles.seeDetailsLink}>Xem chi tiết</Text>
-            </TouchableOpacity>
+         
 
             <View style={styles.roomSelectionRow}>
               <TouchableOpacity

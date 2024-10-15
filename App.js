@@ -19,19 +19,19 @@ import AppNavigator from './navigation/AppNavigator';
 // import { RoleContext, ContextProvider } from './screens/ContextProvider';
 const Stack = createNativeStackNavigator();
 export default function App() {
-  const [storedToken, setToken] = useState('');
-  const [tokenFb, setTokenFireBase] = useState('');
-  // const token = AsyncStorage.getItem('userToken')
-  useEffect(() => {
-    const checkToken = async () => {
-      const storedToken = await AsyncStorage.getItem('userToken');
-      const storedTokenFb = await AsyncStorage.getItem('tokenFirebase')
-      setToken(storedToken);
-      setTokenFireBase(storedTokenFb);
-    };
+  // const [storedToken, setToken] = useState('');
+  // const [tokenFb, setTokenFireBase] = useState('');
+  // // const token = AsyncStorage.getItem('userToken')
+  // useEffect(() => {
+  //   const checkToken = async () => {
+  //     const storedToken = await AsyncStorage.getItem('userToken');
+  //     const storedTokenFb = await AsyncStorage.getItem('tokenFirebase')
+  //     setToken(storedToken);
+  //     setTokenFireBase(storedTokenFb);
+  //   };
 
-    checkToken();
-  }, []);
+  //   checkToken();
+  // }, []);
   // return (
   //   <NavigationContainer>
   //     <Stack.Navigator initialRouteName="Main">

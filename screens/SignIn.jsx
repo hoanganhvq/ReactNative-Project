@@ -14,6 +14,24 @@ function SignIn({ navigation }) {
     const [isValid, setIsValid] = useState(true);
     const [ms, setMS] = useState('');
 
+    // useEffect(() =>{
+    //     const clearAsync = async () => {
+           
+    //         try {
+    //           await AsyncStorage.clear();
+    //           console.log('AsyncStorage đã được xóa thành công.');
+    //         } catch (error) {
+    //           console.error('Lỗi khi xóa AsyncStorage:', error);
+    //         }
+    //       };
+    //       if(AsyncStorage){
+    //         clearAsync();
+    //       } else{
+    //         console.log("Đéo có data để clear");
+    //       }
+          
+    // }
+    // )
     const validateEmail = (text) => {
         setEmail(text);
         const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
