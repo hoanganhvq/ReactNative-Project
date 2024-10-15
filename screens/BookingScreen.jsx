@@ -184,7 +184,7 @@ const BookingScreen = ({ navigation, route }) => {
               onRequestClose={() => setIsViewerVisible(false)}
             /> */}
             
-            <View style={styles.carouselCounter}>
+            <View style={styles.counter}>
               <Text style={styles.counterText}>
                 {activeIndex + 1}/{item.images.length}
               </Text>
@@ -518,24 +518,17 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   counter: {
-    position: "absolute",
-    bottom: 8,
-    left: 26,
-    backgroundColor: "rgb(222, 242, 242)",
-    padding: 5,
-    borderRadius: 5,
-    opacity: 0.4,
-    width: 32,
-    height: 27,
-    alignItems: "center",
-    justifyContent: "center",
+    position: 'absolute',
+    bottom: 10,
+    right: 23,
+    backgroundColor: 'rgba(128, 128, 128, 0.7)',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
   counterText: {
-    color: "gray",
-    fontSize: 14,
-    fontWeight: "400",
-    alignContent: 'flex-start',
-    justifyContent: 'flex-start'
+    color: 'white',
+    fontWeight: 'bold',
   },
   applyButton: {
     backgroundColor: "#4b47f2",
@@ -553,6 +546,7 @@ const styles = StyleSheet.create({
     width: "100%",
     alignItems: "center",
     marginBottom: 20,
+    borderBlockColor:"red",
   },
   imageContainer: {
     alignItems: "center",
@@ -565,13 +559,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
   },
   carouselCounter: {
-    position: "absolute",
+    position: 'absolute',
     bottom: 10,
-    left: width / 2 - 40,
-    backgroundColor: "rgba(0,0,0,0.6)",
-    paddingHorizontal: 10,
-    paddingVertical: 5,
-    borderRadius: 15,
+    right: 10,
+    backgroundColor: 'rgba(128, 128, 128, 0.7)',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
   },
   roomDetailsBox: {
     width: "90%",
