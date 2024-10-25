@@ -1,11 +1,10 @@
 import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
 import Feather from '@expo/vector-icons/Feather';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/native-stack';
-import avImg from '../assets/avt.png';
+import color from "../assets/color.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState , useLayoutEffect} from "react";
 import { getMe } from "../handleAPI/viewAPI";
+import { Icon } from 'react-native-elements';
 
 function EditProfile({ navigation }) {
     const [user, setUser] = useState(null);
@@ -17,41 +16,46 @@ function EditProfile({ navigation }) {
             const token = await AsyncStorage.getItem('userToken');
             const rs = await getMe(token);
             setUser(rs.data);
+            
         } catch (error) {
             console.error("Error fetching user:", error);
         } finally {
             setIsLoading(false);
         }
     }
-    const clearAsync = async () => {
-           
-        try {
-          await AsyncStorage.clear();
-          console.log('AsyncStorage đã được xóa thành công.');
-        } catch (error) {
-          console.error('Lỗi khi xóa AsyncStorage:', error);
-        }
-      };
+
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <Icon
+                    name="arrow-back" 
+                    size={29}
+                    color="#fff" 
+                    style={{ marginLeft: 5 }} 
+                    onPress={() => navigation.goBack()} 
+                />
+            ),
+            headerStyle: {
+                backgroundColor: color.background_dark, 
+            },
+            headerTintColor: 'white',
+        });
+    }, [navigation]);
+    
     useEffect(() => {
         fetchUser();
 
     }, [])
 
-    const handleLogOut = async () => {
-        //CLear của m bị hư nè
-        await AsyncStorage.multiRemove(['userToken', 'userPhoto', 'user', 'userName', 'tokenFirebase']);
-        clearAsync();
-        navigation.navigate('Main');
-    }
+   
 
     const handleSaveInf = async () => {
         console.log('save');
-
     }
 
     const Content = () => {
         if (isLoading) {
-            return <ActivityIndicator size="large" color="#0000ff" />;
+            return <ActivityIndicator size="large" color={color.title} />;
         }
 
         if (!user || !user.data) {
@@ -89,17 +93,10 @@ function EditProfile({ navigation }) {
 
                 <View style={styles.saveBox}>
                     <TouchableOpacity style={{ width: 100, height: 35, alignItems: "center", justifyContent: "center" }} onPress={handleSaveInf} >
-                        <Text style={{ color: "white", fontWeight: "bold", textAlign: "center" }}>SAVE</Text>
+                        <Text style={{ color: "white", fontWeight: "bold", textAlign: "center", fontSize:"18" }}>SAVE</Text>
                     </TouchableOpacity>
                 </View>
-                <View style={{ flexDirection: "row", marginTop: 40, alignItems: "center", columnGap: 90 }}>
-                    <Text style={{ fontSize: 12, fontWeight: 500 }}>Joined 04 March 2022</Text>
-                    <View style={styles.logoutBox}>
-                        <TouchableOpacity style={{ width: 80, height: 35, alignItems: "center", justifyContent: "center" }} onPress={handleLogOut} >
-                            <Text style={{ color: "red", fontWeight: "bold", textAlign: "center" }}>Logout</Text>
-                        </TouchableOpacity>
-                    </View>
-                </View>
+
             </>
         );
     }
@@ -107,7 +104,7 @@ function EditProfile({ navigation }) {
     return (
         <View style={styles.container}>
             <Content />
-        </View>
+        </View> 
     );
 }
 const styles = StyleSheet.create({
@@ -116,14 +113,10 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
     },
-    loadingText: {
-        marginTop: 10,
-        fontSize: 16,
-        color: '#000',
-    },
+ 
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: color.background_dark,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -132,7 +125,7 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         height: 100,
         borderWidth: 2,
-        borderColor: '#3362E6',
+        borderColor: color.tilte,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -158,6 +151,7 @@ const styles = StyleSheet.create({
         alignSelf: "flex-start",
         width: 300,
         marginLeft: 30,
+        color:"white"
     },
     logoutBox: {
         width: 80,
@@ -168,12 +162,13 @@ const styles = StyleSheet.create({
         borderRadius: 10
     },
     saveBox: {
-        marginTop: 10,
-        width: 100,
-        height: 35,
-        backgroundColor: "#4da6ff",
+        marginTop: 40,
+        width: 150,
+        height: 50,
+        backgroundColor: color.tilte,
         justifyContent: "flex-start",
-        // alignItems: "center",
+        alignItems: "center",
+        justifyContent:"center",
         borderRadius: 10
     }
 })

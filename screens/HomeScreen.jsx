@@ -10,6 +10,7 @@ import UserProfile from "./UserProfile";
   const Tab = createBottomTabNavigator();
 export default function HomeScreen() {
   return (
+    
       <Tab.Navigator
         screenOptions={({ route }) => ({
           tabBarIcon: ({ color, size }) => {
@@ -38,7 +39,7 @@ export default function HomeScreen() {
       >
         <Tab.Screen name="Trang chủ" component={MainScreen} options={{ headerShown: false }} />
         <Tab.Screen name="Xe đẩy hàng" component={CartScreen} />
-        <Tab.Screen name="Thêm" component={UserProfile} />
+        <Tab.Screen name="Thêm" component={UserProfile} options={{ headerShown: false}}  />
         
       </Tab.Navigator>
   );

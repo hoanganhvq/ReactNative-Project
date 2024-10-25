@@ -1,14 +1,11 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/native-stack';
-import avImg from '../assets/avt.png';
+
 import Ionicons from '@expo/vector-icons/Ionicons';
-import AntDesign from '@expo/vector-icons/AntDesign';
-import Entypo from '@expo/vector-icons/Entypo';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getMe } from "../handleAPI/viewAPI";
-
+import color from "../assets/color.json";
+import { SafeAreaView } from 'react-native-safe-area-context';
 
 function User({navigation}) {
     const [user, setUser] = useState(null);1
@@ -29,6 +26,23 @@ function User({navigation}) {
         
     }
 
+    const clearAsync = async () => {
+           
+        try {
+          await AsyncStorage.clear();
+          console.log('AsyncStorage đã được xóa thành công.');
+        } catch (error) {
+          console.error('Lỗi khi xóa AsyncStorage:', error);
+        }
+      };
+
+      const handleLogOut = async () => {
+        //CLear của m bị hư nè
+        await AsyncStorage.multiRemove(['userToken', 'userPhoto', 'user', 'userName', 'tokenFirebase']);
+        clearAsync();
+        navigation.navigate('Main');
+    }
+
     useEffect(() => {
         fetchUser();
     }, [])
@@ -36,51 +50,63 @@ function User({navigation}) {
          
     const Content =() =>{
         if(isLoading){
-            return <ActivityIndicator size="large" color="#0000ff" />;
+            return <ActivityIndicator size="large" color={color.tilte} />;
         } 
         if(!user || !user.data){
             return <Text>No user data available</Text>
         }
         return (
-            /**
-             * Set the loading state to false to hide the loading indicator
-             */
-        <View style={styles.container}>
+       
+        <SafeAreaView style={styles.container}>
+
+             
             <View style={styles.avatarUser}>
                  <Image source={{ uri: `https://github.com/JINO25/IMG/raw/master/user/${user.data.photo}` }} style={{resizeMode:'cover',width:"100%",height:"100%"}}></Image>
             </View>
-            <Text style={{ fontSize: 20, fontWeight: 'bold', marginTop: 10 }}>{user.data.name}</Text>
-            <Text style={{ color: 'gray', fontSize: 15 }}>{user.data.email}</Text>
-            <TouchableOpacity style={styles.editBox} onPress={() => navigation.navigate('EditProfile')}>
-                <Text style={{ color: 'white', fontSize: 15, fontWeight: 'bold' }}>Edit Profile</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10, color:"white"}}>{user.data.name}</Text>
+            <Text style={{ color: 'white', fontSize: 15 , marginTop:10}}>{user.data.email}</Text>
+           
+
+            <View style={{marginTop: 25,height: 1,width:330,backgroundColor: '#555'}}></View>
+
+            <TouchableOpacity style={styles.funItem}  onPress={()=>navigation.navigate('Edit Profile')}>
+            <View style={styles.iconBox}>
+            <Ionicons name="person-outline" size={24} color={color.tilte} />
+            </View>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "white" }}>
+                    Edit Profile 
+                </Text>
             </TouchableOpacity>
-            <View style={{marginTop: 15,height: 1,width:500,backgroundColor: '#ebeced'}}></View>
+
+
             <TouchableOpacity style={styles.funItem}  onPress={()=>navigation.navigate('MyTrip')}>
             <View style={styles.iconBox}>
-            <Ionicons name="airplane-outline" size={24} color="#7998D7" />
+            <Ionicons name="airplane-outline" size={24} color={color.tilte} />
             </View>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "gray" }}>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "white"  }}>
                     My Trip
                 </Text>
             </TouchableOpacity>
-            <TouchableOpacity style={styles.funItem}>
+
+            <TouchableOpacity style={styles.funItem} >
             <View style={styles.iconBox}>
-            <AntDesign name="minuscircle" size={23} color="#7998D7" />
+            <Ionicons name="information-circle-outline" size={28} color={color.tilte} />
             </View>
-                <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "gray" }}>
-                    Billing Details
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "white" }}>
+                    Help Center
                 </Text>
             </TouchableOpacity>
-                {/* <TouchableOpacity style={styles.funItem}>
-                <View style={styles.iconBox}>
-                <Entypo name="wallet" size={24} color="#7998D7" />
-                </View>
-                    <Text style={{ fontSize: 16, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "gray" }}>
-                        User Management
-                    </Text>
-                </TouchableOpacity> */}
-            <View style={{marginTop: 10,height: 1,width:500,backgroundColor: '#ebeced'}}></View>
-        </View>
+
+            <TouchableOpacity style={styles.funItem} onPress={handleLogOut}>
+            <View style={styles.iconBox}>
+            <Ionicons name="log-out-outline" size={28} color="red" />
+            </View>
+                <Text style={{ fontSize: 18, fontWeight: 'bold', marginLeft: 15, alignSelf: 'center', color: "red" }}>
+                    Log out
+                </Text>
+            </TouchableOpacity>
+          
+        </SafeAreaView>
     )
     }
 
@@ -94,7 +120,7 @@ function User({navigation}) {
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-        backgroundColor: '#fff',
+        backgroundColor: color.background_dark,
         alignItems: 'center',
         justifyContent: 'center',
     },
@@ -103,15 +129,15 @@ const styles = StyleSheet.create({
         borderRadius: 100,
         height: 100,
         borderWidth:2,
-        borderColor: '#3362E6',
+        borderColor: color.tilte,
         alignItems: 'center',
         justifyContent: 'center',
         overflow: 'hidden',
     },
     editBox: {
-        width: 135,
-        height: 35,
-        backgroundColor: '#3362E6',
+        width: 150,
+        height: 40,
+        backgroundColor: color.tilte,
         borderRadius: 25,
         alignItems: 'center',
         justifyContent: 'center',
@@ -120,7 +146,6 @@ const styles = StyleSheet.create({
     iconBox: {
         width: 40,
         height: 40,
-        backgroundColor: '#e3e3e3',
         borderRadius: 10,
         alignItems: 'center',
         justifyContent: 'center',

@@ -4,6 +4,7 @@ import { searchHotel } from '../handleAPI/viewAPI';
 import { SearchBar } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { MasonryFlashList } from '@shopify/flash-list';
+import color from "../assets/color.json";
 
 const width = Dimensions.get('window').width;
 const ITEM_WIDTH = width / 2 - 15;
@@ -159,7 +160,7 @@ const styles = StyleSheet.create({
     container: {
         flex: 1,
         paddingHorizontal: 20,
-        backgroundColor: '#fff'
+        backgroundColor: color.background_dark
     },
     row: {
         flexDirection: 'row',
@@ -182,15 +183,17 @@ const styles = StyleSheet.create({
         borderColor: 'white',
         backgroundColor: 'transparent',
         borderWidth: 0,
-        // marginVertical: 16,
-    },
-    searchBarInput: {
-        backgroundColor: '#f0f0f0',
+        marginVertical: 16,
+        borderBlockColor: color.background_dark,
+      },
+      searchBarInput: {
+        backgroundColor: color.item_background_dark, 
         borderRadius: 10,
         borderWidth: 0,
-    },
+      },
     inputStyle: {
         padding: 0,
+        color:'white'
     },
     imageContainer: {
         justifyContent: 'center',

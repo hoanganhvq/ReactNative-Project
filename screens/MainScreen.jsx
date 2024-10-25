@@ -67,11 +67,6 @@ export default function MainScreen({ navigation }) {
     
   }, []);
   
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-};
-
-
 
 
 
@@ -171,7 +166,6 @@ const renderHorizontalItem = ({ item, index }) => {
     }
 
    
-
     return (
       <>
         {!token ? (
@@ -182,7 +176,7 @@ const renderHorizontalItem = ({ item, index }) => {
           </TouchableOpacity>
 
         ) : (
-          <TouchableOpacity onPress={() => navigation.navigate('UserProfile')} style={{ marginTop: 20 }}>
+          <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={{ marginTop: 20 }}>
             <View style={styles.row}>
               <Image
                 source={{ uri: `https://github.com/JINO25/IMG/raw/master/user/${photo}` }}
@@ -339,7 +333,7 @@ const styles = StyleSheet.create({
   },
   inputStyle: {
     padding: 0,
-    color: 'black', 
+    color: 'white', 
   },
 
   image: {

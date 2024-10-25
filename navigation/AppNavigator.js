@@ -44,10 +44,23 @@
                 }}
             />
             <Stack.Screen name="Image" component={ImageScreen} />
-            <Stack.Screen name="EditProfile" component={EditProfile} />
+            <Stack.Screen name="Edit Profile" component={EditProfile}  options={{headerShown: true, headerStyle: {backgroundColor: color.background_dark,},
+                    headerTitleStyle: {
+                        color: "white",
+                        fontSize:20
+                    },
+                }}/>
             <Stack.Screen name="Hotel" component={HotelScreen} />
             <Stack.Screen name="FeedBack" component={FeedBackScreen} />
-            <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerShown: false }} />
+            <Stack.Screen name="Profile" component={UserProfile} options={{
+            headerShown: false,
+            headerStyle: { backgroundColor: color.background_dark },
+            headerTitleStyle: {
+                color: "white",
+                fontSize: 20
+            },
+            headerLeft: () => null, // Không hiển thị gì
+        }} />
             <Stack.Screen name="Booking" component={Booking} />
             <Stack.Screen name="Searching" component={Searching} />
             <Stack.Screen name="SignIn" component={SignIn} />
@@ -57,15 +70,13 @@
     );
 
     const AuthStackNavigator = () => (
-        <Stack.Navigator initialRouteName="SignUp" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Image" component={ImageScreen} />
             <Stack.Screen name="Hotel" component={HotelScreen} />
             <Stack.Screen name="FeedBack" component={FeedBackScreen} />
-            <Stack.Screen name="UserProfile" component={UserProfile} options={{ headerShown: false }} />
-            <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="Booking" component={Booking} />
             <Stack.Screen name="Searching" component={Searching} />
             <Stack.Screen name="ChatRoom" component={Chat} />
