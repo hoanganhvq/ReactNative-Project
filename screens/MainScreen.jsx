@@ -39,9 +39,7 @@ export default function MainScreen({ navigation }) {
     const res = await getData();
     const data = res.data.data.hotel
     const dataStandoutDestination = res.data.data.standoutDestination;
-    console.log(data);
-
-   
+    console.log(data);   
     setData(data)
     setStandoutDestination(dataStandoutDestination);
   };
@@ -67,6 +65,11 @@ export default function MainScreen({ navigation }) {
     
   }, []);
   
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+};
+
+
 
 
 
@@ -166,6 +169,7 @@ const renderHorizontalItem = ({ item, index }) => {
     }
 
    
+
     return (
       <>
         {!token ? (
@@ -176,7 +180,7 @@ const renderHorizontalItem = ({ item, index }) => {
           </TouchableOpacity>
 
         ) : (
-          <TouchableOpacity onPress={() => navigation.navigate('Profile')} style={{ marginTop: 20 }}>
+          <TouchableOpacity onPress={() => navigation.navigate('UserProfile')} style={{ marginTop: 20 }}>
             <View style={styles.row}>
               <Image
                 source={{ uri: `https://github.com/JINO25/IMG/raw/master/user/${photo}` }}
@@ -343,15 +347,7 @@ const styles = StyleSheet.create({
     alignItems: 'center',
     justifyContent: 'center',
   },
-  imageVertical: {
-    width: 110,
-    height: 110,
-    resizeMode: 'cover',
-    borderRadius: 20,
-    marginHorizontal: 8,
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
+
   imageIndex: {
     fontSize: 18,
     fontWeight: 'bold',
@@ -379,9 +375,14 @@ const styles = StyleSheet.create({
     width: 120,
     height: 120,
     borderRadius: 10,
-    marginRight: 10,
+    marginRight: 20,
     borderWidth: 2,
     borderColor: "rgba(255, 255, 255, 0.5)", // Đặt màu trắng với độ mờ 50%
+    marginHorizontal: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    resizeMode: 'cover',
+
 },
 
   textName: {

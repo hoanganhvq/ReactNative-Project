@@ -52,7 +52,7 @@
                 }}/>
             <Stack.Screen name="Hotel" component={HotelScreen} />
             <Stack.Screen name="FeedBack" component={FeedBackScreen} />
-            <Stack.Screen name="Profile" component={UserProfile} options={{
+            <Stack.Screen name="UserProfile" component={UserProfile} options={{
             headerShown: false,
             headerStyle: { backgroundColor: color.background_dark },
             headerTitleStyle: {

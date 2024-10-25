@@ -23,6 +23,7 @@ const SearchScreen = ({ navigation, route }) => {
                 const res = await searchHotel(search);
                 setSearch(null);
                 setHotel(res.data.data);
+                console.log("hotel ",hotel)
             } catch (error) {
                 if (error.response && error.response.status === 404) {
                     const message = error.response.data.message;
@@ -56,18 +57,30 @@ const SearchScreen = ({ navigation, route }) => {
         }, 3000);
     };
 
-    const renderVerticalItem = ({ item }) => (
-        <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item._id })}>
+    const renderVerticalItem = ({ item }) => {
+        const rating = item.ratingsAverage ? item.ratingsAverage.toFixed(1) : 0; 
+        
+        return (
+          <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item._id })}>
             <View style={styles.verticalItem}>
-                <Image
-                    source={{ uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item.imgCover}` }}
-                    style={styles.image}
-                    resizeMode="cover"
-                />
-                <Text style={styles.text}>{item.name}</Text>
+              <Image
+                source={{ uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item.imgCover}` }}
+                style={styles.imageVertical}
+                resizeMode="cover"
+              />
+              <View style = {styles.hotelInfo}> 
+                <Text style={styles.textName}>{item.name}</Text>
+                <Text style={styles.textCity}>{item.city}</Text>
+                <View style = {styles.ratingContainer}>
+                  <Text style={styles.rating}>⭐ {rating}</Text>
+                  <Text style={styles.ratingSubtitle}>({item.ratingsQuantity} reviews)</Text>
+                </View>
+              </View>
             </View>
-        </TouchableOpacity>
-    );
+          </TouchableOpacity>
+        );
+      };
+
 
     const [scrollY] = useState(new Animated.Value(0));
 
@@ -141,9 +154,8 @@ const SearchScreen = ({ navigation, route }) => {
                 <MasonryFlashList
                     data={hotel}
                     renderItem={renderVerticalItem}
-                    keyExtractor={item => item._id}
+                    keyExtractor={item => item.id}
                     showsVerticalScrollIndicator={false}
-                    numColumns={2}
                     estimatedItemSize={255}
                     contentContainerStyle={styles.verticalFlatlist}
                 />
@@ -162,10 +174,7 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
         backgroundColor: color.background_dark
     },
-    row: {
-        flexDirection: 'row',
-        alignItems: 'center',
-    },
+  
     avatar: {
         width: 50,
         height: 50,
@@ -185,58 +194,89 @@ const styles = StyleSheet.create({
         borderWidth: 0,
         marginVertical: 16,
         borderBlockColor: color.background_dark,
+        width:"100%"
       },
       searchBarInput: {
         backgroundColor: color.item_background_dark, 
         borderRadius: 10,
         borderWidth: 0,
       },
-    inputStyle: {
+      inputStyle: {
         padding: 0,
-        color:'white'
-    },
-    imageContainer: {
-        justifyContent: 'center',
-        alignItems: 'center',
+        color: 'white', 
+      },
+    
+      image: {
+        width: 150,
         height: 300,
-        marginTop: 1,
-    },
-    image: {
-        width: ITEM_WIDTH * 1,
-        height: 200,
-        resizeMode: 'cover',
         borderRadius: 10,
-        marginHorizontal: 8,
         alignItems: 'center',
         justifyContent: 'center',
-    },
-    imageIndex: {
+      },
+    
+      imageIndex: {
         fontSize: 18,
         fontWeight: 'bold',
         marginTop: 10,
-    },
-    horizontalFlatList: {
-        height: 100,
-        marginBottom: 20,
-    },
-    horizontalItem: {
-        width: width * 0.8,
-        height: 80,
-        backgroundColor: '#f9c2ff',
-        marginHorizontal: 10,
-        justifyContent: 'center',
-        alignItems: 'center',
+        color: 'white', 
+      },
+    
+      verticalItem: {
+        flexDirection: 'row', 
+        padding: 15,
+        backgroundColor: color.item_background_dark, // Darker background for better contrast
+        borderRadius: 12,
+        marginVertical: 15,
+        marginHorizontal: 1,
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 2,
+        },
+        shadowOpacity: 0.5,
+        shadowRadius: 8,
+        elevation: 5,
+        width:"100%"
+      },
+      imageVertical: {
+        width: 120,
+        height: 120,
         borderRadius: 10,
-    },
-    verticalFlatList: {
-        paddingHorizontal: 20,
-    },
-    verticalItem: {
-        flex: 1,
-        backgroundColor: '#d3f9c2',
-        margin: 5,
-        justifyContent: 'center',
+        marginRight: 20,
+        borderWidth: 2,
+        borderColor: "rgba(255, 255, 255, 0.5)", // Đặt màu trắng với độ mờ 50%
+        marginHorizontal: 8,
         alignItems: 'center',
-        borderRadius: 10,
+        justifyContent: 'center',
+        resizeMode: 'cover',
+    
     },
+    
+      textName: {
+        fontSize: 18,
+        color: '#ffffff', // Keeping the text white for visibility
+        fontWeight: 'bold',
+        marginBottom:20,
+        marginTop:10,
+      },
+      textCity: {
+        fontSize: 14,
+        color: '#b0b0b0',
+        marginBottom:20,
+      },
+      ratingContainer: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginTop: 5,
+      },
+      rating: {
+        fontSize: 16,
+        color: color.tilte,
+        marginRight: 5,
+        fontWeight: "bold",
+      },
+      ratingSubtitle: {
+        fontSize: 14,
+        color: '#b0b0b0',
+      },
 });
