@@ -4,13 +4,14 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import FontAwesome from '@expo/vector-icons/FontAwesome';
 import { hotelData } from '../Data/hotelData.js';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
-
+import LoadingScreen from './LoadingScreen.jsx';
 import { hotelDetail } from '../handleAPI/viewAPI.js';
 import { auth, db } from '../config/firebase.js';
 import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Carousel from 'react-native-reanimated-carousel';
-
+import { color } from 'react-native-elements/dist/helpers/index.js';
+import colorTheme from '../assets/color.json';
 
 const { width, height } = Dimensions.get('window');
 const ITEM_WIDTH = width;
@@ -99,37 +100,15 @@ export default function HotelScreen({ navigation, route }) {
 
   const renderAmenities = ({ item }) => (
     <View style={styles.amenityContainer}>
-      <Icon name="check" size={15} color="green" />
+      <Icon name="check" size={15} color={colorTheme.tilte} />
       <Text style={styles.amenity}>{item}</Text>
     </View>
   );
 
-  const renderImages = ({ item }) => (
-    <TouchableOpacity style={styles.imageContainer} onPress={() => navigation.navigate('Image', { image: hotel.images, room: hotel.rooms })}>
-      <Image
-        source={{
-          uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item}`
-        }}
-        style={styles.image}
-        resizeMode="cover"
-      />
-      <Text style={styles.imageText}>{currentIndex}/{hotel.images.length}</Text>
-    </TouchableOpacity>
-  );
-
-  const onViewableItemsChanged = useRef(({ viewableItems }) => {
-    if (viewableItems.length > 0) {
-      setCurrentIndex(viewableItems[0].index + 1); // Set currentIndex based on the visible item
-    }
-  }).current;
-
   const Content = () => {
     if (!hotel) {
       return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+        <LoadingScreen/>
       );
     }
     let rating;
@@ -189,7 +168,7 @@ export default function HotelScreen({ navigation, route }) {
           {tokenUser ? (
             <TouchableOpacity
               style={styles.chatButton}
-              onPress={() => navigation.navigate('ChatRoom', { hotelierId })}>
+              onPress={() => navigation.navigate('Chat', { hotelierId })}>
               <FontAwesome name="comments" size={24} color="#fff" />
             </TouchableOpacity>
           ) : (
@@ -208,7 +187,9 @@ export default function HotelScreen({ navigation, route }) {
         <View style={styles.descriptionContainer}>
           <View style={styles.descriptionHeader}>
             <Text style={styles.descriptionTitle}>Mô tả Khách Sạn</Text>
-            <Button style={{ paddingLeft: 40 }} title="Tìm hiểu thêm" onPress={handleShowDescription} />
+            <TouchableOpacity>
+              <Text  style={{ fontWeight:"500", fontSize:18, paddingLeft: 15 ,color:colorTheme.tilte}} onPress={handleShowDescription}>Tìm hiểu thêm</Text>
+            </TouchableOpacity>
           </View>
 
           <View style={styles.descriptionTextContainer}>
@@ -233,7 +214,7 @@ export default function HotelScreen({ navigation, route }) {
                   onPress={() => setDetailModalVisible(false)}
                   accessibilityLabel="Close description modal"
                 >
-                  <EvilIcons name="close" size={28} color="#333" />
+                  <EvilIcons name="close" size={28} color="#ccc" />
                 </TouchableOpacity>
               </View>
 
@@ -260,15 +241,15 @@ export default function HotelScreen({ navigation, route }) {
         <View style={styles.contactContainer}>
           <Text style={styles.headerContact}>Contact</Text>
           <View style={styles.contactOption}>
-            <FontAwesome name="phone" size={24} color="green" />
+            <FontAwesome name="phone" size={24} color={colorTheme.tilte}/>
             <Text style={styles.contactText}>{hotel.phone}</Text>
           </View>
           <View style={styles.contactOption}>
-            <FontAwesome name="envelope" size={24} color="green" />
+            <FontAwesome name="envelope" size={24} color= {colorTheme.tilte}/>
             <Text style={styles.contactText}>{hotel.hotelier.email}</Text>
           </View>
           <View style={styles.contactOption}>
-            <FontAwesome name="location-arrow" size={24} color="green" />
+            <FontAwesome name="location-arrow" size={24} color={colorTheme.tilte} />
             <Text style={styles.contactText}>{hotel.address}</Text>
           </View>
         </View>
@@ -276,11 +257,10 @@ export default function HotelScreen({ navigation, route }) {
       </Animated.ScrollView>
         <View style={styles.footerContainer}>
           <View style={styles.priceContainer}>
-            <Text style={styles.startingPrice}>Khởi điểm:</Text>
             <Text style={styles.priceText}>{hotel.price} {hotelData.currency}</Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { rooms: hotel.rooms })}>
-            <Text style={styles.buttonText}>Xem mọi phòng</Text>
+            <Text style={styles.buttonText}>Booking Now!</Text>
           </TouchableOpacity>
         </View>
 
@@ -314,7 +294,7 @@ const styles = StyleSheet.create({
     position: 'absolute',
     bottom: 20,
     right: 20,
-    backgroundColor: 'green',
+    backgroundColor: colorTheme.tilte,
     borderRadius: 30,
     padding: 10,
     elevation: 5,
@@ -325,7 +305,7 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: colorTheme.background_dark,
   },
   scrollImages: {
     position: 'relative',
@@ -355,7 +335,7 @@ const styles = StyleSheet.create({
   },
   feedbackContainer: {
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: colorTheme.item_background_dark,
     borderRadius: 10,
     margin: 10,
     shadowColor: '#000',
@@ -371,7 +351,7 @@ const styles = StyleSheet.create({
   nameHotel: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: '#333',
+    color: 'white',
   },
   ratingContainer: {
     flexDirection: 'row',
@@ -385,12 +365,12 @@ const styles = StyleSheet.create({
     marginRight: 5,
   },
   ratingSubtitle: {
-    fontSize: 14,
+    fontSize: 16,
     color: '#666',
   },
   descriptionContainer: {
     padding: 10,
-    backgroundColor: 'white',
+    backgroundColor: colorTheme.item_background_dark,
     borderRadius: 10,
     margin: 10,
     shadowColor: '#000',
@@ -412,6 +392,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     paddingRight: 60,
+    color:'white'
   },
   descriptionTextContainer: {
     maxHeight: 80,
@@ -419,7 +400,7 @@ const styles = StyleSheet.create({
   descriptionText: {
     fontSize: 16,
     lineHeight: 24,
-    color: '#333',
+    color: '#ccc',
   },
   modalOverlay: {
     flex: 1,
@@ -431,7 +412,7 @@ const styles = StyleSheet.create({
   modalContent: {
     width: width * 0.95,
     maxHeight: height * 0.95,
-    backgroundColor: '#fff',
+    backgroundColor: colorTheme.background_dark,
     borderRadius: 15,
     padding: 20,
     shadowColor: '#000',
@@ -445,19 +426,21 @@ const styles = StyleSheet.create({
   },
   modalHeader: {
     flexDirection: 'row',
-    justifyContent: 'space-between',
-    alignItems: 'center',
   },
   modalTitle: {
     fontSize: 22,
-    fontWeight: 'bold',
-    color: '#333',
+    fontWeight: "bold",
+    textAlign: "center",
+    color:"white"
   },
   modalCloseButton: {
-    padding: 5,
+    position: "absolute",
+    top: 10,
+    right: 10,  
   },
+
   modalDivider: {
-    backgroundColor: '#e0e0e0',
+    backgroundColor: '#888',
     height: 1,
     marginVertical: 15,
   },
@@ -466,12 +449,12 @@ const styles = StyleSheet.create({
   },
   modalDescription: {
     fontSize: 16,
-    color: '#555',
+    color:'#ccc',
     lineHeight: 22,
   },
   amenitiesContainer: {
     padding: 10,
-    backgroundColor: 'white',
+    backgroundColor: colorTheme.item_background_dark,
     borderRadius: 10,
     margin: 10,
     shadowColor: '#000',
@@ -487,10 +470,13 @@ const styles = StyleSheet.create({
   amenitiesTitle: {
     fontSize: 20,
     fontWeight: 'bold',
-    marginBottom: 5,
+    paddingRight: 60,
+    color:'white'
   },
   amenitiesList: {
     paddingVertical: 5,
+    color:'white'
+
   },
   amenityContainer: {
     flexDirection: 'row',
@@ -500,12 +486,12 @@ const styles = StyleSheet.create({
   amenity: {
     marginLeft: 5,
     fontSize: 16,
-    color: '#333',
+    color: '#ccc',
   },
   contactContainer: {
     flexDirection: 'column',
     padding: 20,
-    backgroundColor: 'white',
+    backgroundColor: colorTheme.item_background_dark,
     borderRadius: 10,
     margin: 10,
     shadowColor: '#000',
@@ -530,23 +516,20 @@ const styles = StyleSheet.create({
     padding: 10,
     width: '100%',
   },
-  contactButtonText: {
-    color: '#fff',
-    marginLeft: 5,
-    fontWeight: 'bold',
-  },
   contactText: {
     fontSize: 16,
-    color: '#333',
+    color: '#ccc',
     marginLeft: 10,
   },
   headerContact: {
     fontSize: 20,
     fontWeight: 'bold',
+    paddingRight: 60,
+    color:'white'
   },
   footerContainer: {
     padding: 20,
-    backgroundColor: '#fff',
+    backgroundColor: colorTheme.item_background_dark,
     flexDirection: 'row',
     justifyContent: 'space-between',
     alignItems: 'center',
@@ -558,19 +541,21 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
+    borderTopLeftRadius:25,
+    borderTopRightRadius:25,
   },
-  priceContainer: {},
   startingPrice: {
     fontSize: 14,
-    color: '#333',
+    color: 'white',
+    paddingBottom:5
   },
   priceText: {
     fontSize: 24,
     fontWeight: 'bold',
-    color: 'red',
+    color: colorTheme.tilte,
   },
   button: {
-    backgroundColor: '#007BFF',
+    backgroundColor: colorTheme.tilte,
     borderRadius: 150,
     padding: 20,
     width: '45%',

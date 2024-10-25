@@ -1,20 +1,19 @@
 import React, { useEffect, useLayoutEffect, useState } from 'react';
-import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, ScrollView, TouchableOpacity, ActivityIndicator, TextInput } from 'react-native';
+import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, ScrollView, TouchableOpacity, useColorScheme} from 'react-native';
 import { SearchBar } from 'react-native-elements';
-import { Feather } from '@expo/vector-icons';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
-import { hotelData } from '../Data/hotelData.js';
 import { MasonryFlashList } from '@shopify/flash-list';
 import { home } from '../handleAPI/viewAPI.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { onAuthStateChanged } from 'firebase/auth';
+import color from '../assets/color.json';
+import { Extrapolation, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
+import LoadingScreen from './LoadingScreen.jsx';
 
-// import { NetworkInfo } from "react-native-network-info"
 
 const width = Dimensions.get('window').width;
 const ITEM_WIDTH = width / 2 - 15;
-const images = hotelData.images.imageHotel;
-
+const ITEM_SIZE = width * 0.72;
+const SPACER_ITEM_SIZE = (width - ITEM_SIZE)/ 2 
 export default function MainScreen({ navigation }) {
   const [token, setToken] = useState(null);
   const [photo, setPhoto] = useState('');
@@ -23,6 +22,9 @@ export default function MainScreen({ navigation }) {
   const [data, setData] = useState(null);
   const [user, setUser] = useState(null);
   const [standoutDestination, setStandoutDestination] = useState(null);
+  const scrollX = React.useRef(new Animated.Value(0)).current;
+  const [darkMode,setDarkMode] = useState(true)
+ 
   const getData = async () => {
     try {
       const data = await home();
@@ -37,10 +39,13 @@ export default function MainScreen({ navigation }) {
     const res = await getData();
     const data = res.data.data.hotel
     const dataStandoutDestination = res.data.data.standoutDestination;
+    console.log(data);
 
+   
     setData(data)
     setStandoutDestination(dataStandoutDestination);
   };
+   
 
   const fetchToken = async () => {
     const storedToken = await AsyncStorage.getItem('userToken');
@@ -59,25 +64,20 @@ export default function MainScreen({ navigation }) {
     navigation.addListener('focus', () => {
       fetchToken();
     })
-
+    
   }, []);
+  
+  const toggleTheme = () => {
+    setDarkMode(!darkMode);
+};
 
 
-  // useEffect(() => {
-  //   const clearAsyncStorage = async () => {
-  //     try {
-  //       await AsyncStorage.clear(); // Clear AsyncStorage when the component mounts
-  //       console.log('AsyncStorage cleared');
-  //     } catch (error) {
-  //       console.error('Error clearing AsyncStorage:', error);
-  //     }
-  //   };
 
-  //   clearAsyncStorage(); // Call the function to clear AsyncStorage
-  // },[]);
+
 
   useLayoutEffect(() => {
     fetchData();
+    
   }, []);
 
 
@@ -102,59 +102,82 @@ export default function MainScreen({ navigation }) {
 
   const [scrollY] = useState(new Animated.Value(0));
 
-  const translateY = scrollY.interpolate({
-    inputRange: [0, 100],
-    outputRange: [0, 100],
-    extrapolate: 'clamp',
-  });
 
-  const renderHorizontalItem = ({ item }) => (
+// Define the function rnAnimatedStyle that takes index as a parameter
+
+
+const renderHorizontalItem = ({ item, index }) => {
+ 
+  const translateY  = scrollX.interpolate({
+    inputRange:[(index - 2) * ITEM_SIZE,(index - 1) * ITEM_SIZE, index * ITEM_SIZE],
+    outputRange:[0,-30,0],
+  })
+  return (
     <TouchableOpacity onPress={() => navigation.navigate('Searching', { searching: item.city })}>
-      <View style={styles.horiziontalItem}>
+      <Animated.View style={{
+          padding: 10,
+          alignItems: 'center',
+          borderRadius:34,
+          transform:[{translateY}],
+          justifyContent: 'center',
+          marginHorizontal: 10, 
+          
+      }}>
         <Image
           source={{ uri: `https://github.com/JINO25/IMG/raw/master/Hotel/${item.imgCover}` }}
           style={styles.image}
-          resizeMode="cover"
         />
         <View style={styles.viewText}>
-          <EvilIcons name="location" size={25} color="green" style={{ marginRight: 0 }} />
-          <Text style={styles.text}>{item.city}</Text>
+            <EvilIcons name="location" size={25} color="green" style={{ marginRight: 0, fontWeight: "bold"}} />
+            <Text style={styles.txtCity}>{item.city}</Text>
         </View>
-
-      </View>
-    </TouchableOpacity>
-
-  );
-
-  const renderVerticalItem = ({ item }) => (
-    <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item._id })}>
-      <View style={styles.verticalItem}>
-        <Image
-          source={{ uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item.imgCover}` }}
-          style={styles.image}
-          resizeMode="cover"
-        />
-        <Text style={styles.textName}>{item.name}</Text>
-      </View>
+      </Animated.View>
     </TouchableOpacity>
   );
+};
+
+  
+
+  const renderVerticalItem = ({ item }) => {
+    const rating = item.ratingsAverage ? item.ratingsAverage.toFixed(1) : 0; 
+    
+    return (
+      <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item._id })}>
+        <View style={styles.verticalItem}>
+          <Image
+            source={{ uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item.imgCover}` }}
+            style={styles.imageVertical}
+            resizeMode="cover"
+          />
+          <View style = {styles.hotelInfo}> 
+            <Text style={styles.textName}>{item.name}</Text>
+            <Text style={styles.textCity}>{item.city}</Text>
+            <View style = {styles.ratingContainer}>
+              <Text style={styles.rating}>⭐ {rating}</Text>
+              <Text style={styles.ratingSubtitle}>({item.ratingsQuantity} reviews)</Text>
+            </View>
+          </View>
+        </View>
+      </TouchableOpacity>
+    );
+  };
+  
 
   const Content = () => {
     if (!data) {
       return (
-        <View style={styles.loadingContainer}>
-          <ActivityIndicator size="large" color="#0000ff" />
-          <Text style={styles.loadingText}>Loading...</Text>
-        </View>
+        <LoadingScreen/>
       );
     }
+
+   
 
     return (
       <>
         {!token ? (
           <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
             <View style={styles.row}>
-              <Text style={styles.text}>Login</Text>
+              <Text style={styles.textLogin}>Login</Text>
             </View>
           </TouchableOpacity>
 
@@ -184,28 +207,6 @@ export default function MainScreen({ navigation }) {
           clearIcon={{ size: 24, color: 'gray' }}
         />
 
-        {/* <View style={{
-          flexDirection: 'row',
-          alignItems: 'center',
-          backgroundColor: '#f0f0f0',
-          borderRadius: 8,
-          padding: 8,
-          marginHorizontal: 16,
-          marginVertical: 8,
-        }}>
-          <TextInput
-            autoFocus={true}
-            style={styles.input}
-            placeholder="Tìm kiếm..."
-            value={searchQuery}
-            onChange={(text) => setSearchQuery(text)}
-            onSubmitEditing={updateSearch}
-            returnKeyType="search"
-          />
-          <TouchableOpacity onPress={handleSubmit} style={styles.searchIcon}>
-            <Feather name="search" size={24} color="gray" />
-          </TouchableOpacity>
-        </View> */}
 
 
         <Animated.ScrollView
@@ -215,28 +216,44 @@ export default function MainScreen({ navigation }) {
           )}
           scrollEventThrottle={16}
         >
-          <Text style={{ fontSize: 20 }}>Khám Phá</Text>
+          <Text style={{ fontSize: 25, color: "white" , fontStyle: "bold", fontFamily: "Viga-Regular", marginLeft: 10 }}>Khám Phá</Text>
           <Animated.FlatList
             data={standoutDestination}
             renderItem={renderHorizontalItem}
-            keyExtractor={item => item.id}
             horizontal={true}
             showsHorizontalScrollIndicator={false}
-            snapToInterval={ITEM_WIDTH}
-            snapToAlignment="start"
-            decelerationRate="fast"
-            estimatedItemSize={255}
+            contentContainerStyle={{
+              alignItems: 'center',
+              paddingTop:20
+            }}
+            onScroll={Animated.event(
+              [{nativeEvent: {contentOffset: {x: scrollX}}}],
+              {useNativeDriver:true}
+            )}
+            // scrollEventThrottle={16}
+            decelerationRate={0}
+            bounces={false}
+            // onScroll={onScrollHandler}
             style={styles.horizontalFlatlist}
           />
+            {/* <Carousel
+            data={standoutDestination} // Dữ liệu bạn đã lấy
+            renderItem={renderItem}
+            sliderWidth={sliderWidth}
+            itemWidth={width}
+            layout={'default'} // Hoặc layout="stack" để có hiệu ứng xếp chồng
+            inactiveSlideScale={0.9} // Tỉ lệ phóng to/thu nhỏ của item không được chọn
+            inactiveSlideOpacity={0.7} // Độ mờ của item không được chọn
+            /> */}
 
-          <Text style={{ fontSize: 20 }}>Nổi bật</Text>
+
+          <Text style={{ fontSize: 25, color: "white" , fontStyle: "bold", fontFamily: "Viga-Regular", marginLeft: 10  }}>Nổi bật</Text>
 
           <MasonryFlashList
             data={data}
             renderItem={renderVerticalItem}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}
-            numColumns={2}
             estimatedItemSize={255}
             contentContainerStyle={styles.verticalFlatlist}
           />
@@ -252,41 +269,29 @@ export default function MainScreen({ navigation }) {
     </SafeAreaView>
   );
 }
-
 const styles = StyleSheet.create({
-  textName: {
-    fontSize: 16
-  },
+
   viewText: {
     flexDirection: 'row',
     alignItems: 'center',
     marginBottom: 2,
-    justifyContent: 'center'
+    justifyContent: 'center',
   },
+
   input: {
     flex: 1,
     fontSize: 16,
     paddingVertical: 8,
     paddingHorizontal: 12,
+    color: 'black', 
   },
-  searchIcon: {
-    padding: 8,
-  },
-  loadingContainer: {
-    flex: 1,
-    justifyContent: 'center',
-    alignItems: 'center',
-  },
-  loadingText: {
-    marginTop: 10,
-    fontSize: 16,
-    color: '#000',
-  },
+  
   container: {
     flex: 1,
     padding: 20,
-    backgroundColor: '#fff'
+    backgroundColor: color.background_dark, 
   },
+  
   row: {
     flexDirection: 'row',
     alignItems: 'center',
@@ -301,7 +306,23 @@ const styles = StyleSheet.create({
   text: {
     marginLeft: 0,
     fontSize: 18,
-    color: '#333',
+    fontStyle:"bold",
+    color: color.tilte,
+    padding: 10,
+  },
+  txtCity:{
+    marginLeft: 0,
+    fontSize: 18,
+    fontWeight:"bold",
+    color: color.tilte,
+    padding: 10,
+ 
+  },
+  textLogin:{
+    marginLeft: 10,
+    fontSize: 18,
+    fontWeight:"bold",
+    color: 'white',
     padding: 10,
   },
   searchBarContainer: {
@@ -309,27 +330,30 @@ const styles = StyleSheet.create({
     backgroundColor: 'transparent',
     borderWidth: 0,
     marginVertical: 16,
-    borderBlockColor: 'white',
+    borderBlockColor: color.background_dark,
   },
   searchBarInput: {
-    backgroundColor: '#f0f0f0',
+    backgroundColor: color.item_background_dark, 
     borderRadius: 10,
     borderWidth: 0,
   },
   inputStyle: {
     padding: 0,
+    color: 'black', 
   },
-  imageContainer: {
-    justifyContent: 'center',
-    alignItems: 'center',
-    height: 300,
-    marginTop: 1,
-  },
+
   image: {
-    width: ITEM_WIDTH * 1,
-    height: 200,
-    resizeMode: 'cover',
+    width: 150,
+    height: 300,
     borderRadius: 10,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  imageVertical: {
+    width: 110,
+    height: 110,
+    resizeMode: 'cover',
+    borderRadius: 20,
     marginHorizontal: 8,
     alignItems: 'center',
     justifyContent: 'center',
@@ -338,32 +362,60 @@ const styles = StyleSheet.create({
     fontSize: 18,
     fontWeight: 'bold',
     marginTop: 10,
+    color: 'white', 
   },
-  horizontalFlatList: {
-    height: 100,
-    marginBottom: 20,
-  },
-  horiziontalItem: {
-    marginTop: 5
-  },
-  horizontalItem: {
-    width: width * 0.8,
-    height: 80,
-    backgroundColor: '#f9c2ff',
-    marginHorizontal: 10,
-    justifyContent: 'center',
-    alignItems: 'center',
-    borderRadius: 10,
-  },
-  verticalFlatList: {
-    paddingHorizontal: 20,
-  },
+
   verticalItem: {
-    flex: 1,
-    backgroundColor: '#d3f9c2',
-    margin: 5,
-    justifyContent: 'center',
+    flexDirection: 'row', 
+    padding: 15,
+    backgroundColor: color.item_background_dark, // Darker background for better contrast
+    borderRadius: 12,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 5,
+  },
+  imageVertical: {
+    width: 120,
+    height: 120,
+    borderRadius: 10,
+    marginRight: 10,
+    borderWidth: 2,
+    borderColor: "rgba(255, 255, 255, 0.5)", // Đặt màu trắng với độ mờ 50%
+},
+
+  textName: {
+    fontSize: 18,
+    color: '#ffffff', // Keeping the text white for visibility
+    fontWeight: 'bold',
+    marginBottom:20,
+    marginTop:10,
+  },
+  textCity: {
+    fontSize: 14,
+    color: '#b0b0b0',
+    marginBottom:20,
+  },
+  ratingContainer: {
+    flexDirection: 'row',
     alignItems: 'center',
-    borderRadius: 8,
+    marginTop: 5,
+  },
+  rating: {
+    fontSize: 16,
+    color: color.tilte,
+    marginRight: 5,
+    fontWeight: "bold",
+  },
+  ratingSubtitle: {
+    fontSize: 14,
+    color: '#b0b0b0',
   },
 });
+

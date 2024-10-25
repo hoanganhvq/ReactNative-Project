@@ -1,26 +1,40 @@
-import { View, Text, StyleSheet, TouchableOpacity, TextInput } from "react-native";
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/native-stack';
+import {
+    View,
+    Text,
+    StyleSheet,
+    TextInput,
+    TouchableOpacity,
+    ImageBackground,
+    Dimensions,
+    SafeAreaView,
+    KeyboardAvoidingView,
+    Platform,
+    Image,
+  } from "react-native";
+import { StatusBar } from "expo-status-bar";
+import Animated, { FadeInDown } from "react-native-reanimated";
 import { useEffect, useState } from "react";
-import { color } from "react-native-elements/dist/helpers";
 import { findEmail, signUp } from "../handleAPI/viewAPI";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import { createUserWithEmailAndPassword } from "firebase/auth";
 import { auth, db } from '../config/firebase';
 import { doc, setDoc } from "firebase/firestore";
+import color from "../assets/color.json";
 
+
+const bg = require("../assets/background.png");
+const height = Dimensions.get("screen").height;
+const logo = require("../assets/LogoDark.jpg");
 function SignUp({ navigation }) {
     const [name, setName] = useState(null);
     const [email, setEmail] = useState(null);
     const [phone, setPhone] = useState(null);
     const [pwd, setPwd] = useState(null);
-    const [pwdConfirm, setPwdConfirm] = useState(null);
     const [ms, setMS] = useState('');
 
 
     const [isValid, setIsValid] = useState(true);
     const [isExisted, setIsExisted] = useState(true);
-    const [isPasswordMatch, setIsPasswordMatch] = useState(true);
 
     const validateEmail = (text) => {
         setEmail(text);
@@ -28,18 +42,12 @@ function SignUp({ navigation }) {
         setIsValid(emailRegex.test(text));
     };
 
-    const checkPasswordMatch = (text) => {
-        setPwdConfirm(text);
-        setIsPasswordMatch(pwd === text);
-    };
 
     const handleSignUp = async () => {
         try {
             validateEmail(email);
-            checkPasswordMatch(pwdConfirm)
-            if (name && email && phone && pwd && pwdConfirm && isValid && isPasswordMatch) {
+            if (name && email && phone && pwd && isValid) {
                 handleSignUpSuccessfully(name, email, phone);
-
             } else {
                 alert('Vui lòng điền đầy đủ thông tin và sửa lỗi trước khi đăng ký.');
             }
@@ -65,14 +73,13 @@ function SignUp({ navigation }) {
 
             const response = await createUserWithEmailAndPassword(auth, email, pwd);
 
-            // Set user data in Firestore
             await setDoc(doc(db, 'users', response.user.uid), {
                 email,
                 profileUrl: 'default.jpg',
                 userId: response.user.uid,
                 name: name,
             });
-
+            console.log("SignUp Successfully");
             navigation.navigate('SignIn');
         } catch (error) {
             console.log(error);
@@ -84,41 +91,57 @@ function SignUp({ navigation }) {
     }
 
     return (
-        <View style={styles.container}>
-            <Text style={styles.signText}>Đăng ký</Text>
+        <KeyboardAvoidingView
+      behavior={Platform.OS === "ios" ? "padding" : "height"}
+      style={styles.container}
+    >
+      <StatusBar style="light" />
+      <ImageBackground
+        source={bg}
+        style={{ width: "100%", height, alignItems: "center" }}
+      >
+        <Animated.Image source={logo} style={styles.logo}
+          entering={FadeInDown.delay(200).duration(2000).springify()}
+        />
+        <Animated.View
+          entering={FadeInDown.delay(200).duration(2000).springify()}
+          style={{ marginTop: 225 }}
+        >
+          <Text style={styles.signText}>Đăng ký</Text>
+        </Animated.View>
+        <Animated.View
+          entering={FadeInDown.delay(500).duration(1000).springify()}
+          style={[styles.txtBox, { position: "absolute", bottom: 380 }]}
+        >
+          <TextInput placeholder="Họ và Tên" style={styles.input}
+          value={name}
+          autoCapitalize="words"
+          onChangeText={(text) => setName(text)}
+          />
+        </Animated.View>
 
-            <Text style={styles.txtStl}>Họ Tên</Text>
-            <View style={styles.txtBox}>
-                <TextInput
-                    placeholder="Tên"
-                    style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
-                    value={name}
-                    autoCapitalize="words"
-                    onChangeText={(text) => setName(text)}
-                />
-            </View>
-            <Text style={styles.txtStl}>SỐ ĐIỆN THOẠI</Text>
-            <View style={styles.txtBox}>
-                <TextInput
-                    placeholder="00000-00000"
-                    keyboardType="phone-pad"
-                    style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
-                    value={phone}
-                    onChangeText={(text) => setPhone(text)}
-                />
-            </View>
-            <Text style={styles.txtStl}>EMAIL</Text>
-            <View style={styles.txtBox}>
-                <TextInput
-                    placeholder="hello@reallygreatsite.com"
-                    style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
-                    value={email}
-                    keyboardType="email-address"
-                    autoCapitalize="none"
-                    onChangeText={validateEmail}
-                />
-            </View>
-            {!isValid && (
+        <Animated.View
+          entering={FadeInDown.delay(300).duration(1000).springify()}
+          style={[styles.txtBox, { position: "absolute", bottom: 314 }]}
+        >
+          <TextInput placeholder="Số điện thoại" style={styles.input} 
+             keyboardType="phone-pad"
+             value={phone}
+              onChangeText={(text) => setPhone(text)}
+          />
+        </Animated.View>
+        <Animated.View
+          entering={FadeInDown.delay(400).duration(1000).springify()}
+          style={[styles.txtBox, { position: "absolute", bottom: 247 }]}
+        >
+          <TextInput placeholder="Email" style={styles.input} 
+              value={email}
+              keyboardType="email-address"
+              autoCapitalize="none"
+              onChangeText={validateEmail}
+          />
+        </Animated.View>
+        {!isValid && (
                 // <View style={styles.passwordConfirm}>
                 <Text style={styles.errorText}>Email không đúng!</Text>
                 // </View>
@@ -128,38 +151,38 @@ function SignUp({ navigation }) {
                 <Text style={styles.errorText}>{ms}</Text>
                 // </View>
             )}
-            <Text style={styles.txtStl}>MẬT KHẨU</Text>
-            <View style={styles.txtBox}>
-                <TextInput
-                    placeholder="********"
-                    secureTextEntry={true}
-                    style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
-                    value={pwd}
-                    onChangeText={(text) => setPwd(text)}
-                />
-            </View>
-            <Text style={styles.txtStl}>XÁC NHẬN MẬT KHẨU</Text>
-            <View style={styles.txtBox}>
-                <TextInput
-                    placeholder="********"
-                    secureTextEntry={true}
-                    style={{ fontSize: 14, color: '#8f8e8e', width: 310, height: 46, textAlign: 'center' }}
-                    value={pwdConfirm}
-                    onChangeText={checkPasswordMatch}
-                />
-            </View>
-            {!isPasswordMatch && (
-                // <View style={styles.passwordConfirm}>
-                <Text style={styles.errorText}>Mật khẩu không khớp!</Text>
-                // </View>
-            )}
-            <TouchableOpacity style={styles.signBox} onPress={handleSignUp}>
-                <Text style={{ color: '#fff', fontSize: 18, fontWeight: 'bold' }}>Đăng ký</Text>
-            </TouchableOpacity>
-            <TouchableOpacity style={{ marginTop: 20, alignItems: 'center' }} onPress={() => navigation.navigate('SignIn')}>
-                <Text style={{ color: '#8f8e8e' }}>Đã có tài khoản? Đăng nhập tại đây</Text>
-            </TouchableOpacity>
-        </View >
+
+        <Animated.View
+          entering={FadeInDown.delay(600).duration(1000).springify()}
+          style={[styles.txtBox, { position: "absolute", bottom: 180 }]}
+        >
+          <TextInput
+            secureTextEntry={true}
+            placeholder="Mật khẩu"
+            value={pwd}
+            onChangeText={(text) => setPwd(text)}
+            style={styles.input}
+          />
+        </Animated.View>
+        <Animated.View
+          style={styles.signBox}
+          entering={FadeInDown.delay(700).duration(1000).springify()}
+        >
+          <TouchableOpacity onPress={handleSignUp} >
+            <Text style={styles.signButtonText}>Đăng ký</Text>
+          </TouchableOpacity>
+        </Animated.View>
+        <Animated.View
+          style={styles.footer}
+          entering={FadeInDown.delay(800).duration(1000).springify()}
+        >
+          <Text style={{fontSize:18}}>Đã có tài khoản? Đăng nhập</Text>
+          <TouchableOpacity onPress={() => navigation.replace("SignIn")}>
+            <Text style={styles.linkText}>tại đây</Text>
+          </TouchableOpacity>
+        </Animated.View>
+      </ImageBackground>
+    </KeyboardAvoidingView>
     )
 }
 const styles = StyleSheet.create({
@@ -167,45 +190,69 @@ const styles = StyleSheet.create({
         color: 'red',
         marginBottom: 0
     },
-    container: {
-        backgroundColor: '#fff',
-        alignItems: 'center',
-        justifyContent: 'center',
-        flex: 1,
-    },
+   
     errorText: {
         color: 'red'
     },
-    signText: {
-        fontSize: 36,
-        color: '#6562df',
-        alignSelf: 'center',
-        fontWeight: 'bold',
-    },
-    txtBox: {
-        width: 310,
+    container: {
+        flex: 1,
+        alignItems: "center",
+        justifyContent: "center",
+        backgroundColor: "#fff",
+      },
+      signText: {
+        fontSize: 44,
+        color: "#fff",
+        fontWeight: "bold",
+      },
+      txtBox: {
+        width: 250,
         height: 46,
-        backgroundColor: '#ececec',
-        justifyContent: 'center',
-        alignItems: 'center',
+        backgroundColor: "#ececec",
         borderRadius: 5,
         marginTop: 10,
-    },
-    txtStl: {
-        alignSelf: 'center',
-        marginTop: 10,
-        color: '#8f8e8e',
-        fontSize: 15
-    },
-    signBox: {
-        width: 310,
-        height: 68,
-        backgroundColor: '#6562df',
-        justifyContent: 'center',
-        alignItems: 'center',
-        marginTop: 60,
-        borderRadius: 5,
-    },
+        justifyContent: "center",
+        alignItems: "center",
+      },
+      input: {
+        fontSize: 18,
+        color: "#8f8e8e",
+        width: 300,
+        height: 46,
+        textAlign: "center",
+      },
+      signBox: {
+        width: 300,
+        height: 65,
+        backgroundColor: color.background_dark,
+        borderRadius: 50,
+        justifyContent: "center",
+        alignItems: "center",
+        position: "absolute",
+        bottom: 97,
+      },
+      signButtonText: {
+        color: "#fff",
+        fontSize: 22,
+        fontWeight: "bold",
+      },
+      footer: {
+        position: "absolute",
+        bottom: 62,
+        flexDirection: "row",
+        columnGap: 5,
+      },
+      linkText: {
+        color: "white",
+        fontSize:18
+      },
+      logo: {
+        width: 200,
+        height: 200,
+        position: "absolute",
+        top: 60,
+        resizeMode: "contain",
+      }
 
 })
 

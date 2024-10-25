@@ -13,7 +13,6 @@ import BookingScreen from './screens/BookingScreen';
 import EditProfile from './screens/EditProfile'
 import SearchScreen from './screens/SearchScreen';
 import ChatScreen from './screens/ChatScreen';
-import AppNavigation from './navigation/AppNavigator'
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import AppNavigator from './navigation/AppNavigator';
 // import { RoleContext, ContextProvider } from './screens/ContextProvider';

@@ -12,9 +12,11 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { getRoomId } from '../utils/getId'
-import { ActivityIndicator, Text, View } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Text, View,StyleSheet } from 'react-native';
+import color from "../assets/color.json";
+import { Icon } from 'react-native-elements';
 
-export default function Chat({ route }) {
+export default function Chat({ route , navigation}) {
     const { hotelierId } = route.params;
     const user = auth.currentUser;
     const [tokenFireBase, setTokenFireBase] = useState(null);
@@ -62,6 +64,24 @@ export default function Chat({ route }) {
         return unsubscribe;
     }, []);
 
+    useLayoutEffect(() => {
+        navigation.setOptions({
+            headerLeft: () => (
+                <Icon
+                    name="arrow-back" 
+                    size={29}
+                    color="#fff" 
+                    style={{ marginLeft: 5 }} 
+                    onPress={() => navigation.goBack()} 
+                />
+            ),
+            headerStyle: {
+                backgroundColor: color.background_dark, 
+            },
+            headerTintColor: 'white',
+        });
+    }, [navigation]);
+
     const onSend = useCallback((messages = []) => {
         setMessages(previousMessages =>
             GiftedChat.append(previousMessages, messages)
@@ -86,24 +106,25 @@ export default function Chat({ route }) {
                     justifyContent: 'center',
                     alignItems: 'center',
                 }}>
-                    <ActivityIndicator size="large" color="#0000ff" />
+                    <ActivityIndicator size="large" color={color.tilte} />
                     <Text style={{
                         marginTop: 10,
                         fontSize: 16,
-                        color: '#000',
+                        color: color.tilte,
                     }}>Loading...</Text>
                 </View>
             );
         }
 
         return (
-            <GiftedChat
+            // <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
+                     <GiftedChat
                 messages={messages}
                 showAvatarForEveryMessage={true}
                 showUserAvatar={false}
                 onSend={messages => onSend(messages)}
                 messagesContainerStyle={{
-                    backgroundColor: '#fff'
+                    backgroundColor: color.background_dark
                 }}
                 textInputStyle={{
                     backgroundColor: '#fff',
@@ -113,6 +134,8 @@ export default function Chat({ route }) {
                     _id: user?.uid,
                 }}
             />
+            // </KeyboardAvoidingView>
+           
         )
     }
 

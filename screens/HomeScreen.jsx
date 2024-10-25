@@ -1,18 +1,13 @@
 import React from 'react';
-import { NavigationContainer } from '@react-navigation/native';
 import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
-import { createMaterialTopTabNavigator } from '@react-navigation/material-top-tabs';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { View, Text, StyleSheet, TurboModuleRegistry } from 'react-native';
 import MainScreen from './MainScreen';
-
+import color from "../assets/color.json";
 
 import CartScreen from "./CartScreen";
 import UserProfile from "./UserProfile";
 
-// Bottom Tab Navigator
-const Tab = createBottomTabNavigator();
-
+  const Tab = createBottomTabNavigator();
 export default function HomeScreen() {
   return (
       <Tab.Navigator
@@ -32,12 +27,13 @@ export default function HomeScreen() {
             }
             return <Icon name={iconName} size={size} color={color} />;
           },
-          tabBarActiveTintColor: '#5652f2',
-          tabBarInactiveTintColor: 'black',
-          tabBarStyle: { backgroundColor: '#fff', paddingBottom: 5, paddingBottom: 10, height: 60,  },
+          tabBarActiveTintColor: color.tilte,
+          tabBarInactiveTintColor: 'gray',
+          tabBarStyle: { backgroundColor: color.background_dark,  paddingBottom: 10, height: 70 },
           tabBarLabelStyle: { fontSize: 11,           
             fontWeight: 'bold',
-            textAlign: 'center', }
+            textAlign: 'center',
+            paddingBottom:10}
         })}
       >
         <Tab.Screen name="Trang chủ" component={MainScreen} options={{ headerShown: false }} />

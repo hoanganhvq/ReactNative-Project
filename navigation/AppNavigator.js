@@ -5,7 +5,7 @@
     import { createNativeStackNavigator } from '@react-navigation/native-stack';
     import { onAuthStateChanged } from 'firebase/auth';
     import { auth } from '../config/firebase';
-
+    import { Icon } from 'react-native-elements';
     import Booking from "../screens/BookingScreen"
     import SignIn from '../screens/SignIn';
     import SignUp from '../screens/SignUp';
@@ -19,8 +19,7 @@
     import Chat from '../screens/ChatScreen';
     import Searching from '../screens/SearchScreen';
     import MyTrip from '../screens/MyTrip';
-    import AsyncStorage from '@react-native-async-storage/async-storage';
-
+    import color from "../assets/color.json";
     const Stack = createNativeStackNavigator();
     const AuthenticatedUserContext = createContext({ AsyncStorage: null });
 
@@ -37,7 +36,13 @@
         <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
-            <Stack.Screen name="ChatRoom" component={Chat} />
+            <Stack.Screen name="Chat" component={Chat} options={{headerShown: true, headerStyle: {backgroundColor: color.background_dark,},
+                    headerTitleStyle: {
+                        color: "white",
+                        fontSize:25 
+                    },
+                }}
+            />
             <Stack.Screen name="Image" component={ImageScreen} />
             <Stack.Screen name="EditProfile" component={EditProfile} />
             <Stack.Screen name="Hotel" component={HotelScreen} />
@@ -52,7 +57,7 @@
     );
 
     const AuthStackNavigator = () => (
-        <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="SignUp" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="Main" component={MainScreen} />
