@@ -20,15 +20,28 @@ function EditProfile({ navigation }) {
 
     const fetchUser = async () => {
         setIsLoading(true);
-        try {
-
-            const token = await AsyncStorage.getItem('userToken');
-            const rs = await getMe(token);
-            console.log("user data" , rs.data);
-            setUser(rs.data);
-            
+        const currentUser = await auth.currentUser;
+        try{
+            if(!currentUser){
+                console.log("No user is currently");
+                return;
+            }
+    
+            const userRef = doc(db,"users", currentUser.uid);
+            const userDoc = await getDoc(userRef);
+    
+            if(userDoc.exists()){
+                const data = userDoc.data();
+                setUser(data);
+                console.log("userA", user);
+                setImage(data.profileUrl);
+                console.log("Fetch ok");
+            } else{
+                setImage("default.jpg");
+            }
+    
         } catch (error) {
-            console.error("Error fetching user:", error);
+            console.error("Error fetching profile picture:", error);
         } finally {
             setIsLoading(false);
         }
@@ -42,7 +55,7 @@ function EditProfile({ navigation }) {
                     size={29}
                     color="#fff" 
                     style={{ marginLeft: 5 }} 
-                    onPress={() => navigation.goBack()} 
+                    onPress={() => navigation.navigate("UserProfile")} 
                 />
             ),
             headerStyle: {
@@ -52,10 +65,9 @@ function EditProfile({ navigation }) {
         });
     }, [navigation]);
     
+
     useEffect(() => {
         fetchUser();
-        fetchProfilePicture();
-
     }, [])
 
 
@@ -96,8 +108,6 @@ const uploadProfilePicture = async () => {
             }
             
             console.log("Current user:", currentUser);
-      
-
 
         const storageRef = ref(storage, `profile_pictures/${currentUser.uid}.jpg`);
 
@@ -111,38 +121,13 @@ const uploadProfilePicture = async () => {
         await updateDoc(doc(db, "users", currentUser.uid), {
             profileUrl: downloadURL,
         });
-        fetchProfilePicture();
+        fetchUser();
         console.log("Profile picture uploaded successfully!");
 
     } catch (error) {
         console.error("Error uploading profile picture:", error);
     }
 };
-
-const fetchProfilePicture = async () =>{
-    try{
-        if(!currentUser){
-            console.log("No user is currently");
-            return;
-        }
-
-        const userRef = doc(db,"users", currentUser.uid);
-        const userDoc = await getDoc(userRef);
-
-        if(userDoc.exists()){
-            const data = userDoc.data();
-            setImage(data.profileUrl);
-            console.log("Fetch ok");
-        } else{
-            setImage("default.jpg");
-        }
-
-    } catch (error) {
-        console.error("Error fetching profile picture:", error);
-    } finally {
-        setIsLoading(false);
-    }
-}
 
     const handleSaveInf = async () => {
         console.log('save');
@@ -153,7 +138,7 @@ const fetchProfilePicture = async () =>{
             return <ActivityIndicator size="large" color={color.title} />;
         }
 
-        if (!user || !user.data) {
+        if (!user) {
             return <Text>No user data available</Text>;
         }
         let birth = user.data?.yearOfBirth;
@@ -180,11 +165,11 @@ const fetchProfilePicture = async () =>{
                 </View>
                 <Text style={styles.txtShow}>Name</Text>
                 <View style={styles.txtBox}>
-                    <TextInput placeholder={user.data.name} style={{ fontSize: 20, width: 300 }}></TextInput>
+                    <TextInput placeholder={user.name} style={{ fontSize: 20, width: 300 }}></TextInput>
                 </View>
                 <Text style={styles.txtShow}>Email Adress</Text>
                 <View style={styles.txtBox}>
-                    <TextInput placeholder={user.data.email} style={{ fontSize: 20, width: 300 }}></TextInput>
+                    <TextInput placeholder={user.email} style={{ fontSize: 20, width: 300 }}></TextInput>
                 </View>
                 <Text style={styles.txtShow}>Password</Text>
                 <View style={styles.txtBox}>

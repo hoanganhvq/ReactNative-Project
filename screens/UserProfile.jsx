@@ -1,29 +1,45 @@
 import React, { useRef, useState, useEffect } from 'react';
 import { View, StyleSheet, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
-
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db, storage , auth} from '../config/firebase';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import { getMe } from "../handleAPI/viewAPI";
 import color from "../assets/color.json";
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { useFocusEffect } from '@react-navigation/native';
 
 function User({navigation}) {
-    const [user, setUser] = useState(null);1
+    const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [image, setImage] = useState(null);
+
     const fetchUser = async () => {
         setIsLoading(true);
-        try {
-            const token = await AsyncStorage.getItem('userToken');
-            const rs = await getMe(token);
-            setUser(rs.data);
-            console.log(rs.data);
+        const currentUser = await auth.currentUser;
+        try{
+            if(!currentUser){
+                console.log("No user is currently");
+                return;
+            }
+    
+            const userRef = doc(db,"users", currentUser.uid);
+            const userDoc = await getDoc(userRef);
+    
+            if(userDoc.exists()){
+                const data = userDoc.data();
+                setUser(data);
+                console.log("userA", user);
+                setImage(data.profileUrl);
+                console.log("Fetch ok");
+            } else{
+                setImage("default.jpg");
+            }
         } catch (error) {
-            console.error("Error fetching user:", error);
+            console.error("Error fetching profile picture:", error);
         } finally {
             setIsLoading(false);
-
         }
-        
     }
 
     const clearAsync = async () => {
@@ -42,17 +58,17 @@ function User({navigation}) {
         clearAsync();
         navigation.navigate('Main');
     }
-
-    useEffect(() => {
-        fetchUser();
-    }, [])
-
+    useFocusEffect(
+        React.useCallback(() => {
+                fetchUser();
+        }, [])
+    );
          
     const Content =() =>{
         if(isLoading){
             return <ActivityIndicator size="large" color={color.tilte} />;
         } 
-        if(!user || !user.data){
+        if(!user){
             return <Text>No user data available</Text>
         }
         return (
@@ -61,10 +77,10 @@ function User({navigation}) {
 
              
             <View style={styles.avatarUser}>
-                 <Image source={{ uri: `https://github.com/JINO25/IMG/raw/master/user/${user.data.photo}` }} style={{resizeMode:'cover',width:"100%",height:"100%"}}></Image>
+                 <Image source={{ uri: image}} style={{resizeMode:'cover',width:"100%",height:"100%"}}></Image>
             </View>
-            <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10, color:"white"}}>{user.data.name}</Text>
-            <Text style={{ color: 'white', fontSize: 15 , marginTop:10}}>{user.data.email}</Text>
+            <Text style={{ fontSize: 30, fontWeight: 'bold', marginTop: 10, color:"white"}}>{user.name}</Text>
+            <Text style={{ color: 'white', fontSize: 15 , marginTop:10}}>{user.email}</Text>
            
 
             <View style={{marginTop: 25,height: 1,width:330,backgroundColor: '#555'}}></View>

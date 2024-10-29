@@ -23,7 +23,6 @@ export default function MainScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [standoutDestination, setStandoutDestination] = useState(null);
   const scrollX = React.useRef(new Animated.Value(0)).current;
-  const [darkMode,setDarkMode] = useState(true)
  
   const getData = async () => {
     try {
@@ -57,16 +56,13 @@ export default function MainScreen({ navigation }) {
   };
 
   React.useEffect(() => {
-
     navigation.addListener('focus', () => {
       fetchToken();
     })
     
   }, []);
   
-  const toggleTheme = () => {
-    setDarkMode(!darkMode);
-};
+  
 
 
 
