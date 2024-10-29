@@ -39,8 +39,7 @@ export default function MainScreen({ navigation }) {
     const res = await getData();
     const data = res.data.data.hotel
     const dataStandoutDestination = res.data.data.standoutDestination;
-    console.log(data);   
-    setData(data)
+     setData(data)
     setStandoutDestination(dataStandoutDestination);
   };
    
@@ -68,8 +67,6 @@ export default function MainScreen({ navigation }) {
   const toggleTheme = () => {
     setDarkMode(!darkMode);
 };
-
-
 
 
 

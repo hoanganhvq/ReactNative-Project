@@ -164,14 +164,28 @@ function SignUp({ navigation }) {
             style={styles.input}
           />
         </Animated.View>
+        
+       
         <Animated.View
-          style={styles.signBox}
-          entering={FadeInDown.delay(700).duration(1000).springify()}
-        >
-          <TouchableOpacity onPress={handleSignUp} >
-            <Text style={styles.signButtonText}>Đăng ký</Text>
-          </TouchableOpacity>
-        </Animated.View>
+            style={styles.signBox}
+            entering={FadeInDown.delay(200).duration(1000).springify()}
+          >
+            <TouchableOpacity
+              style={{
+                width: 310,
+                height: 68,
+                justifyContent: "center",
+                alignItems: "center",
+
+              }}
+              onPress={handleSignUp}
+            >
+              <Text style={{ color: "#fff", fontSize: 22, fontWeight: "bold"}}>
+                Đăng ký
+              </Text>
+            </TouchableOpacity>
+          </Animated.View>
+
         <Animated.View
           style={styles.footer}
           entering={FadeInDown.delay(800).duration(1000).springify()}

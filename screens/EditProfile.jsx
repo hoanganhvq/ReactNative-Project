@@ -3,18 +3,27 @@ import Feather from '@expo/vector-icons/Feather';
 import color from "../assets/color.json";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState , useLayoutEffect} from "react";
+import * as ImagePicker from 'expo-image-picker';
+import { getStorage, ref, uploadBytesResumable, getDownloadURL , uploadBytes} from 'firebase/storage';
+import { doc, updateDoc } from 'firebase/firestore';
+import { db, storage , auth} from '../config/firebase';
+
 import { getMe } from "../handleAPI/viewAPI";
 import { Icon } from 'react-native-elements';
+
 
 function EditProfile({ navigation }) {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
+    const [image, setImage] = useState(null);
+
     const fetchUser = async () => {
         setIsLoading(true);
         try {
 
             const token = await AsyncStorage.getItem('userToken');
             const rs = await getMe(token);
+            console.log("user data" , rs.data);
             setUser(rs.data);
             
         } catch (error) {
@@ -47,7 +56,68 @@ function EditProfile({ navigation }) {
 
     }, [])
 
+
+ 
+    const pickImage = async () => {
+        let result = await ImagePicker.launchImageLibraryAsync({
+            mediaTypes: ImagePicker.MediaTypeOptions.Images,
+            allowsEditing: true,
+            quality: 1,
+        });
+    
+        if (result.canceled) {
+            console.log("User canceled image selection.");
+            return null; // Exit if user cancels selection
+        } else if (result.assets && result.assets.length > 0) {
+            console.log("Image selected successfully.");
+            return result.assets[0]; // Return the selected image asset
+        } else {
+            console.log("Image selection failed.");
+            return null; // Exit if there's no valid image asset
+        }
+    };
+    
    
+const uploadProfilePicture = async () => {
+    try {
+        const asset = await pickImage();
+        if (!asset || !asset.uri) {
+            console.error("No valid image selected for upload.");
+            return; // Exit if no valid image was picked
+        }
+
+        const { uri } = asset;
+            const currentUser = auth.currentUser;
+        
+            if (!currentUser) {
+                console.error("No user is currently logged in.");
+                return;
+            }
+            
+            console.log("Current user:", currentUser);
+      
+
+
+        const storageRef = ref(storage, `profile_pictures/${currentUser.uid}.jpg`);
+
+        // Fetch the image and convert it to a Blob
+        const response = await fetch(uri);
+        const blob = await response.blob();
+
+        await uploadBytes(storageRef, blob);
+
+        const downloadURL = await getDownloadURL(storageRef);
+
+        await updateDoc(doc(db, "users", currentUser.uid), {
+            profileUrl: downloadURL,
+        });
+
+        console.log("Profile picture uploaded successfully!");
+
+    } catch (error) {
+        console.error("Error uploading profile picture:", error);
+    }
+};
 
     const handleSaveInf = async () => {
         console.log('save');
@@ -67,9 +137,18 @@ function EditProfile({ navigation }) {
             <>
                 <View style={styles.avatarUser}>
                     <ImageBackground source={{
-                        uri: `https://github.com/JINO25/IMG/raw/master/user/${user.data.photo}`
+                        // uri: `https://github.com/JINO25/IMG/raw/master/user/${user.data.photo}`
+                        uri:image
                     }} imageStyle={{ borderRadius: 50 }} style={styles.avatarImg}>
-                        <TouchableOpacity style={{ width: 30, height: 30, position: "absolute", bottom: 0, right: 0, backgroundColor: "blue", borderRadius: 100, justifyContent: "center", alignItems: "center" }}>
+                        <TouchableOpacity style={{ width: 30, 
+                            height: 30, 
+                            position: "absolute",
+                            bottom: 0, 
+                            right: 0, 
+                            backgroundColor: "blue", 
+                            borderRadius: 100, 
+                            justifyContent: "center", 
+                            alignItems: "center" }} onPress={uploadProfilePicture}>
                             <Feather name="camera" size={18} color="white" />
                         </TouchableOpacity>
                     </ImageBackground>
