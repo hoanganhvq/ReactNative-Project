@@ -5,6 +5,8 @@ import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { MasonryFlashList } from '@shopify/flash-list';
 import { home } from '../handleAPI/viewAPI.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { db, storage , auth} from '../config/firebase';
 import color from '../assets/color.json';
 import { Extrapolation, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
 import LoadingScreen from './LoadingScreen.jsx';
@@ -23,6 +25,7 @@ export default function MainScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [standoutDestination, setStandoutDestination] = useState(null);
   const scrollX = React.useRef(new Animated.Value(0)).current;
+  const [darkMode,setDarkMode] = useState(true)
  
   const getData = async () => {
     try {
@@ -45,14 +48,33 @@ export default function MainScreen({ navigation }) {
 
   const fetchToken = async () => {
     const storedToken = await AsyncStorage.getItem('userToken');
-    const storedPhoto = await AsyncStorage.getItem('userPhoto');
-    const storedName = await AsyncStorage.getItem('userName');
-    const storedUser = await AsyncStorage.getItem('user');
+    if (!storedToken){
+      return;
+    } else{
+       try{
+        const currentUser = auth.currentUser;
+            if(!currentUser){
+                console.log("No user is currently");
+                return;
+            }
+            console.log("Data A", currentUser.uid);
 
-    setToken(storedToken);
-    setPhoto(storedPhoto);
-    setName(storedName);
-    setUser(storedUser);
+            const userRef = doc(db,"users", currentUser.uid);
+            const userDoc = await getDoc(userRef);
+    
+            if(userDoc.exists()){
+                const data = userDoc.data();
+                setPhoto(data.profileUrl);
+                setName(data.name);
+            }
+        } catch (error) {
+            console.error("Error fetching profile picture:", error);
+        } finally {
+          setToken(storedToken);
+            setIsLoading(false);
+        }
+    }
+    
   };
 
   React.useEffect(() => {
@@ -62,8 +84,6 @@ export default function MainScreen({ navigation }) {
     
   }, []);
   
-  
-
 
 
   useLayoutEffect(() => {
@@ -176,7 +196,7 @@ const renderHorizontalItem = ({ item, index }) => {
           <TouchableOpacity onPress={() => navigation.navigate('UserProfile')} style={{ marginTop: 20 }}>
             <View style={styles.row}>
               <Image
-                source={{ uri: `https://github.com/JINO25/IMG/raw/master/user/${photo}` }}
+                source={{ uri: photo }}
                 resizeMode='cover'
                 style={styles.avatar} />
               <Text style={styles.text}>{name}</Text>

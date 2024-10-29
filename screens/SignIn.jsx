@@ -13,6 +13,7 @@ import color from "../assets/color.json";
 const bg = require("../assets/background.png");
 const height = Dimensions.get("screen").height;
 const logo = require("../assets/LogoDark.jpg");
+
 function SignIn({ navigation }) {
 
     const [email, setEmail] = useState(null);
