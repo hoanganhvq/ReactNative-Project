@@ -31,7 +31,7 @@ function SignUp({ navigation }) {
     const [phone, setPhone] = useState(null);
     const [pwd, setPwd] = useState(null);
     const [ms, setMS] = useState('');
-
+    const defaultProfilePicture = 'https://firebasestorage.googleapis.com/v0/b/chatapptest-f62b3.appspot.com/o/profile_pictures%2Fdefault.jpg?alt=media&token=621685c1-45ef-4b24-9146-39095f018e33';
 
     const [isValid, setIsValid] = useState(true);
     const [isExisted, setIsExisted] = useState(true);
@@ -75,7 +75,7 @@ function SignUp({ navigation }) {
 
             await setDoc(doc(db, 'users', response.user.uid), {
                 email,
-                profileUrl: 'default.jpg',
+                profileUrl: defaultProfilePicture,
                 userId: response.user.uid,
                 name: name,
             });

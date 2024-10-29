@@ -5,7 +5,7 @@ import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState , useLayoutEffect} from "react";
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL , uploadBytes} from 'firebase/storage';
-import { doc, updateDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db, storage , auth} from '../config/firebase';
 
 import { getMe } from "../handleAPI/viewAPI";
@@ -16,6 +16,7 @@ function EditProfile({ navigation }) {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [image, setImage] = useState(null);
+    const currentUser = auth.currentUser;
 
     const fetchUser = async () => {
         setIsLoading(true);
@@ -53,6 +54,7 @@ function EditProfile({ navigation }) {
     
     useEffect(() => {
         fetchUser();
+        fetchProfilePicture();
 
     }, [])
 
@@ -87,7 +89,6 @@ const uploadProfilePicture = async () => {
         }
 
         const { uri } = asset;
-            const currentUser = auth.currentUser;
         
             if (!currentUser) {
                 console.error("No user is currently logged in.");
@@ -100,7 +101,6 @@ const uploadProfilePicture = async () => {
 
         const storageRef = ref(storage, `profile_pictures/${currentUser.uid}.jpg`);
 
-        // Fetch the image and convert it to a Blob
         const response = await fetch(uri);
         const blob = await response.blob();
 
@@ -111,13 +111,38 @@ const uploadProfilePicture = async () => {
         await updateDoc(doc(db, "users", currentUser.uid), {
             profileUrl: downloadURL,
         });
-
+        fetchProfilePicture();
         console.log("Profile picture uploaded successfully!");
 
     } catch (error) {
         console.error("Error uploading profile picture:", error);
     }
 };
+
+const fetchProfilePicture = async () =>{
+    try{
+        if(!currentUser){
+            console.log("No user is currently");
+            return;
+        }
+
+        const userRef = doc(db,"users", currentUser.uid);
+        const userDoc = await getDoc(userRef);
+
+        if(userDoc.exists()){
+            const data = userDoc.data();
+            setImage(data.profileUrl);
+            console.log("Fetch ok");
+        } else{
+            setImage("default.jpg");
+        }
+
+    } catch (error) {
+        console.error("Error fetching profile picture:", error);
+    } finally {
+        setIsLoading(false);
+    }
+}
 
     const handleSaveInf = async () => {
         console.log('save');
