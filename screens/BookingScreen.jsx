@@ -283,6 +283,7 @@ const BookingScreen = ({ navigation, route }) => {
           {/* Check-In Date */}
           <View style={styles.dateBox}>
             <Text style={styles.label}>Ngày nhận phòng</Text>
+
             <TouchableOpacity
               style={styles.datePicker}
               onPress={() => showDatePickerMode("date", "checkIn")}
@@ -290,6 +291,7 @@ const BookingScreen = ({ navigation, route }) => {
               <MaterialCommunityIcons name="calendar" size={22} color={color.tilte} />
               <Text style={styles.dateText}>{formattedCheckIn || "Chọn ngày"}</Text>
             </TouchableOpacity>
+            
             {showDatePicker && currentPicker === "checkIn" && (
               <DateTimePicker
                 value={checkInDate}

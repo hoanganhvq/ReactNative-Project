@@ -1,8 +1,8 @@
-import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator, Platform , Button} from "react-native";
 import Feather from '@expo/vector-icons/Feather';
 import color from "../assets/color.json";
-import AsyncStorage from "@react-native-async-storage/async-storage";
 import React, { useEffect, useState , useLayoutEffect} from "react";
+import DateTimePicker from '@react-native-community/datetimepicker';
 import * as ImagePicker from 'expo-image-picker';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL , uploadBytes} from 'firebase/storage';
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
@@ -16,6 +16,12 @@ function EditProfile({ navigation }) {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [image, setImage] = useState(null);
+    const currentDate = new Date();
+    const formattedCurrentDate = currentDate.toLocaleDateString();
+    const [name, setName] = useState('');
+    const [birth, setBirth] = useState(currentDate);
+    const [showPicker, setShowPicker] = useState(false);
+
     const currentUser = auth.currentUser;
 
     const fetchUser = async () => {
@@ -35,6 +41,7 @@ function EditProfile({ navigation }) {
                 setUser(data);
                 console.log("userA", user);
                 setImage(data.profileUrl);
+                setName(data.name)
                 console.log("Fetch ok");
             } else{
                 setImage("default.jpg");
@@ -69,6 +76,17 @@ function EditProfile({ navigation }) {
     useEffect(() => {
         fetchUser();
     }, [])
+
+    const onChange = (event, selectedDate) => {
+        const chosenDate = selectedDate || date;
+        setShowPicker(true);
+        setBirth(chosenDate);
+        setShowPicker(false);
+      };
+    
+      const showDatePicker = () => {
+        setShowPicker(true);
+      };
 
 
  
@@ -130,8 +148,21 @@ const uploadProfilePicture = async () => {
 };
 
     const handleSaveInf = async () => {
-        console.log('save');
-    }
+        if (!currentUser) {
+            console.error("No user is currently logged in.");
+            return;
+        }
+
+        try {
+            const userRef = doc(db, "users", currentUser.uid);
+            await updateDoc(userRef, {
+                name: name, // Ensure 'name' is the state variable holding the new name
+            });
+            console.log("User name updated successfully!");
+        } catch (error) {
+            console.error("Error updating user name:", error);
+        }
+    };
 
     const Content = () => {
         if (isLoading) {
@@ -141,13 +172,11 @@ const uploadProfilePicture = async () => {
         if (!user) {
             return <Text>No user data available</Text>;
         }
-        let birth = user.data?.yearOfBirth;
-        if (!birth) birth = '';
+       
         return (
             <>
                 <View style={styles.avatarUser}>
                     <ImageBackground source={{
-                        // uri: `https://github.com/JINO25/IMG/raw/master/user/${user.data.photo}`
                         uri:image
                     }} imageStyle={{ borderRadius: 50 }} style={styles.avatarImg}>
                         <TouchableOpacity style={{ width: 30, 
@@ -165,7 +194,8 @@ const uploadProfilePicture = async () => {
                 </View>
                 <Text style={styles.txtShow}>Name</Text>
                 <View style={styles.txtBox}>
-                    <TextInput placeholder={user.name} style={{ fontSize: 20, width: 300 }}></TextInput>
+                    <TextInput placeholder={user.name} style={{ fontSize: 20, width: 300 }} 
+                    onChangeText={(text) => setName(text)}/>
                 </View>
                 <Text style={styles.txtShow}>Email Adress</Text>
                 <View style={styles.txtBox}>
@@ -175,9 +205,25 @@ const uploadProfilePicture = async () => {
                 <View style={styles.txtBox}>
                     <TextInput secureTextEntry={true} style={{ fontSize: 20, width: 300 }}></TextInput>
                 </View>
-                <Text style={styles.txtShow}>Year Birth</Text>
+
+                <Text style={styles.txtShow}>Date Of Birth</Text>
                 <View style={styles.txtBox}>
-                    <TextInput placeholder={birth.toString()} style={{ fontSize: 20, width: 300 }}></TextInput>
+                    <TextInput
+                      placeholder={formattedCurrentDate} // Placeholder ban đầu là ngày hiện tại
+                      value={birth.toLocaleDateString()}  // Hiển thị ngày đã chọn
+                      editable={false}  // Không cho phép người dùng chỉnh sửa trực tiếp
+                      onPressIn={showDatePicker} 
+                     style={{ fontSize: 20, width: 300 }}></TextInput>
+
+            <TouchableOpacity onPress={showDatePicker} />
+                {showPicker && (
+                    <DateTimePicker
+                    value={birth}
+                    mode="date" 
+                    display="default"
+                    onChange={onChange}
+                />
+                )}  
                 </View>
 
                 <View style={styles.saveBox}>

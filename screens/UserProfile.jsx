@@ -1,5 +1,5 @@
 import React, { useRef, useState, useEffect } from 'react';
-import { View, StyleSheet, Text, Image, TouchableOpacity, ActivityIndicator } from "react-native";
+import { View, StyleSheet, Text, Image, TouchableOpacity, ActivityIndicator, Modal} from "react-native";
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db, storage , auth} from '../config/firebase';
 import Ionicons from '@expo/vector-icons/Ionicons';
@@ -13,6 +13,7 @@ function User({navigation}) {
     const [user, setUser] = useState(null);
     const [isLoading, setIsLoading] = useState(true);
     const [image, setImage] = useState(null);
+    const [modalVisible, setModalVisible] = useState(false);
 
     const fetchUser = async () => {
         setIsLoading(true);
@@ -63,6 +64,13 @@ function User({navigation}) {
                 fetchUser();
         }, [])
     );
+
+
+    const handleConfirmLogout = () => {
+      setModalVisible(false);
+      handleLogOut(); // Gọi hàm đăng xuất khi người dùng xác nhận
+    };
+    
          
     const Content =() =>{
         if(isLoading){
@@ -113,7 +121,7 @@ function User({navigation}) {
                 </Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.funItem} onPress={handleLogOut}>
+            <TouchableOpacity style={styles.funItem} onPress={() => setModalVisible(true)}>
             <View style={styles.iconBox}>
             <Ionicons name="log-out-outline" size={28} color="red" />
             </View>
@@ -121,6 +129,33 @@ function User({navigation}) {
                     Log out
                 </Text>
             </TouchableOpacity>
+
+         <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContent}>
+            <Text style={styles.modalText}>Are you sure you want to log out?</Text>
+            <View style={styles.buttonContainer}>
+              <TouchableOpacity
+                style={[styles.button, styles.cancelButton]}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text style={styles.buttonText}>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={[styles.button, styles.confirmButton]}
+                onPress={handleConfirmLogout}
+              >
+                <Text style={styles.buttonText}>Log Out</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
           
         </SafeAreaView>
     )
@@ -175,7 +210,50 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         borderColor: '#ebeced',
         borderRadius:5,
-    }
+    },
+    modalOverlay: {
+        flex: 1,
+        justifyContent: 'center',
+        alignItems: 'center',
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    modalContent: {
+        width: 350,
+        padding: 20,
+        backgroundColor:color.background_dark,
+        borderRadius: 10,
+        alignItems: 'center',
+    },
+    modalText: {
+        fontSize: 24,
+        textAlign: 'center',
+        marginBottom: 20,
+        color:color.tilte,
+        fontWeight:"bold"
+    },
+    buttonContainer: {
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        width: '100%',
+    },
+    button: {
+        flex: 1,
+        padding: 10,
+        borderRadius: 20,
+        alignItems: 'center',
+        marginHorizontal: 5,
+    },
+    cancelButton: {
+        backgroundColor: color.item_background_dark,
+    },
+    confirmButton: {
+        backgroundColor: '#f00',
+    },
+    buttonText: {
+        color: "white",
+        fontSize: 18,
+        fontWeight:"bold"
+    },
 }
 );
 export default User;
