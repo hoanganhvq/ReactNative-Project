@@ -1,15 +1,60 @@
 import React, { useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, ScrollView } from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, ScrollView , Modal} from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
+import { Dropdown } from 'react-native-element-dropdown';
+import { RadioButton } from 'react-native-paper';
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import color from '../assets/color.json';
+import payment from '../assets/payment/payment.json';
 
 const BookingDetails = ({ navigation, route }) => {
-    const { hotel, checkInDate, checkOutDate, roomCount, roomName } = route.params;
+    const { hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice} = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
+    const discount = 0;
     const [selectedPayment, setSelectedPayment] = useState('hotel');
+    const [value, setValue] = useState(null);
+    const [selected, setSelected] = useState("Credit Card");
+    const [successfullyModal, setSuccessfullyModal] = useState(false);
+
+
+    const DigitalPayment = [
+        { 
+            label: ' Momo', 
+            value: '1',  
+            icon: () => <Image source={{ uri: payment.Momo }} style={{ width: 40, height: 40 }} /> 
+        },
+        { 
+            label: ' VNPay', 
+            value: '2',  
+            icon: () => <Image source ={{uri: payment.VNPay}} style={{ width: 40, height: 40 }}/>
+        },
+        { 
+            label: ' Paypal', 
+            value: '3', 
+            icon: () => <Image source={{uri: payment.Paypal}} style ={{height:40, width:40}}/> 
+        },
+        { 
+            label: ' ZaloPay', 
+            value: '4', 
+            icon: () => <Image source={{uri: payment.ZaloPay }} style ={{height:40, width:40}}/> 
+        },
+    ]
+
+    const selectedItem = DigitalPayment.find(item => item.value === value);
+
+
+    const renderItem = item => {
+        return (
+          <View style={styles.item}>
+            {item.icon()}
+            <Text style={styles.textItem}>{item.label}</Text>
+    
+          </View>
+        );
+      };
+
     return (
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
@@ -59,11 +104,11 @@ const BookingDetails = ({ navigation, route }) => {
                     </View>
                     <View style={styles.totalSection}>
                         <Text style={styles.totalLabel}>Giá phòng</Text>
-                        <Text style={styles.totalAmount}>1.800.000 đ</Text>
+                        <Text style={styles.totalAmount}>{roomPrice * roomCount}</Text>
                     </View>
                     <View style={styles.sale}>
                         <Text style={styles.saleLable}>Giảm giá</Text>
-                        <Text style={styles.saleAmount}>0</Text>
+                        <Text style={styles.saleAmount}>{discount}</Text>
                     </View>
                     <View style={
                         {backgroundColor: '#888',
@@ -71,17 +116,15 @@ const BookingDetails = ({ navigation, route }) => {
                         marginVertical: 15,}}/>
                     <View style={styles.finalSection}>
                         <Text style={styles.finalLabel}>Giá tiền</Text>
-                        <Text style={styles.finalAmount}>1.404.000 đ</Text>
+                        <Text style={styles.finalAmount}>{(roomPrice * roomCount) - discount}</Text>
                     </View>
                 </View>
 
                 <View style={styles.paymentMethodSection}>
                     <Text style={styles.sectionTitle}>Phương thức thanh toán</Text>
                     <View style = {{flexDirection:"row", padding:5}}>  
-                        <AntDesign name="check" size={20} color={color.tilte} />
-                        <Text style={styles.secureText}>
-                            Mọi dữ liệu thanh toán được mã hóa và bảo mật
-                        </Text>
+                         <AntDesign style={styles.icon} color={color.tilte} name="Safety" size={16} />
+                        <Text style={styles.secureText}> Mọi dữ liệu thanh toán được mã hóa và bảo mật</Text>
                     </View>
 
                     <View style={styles.paymentOptions}>
@@ -98,12 +141,19 @@ const BookingDetails = ({ navigation, route }) => {
                             <Text style={[styles.optionButtonText, selectedPayment === 'immediate' && styles.optionButtonTextActive]}>Thanh toán ngay</Text>
                         </TouchableOpacity>
                     </View>
-
                     </View>
-                    <View style={styles.paymentProcess}>
-                        <View style={styles.creditCardSection}>
-                            <View>
 
+                    {selectedPayment=='immediate' &&  <View style={styles.paymentProcess}>
+                        <View style={styles.creditCardSection}>
+                            <View style={{flexDirection:'row'}}>
+                                <RadioButton.IOS
+                                    value="Credit Card"
+                                    status={selected === 'Credit Card'?
+                                        'checked':'unchecked'
+                                    }
+                                    onPress={()=>setSelected("Credit Card")}
+                                    color={color.tilte}
+                                />
                                 <View>
                                     <Text style={styles.cardLabel}>Thẻ tín dụng/thẻ ghi nợ</Text>
                                     <View style={styles.cardIcons}>
@@ -119,8 +169,9 @@ const BookingDetails = ({ navigation, route }) => {
                                 <TextInput
                                     style={styles.cardInput}
                                     keyboardType="numeric"
-                                    placeholderTextColor='white'
-                                />
+                                    placeholderTextColor='#999' 
+                                    placeholder='0000-0000-0000-0000'
+                                    />
                         </View>
 
                         
@@ -130,27 +181,83 @@ const BookingDetails = ({ navigation, route }) => {
                         marginVertical: 15,}}/>
 
                         <View style={styles.digitalPaymentSection}>
-                            <Text style={styles.sectionSubtitle}>Thanh toán kỹ thuật số</Text>
-
-                            <View style={styles.digitalOptions}>
-                                <CheckBox checked={false} containerStyle={styles.checkBox} />
-                                <Image source={{ uri: 'https://example.com/momo-icon.png' }} style={styles.digitalIcon} />
-                                <Text style={styles.dropdownText}>Momo</Text>
-                                <Icon name="chevron-down" type="font-awesome" style={styles.dropdownIcon} />
+                            <View style={{flexDirection:'row'}}>
+                                    <RadioButton.IOS
+                                        value="Digital"
+                                        status={selected === 'Digital'?
+                                            'checked':'unchecked'
+                                        }
+                                        onPress={()=>setSelected("Digital")}
+                                        color={color.tilte}
+                                    />
+                                <View>
+                                    <Text style={styles.sectionSubtitle}>Thanh toán kỹ thuật số</Text>
+                                    <View style={styles.cardIcons}>
+                                        <Image style={styles.cardIcon} source={{uri: payment.Momo}}/>
+                                        <Image style={styles.cardIcon} source={{uri: payment.VNPay}}/>
+                                        <Image style={styles.cardIcon} source={{uri: payment.Paypal}}/>
+                                        <Image style={styles.cardIcon} source={{uri: payment.ZaloPay}}/>
+                                    </View>
+                                </View>
                             </View>
-                    </View>
-              
+                           
+                            
+                            <Dropdown
+                            style={styles.dropdown}
+                            placeholderStyle={styles.placeholderStyle}
+                            selectedTextStyle={styles.selectedTextStyle}s
+                            iconStyle={styles.iconStyle}
+                            data={DigitalPayment}
+                            maxHeight={300}
+                            labelField="label"
+                            valueField="value"
+                            placeholder={selectedItem ? selectedItem.label : "Chọn hình thức thanh toán"} // Hiển thị tên đã chọn
+                            value={value}
+                            renderLeftIcon={() => (
+                                selectedItem ? selectedItem.icon() : null
+                            )}
+                            onChange={item => {
+                                setValue(item.value);
+                            }}
+                            renderItem={renderItem}
+                       
+                        />
+                         
+                     </View>
 
-                    </View>
+                    </View>}
+                   
                    
                 <View style={styles.confirmationSection}>
                     <CheckBox checked={true} containerStyle={styles.checkBox} />
                     <Text style={styles.confirmationText}>
-                        Chúng tôi sẽ gửi xác nhận đặt phòng của bạn và cả thanh toán chuyển khoản (nếu có) đến <Text style={styles.emailBold}>dads@gmail.com</Text>
+                        Chúng tôi sẽ gửi xác nhận đặt phòng của bạn và cả thanh toán chuyển khoản (nếu có) đến email của bạn
                     </Text>
                 </View>
 
-                <Button title="ĐẶT NGAY" onPress={() => { }} color="#1E90FF" />
+                <TouchableOpacity style={styles.confirmButton} onPress={() => {setSuccessfullyModal(true)}} > 
+                    <Text style={styles.confirmText}>ĐẶT NGAY</Text>
+                </TouchableOpacity>
+
+                <Modal
+                animationType="slide"
+                transparent={true}
+                visible={successfullyModal}
+                onRequestClose={() => setSuccessfullyModal(false)}
+                >
+            <View style={styles.modalOverlay}>
+                <View style={styles.modalContent}>
+                    <AntDesign name="checkcircle" size={80} color="#4BB543" style={styles.successIcon} />
+                    <Text style={styles.successText}>Thanh Toán Thành Công!</Text>
+                    <Text style={styles.message}>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</Text>
+                    
+                    <TouchableOpacity style={styles.closeButton} onPress={() => setSuccessfullyModal(false)}>
+                        <Text style={styles.closeButtonText}>Đóng</Text>
+                    </TouchableOpacity>
+                </View>
+            </View>
+        </Modal>
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -165,7 +272,7 @@ const styles = StyleSheet.create({
     hotel: {
         flexDirection: 'column', 
         padding: 15,
-        backgroundColor: color.item_background_dark, // Darker background for better contrast
+        backgroundColor: color.item_background_dark, 
         borderRadius: 12,
         marginVertical: 10,
         marginHorizontal: 5,
@@ -242,7 +349,7 @@ const styles = StyleSheet.create({
         alignItems:'center'
     },
     roomTitle: {
-        fontSize: 18,
+        fontSize: 20,
         fontWeight: 'bold',
         color: color.tilte,
     },
@@ -356,6 +463,7 @@ const styles = StyleSheet.create({
     secureText: {
         color: '#4CAF50',
         marginBottom: 16,
+        fontSize:13,
     },
     paymentMethodSection: {
         flexDirection: 'column',
@@ -398,6 +506,7 @@ const styles = StyleSheet.create({
         fontSize: 16,
         fontWeight:'bold',
         color: '#555',
+        textAlign:'center',
         borderColor:color.title
     },
     optionButtonTextActive: {
@@ -427,8 +536,9 @@ const styles = StyleSheet.create({
     },
     cardIcons: {
         flexDirection: 'row',
-        marginBottom: 8,
+        marginVertical: 8,
         marginLeft:4
+        
     },
     cardIcon: {
         width: 40,
@@ -441,8 +551,10 @@ const styles = StyleSheet.create({
         paddingVertical: 8,
         marginBottom: 8,
         paddingLeft:8,
-        borderColor:color.tilte, borderWidth:1, borderRadius:5,marginVertical:10, flexDirection:'row',
+        borderWidth:1, borderRadius:12,marginVertical:10, flexDirection:'row',
+        borderColor:color.item_background_dark,
         color:'white',
+        backgroundColor:'#444',
         height:50,
     },
 
@@ -476,6 +588,47 @@ const styles = StyleSheet.create({
     dropdownIcon: {
         marginLeft: 8,
     },
+    dropdown: {
+        height: 50,
+        backgroundColor: '#444',
+        borderRadius: 12,
+        borderColor:color.item_background_dark,
+        padding: 12,
+        shadowColor: '#000',
+        shadowOffset: {
+          width: 0,
+          height: 1,
+        },
+        shadowOpacity: 0.2,
+        shadowRadius: 1.41,
+  
+        elevation: 2,
+      },
+      icon: {
+        marginRight: 5,
+      },
+      item: {
+        padding: 17,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+      },
+      textItem: {
+        flex: 1,
+        fontSize: 16,
+      },
+      placeholderStyle: {
+        fontSize: 16,
+        color:'#999'
+      },
+      selectedTextStyle: {
+        fontSize: 16,
+        color:'white'
+      },
+      iconStyle: {
+        width: 20,
+        height: 20,
+      },
     confirmationSection: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -483,10 +636,68 @@ const styles = StyleSheet.create({
     },
     confirmationText: {
         fontSize: 14,
-        color: '#333',
+        color: '#666',
         flex: 1,
     },
     emailBold: {
+        fontWeight: 'bold',
+    },
+    confirmButton:{
+        backgroundColor:color.tilte,
+        height:55,
+        justifyContent:'center',
+        alignItems:'center',
+        borderRadius:40,
+        marginTop:10
+    },
+    confirmText:{
+        fontSize:20,
+        fontWeight:'bold',
+        color:'white'
+    },
+
+    modalOverlay: {
+        flex: 1,
+        backgroundColor: 'rgba(0, 0, 0, 0.5)',
+        justifyContent: 'center',
+        alignItems: 'center',
+    },
+    modalContent: {
+        width: '90%',
+        padding: 20,
+        backgroundColor: color.item_background_dark,
+        borderRadius: 10,
+        alignItems: 'center',
+        elevation: 10,
+    },
+    successIcon: {
+        marginBottom: 15,
+    },
+    successText: {
+        fontSize: 24,
+        fontWeight: 'bold',
+        color: '#4BB543',
+        marginBottom: 10,
+    },
+    message: {
+        fontSize: 16,
+        color: '#aaa',
+        textAlign: 'center',
+        marginBottom: 20,
+    },
+    closeButton: {
+        height:50,
+        justifyContent:'center',
+        alignItems:'center',
+        width:140,
+        backgroundColor: color.tilte,
+        borderRadius: 40,
+        paddingVertical: 10,
+        paddingHorizontal: 30,
+    },
+    closeButtonText: {
+        color: '#fff',
+        fontSize: 20,
         fontWeight: 'bold',
     },
 });

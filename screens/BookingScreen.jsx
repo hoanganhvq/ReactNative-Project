@@ -272,6 +272,7 @@ const BookingScreen = ({ navigation, route }) => {
                 checkOutDate:checkOutDate,
                 roomCount:roomCount,
                 roomName: item.name,
+                roomPrice: item.price,
               })}>
                 <Text style={styles.bookButtonText}>Đặt</Text>
               </TouchableOpacity>
@@ -612,8 +613,8 @@ const styles = StyleSheet.create({
   roomSelector: {
     flexDirection: "row",
     alignItems: "center",
+    backgroundColor:'#444',
     borderWidth: 1,
-    borderColor: color.tilte,
     borderRadius: 10,
     padding: 10,
     flex: 1,
