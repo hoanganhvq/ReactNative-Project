@@ -25,7 +25,6 @@ export default function MainScreen({ navigation }) {
   const [user, setUser] = useState(null);
   const [standoutDestination, setStandoutDestination] = useState(null);
   const scrollX = React.useRef(new Animated.Value(0)).current;
-  const [darkMode,setDarkMode] = useState(true)
  
   const getData = async () => {
     try {
@@ -41,7 +40,8 @@ export default function MainScreen({ navigation }) {
     const res = await getData();
     const data = res.data.data.hotel
     const dataStandoutDestination = res.data.data.standoutDestination;
-     setData(data)
+    console.log("Du lieu khach san", data);
+    setData(data)
     setStandoutDestination(dataStandoutDestination);
   };
    

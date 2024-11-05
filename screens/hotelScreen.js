@@ -21,7 +21,6 @@ export default function HotelScreen({ navigation, route }) {
   LogBox.ignoreAllLogs(true);
   const user = auth.currentUser;
   const { hotelId } = route.params;
-  // const [hotelier, setHotelier] = useState('');
   const [hotelierId, setHotelierId] = useState('');
   const [hotel, setHotel] = useState(null);
   const [tokenUser, setToken] = useState(null);
@@ -47,6 +46,7 @@ export default function HotelScreen({ navigation, route }) {
 
   const fetchData = async () => {
     const res = await getData();
+    console.log("Avb",res);
     setHotel(res);
     await getHotelier(res.hotelier.email);
   };
@@ -67,7 +67,6 @@ export default function HotelScreen({ navigation, route }) {
       const querySnapshot = await getDocs(q);
 
       querySnapshot.forEach((doc) => {
-        // console.log('Token: ', doc.data());
         setHotelierId(doc.data());
       })
 
@@ -259,7 +258,7 @@ export default function HotelScreen({ navigation, route }) {
           <View style={styles.priceContainer}>
             <Text style={styles.priceText}>{hotel.price} {hotelData.currency}</Text>
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { rooms: hotel.rooms })}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { hotel: hotel })}>
             <Text style={styles.buttonText}>Booking Now!</Text>
           </TouchableOpacity>
         </View>

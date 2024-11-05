@@ -83,8 +83,9 @@ const RoomModal = ({
 };
 
 const BookingScreen = ({ navigation, route }) => {
-  const { rooms } = route.params;
-
+  const { hotel } = route.params;
+  const hotelData = hotel;
+  const rooms = hotel.rooms;
   // Date Picker States
   const [checkInDate, setCheckInDate] = useState(new Date());
   const [checkOutDate, setCheckOutDate] = useState(new Date());
@@ -262,10 +263,16 @@ const BookingScreen = ({ navigation, route }) => {
                 onClose={() => setRoomModalVisible(false)}
                 roomCount={roomCount}
                 setRoomCount={setRoomCount}
-                maxRooms={5} // Adjust as needed
+                maxRooms={5} 
               />
 
-              <TouchableOpacity style={styles.bookButton}>
+              <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('BookingDetails',
+              { hotel: hotelData, 
+                checkInDate:checkInDate,
+                checkOutDate:checkOutDate,
+                roomCount:roomCount,
+                roomName: item.name,
+              })}>
                 <Text style={styles.bookButtonText}>Đặt</Text>
               </TouchableOpacity>
             </View>
@@ -575,7 +582,7 @@ const styles = StyleSheet.create({
   bookingLabel: {
     fontSize: 18,
     marginLeft: 10,
-    color: color.tilte,
+    color:'white',
     fontWeight:"bold"
   },
   vdtList: {

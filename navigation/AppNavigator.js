@@ -19,6 +19,12 @@
     import Chat from '../screens/ChatScreen';
     import Searching from '../screens/SearchScreen';
     import MyTrip from '../screens/MyTrip';
+    import BookingDetails from '../screens/BDetailScreen';
+    import PaymentScreen from '../screens/PaymentScreen';
+    import VoucherScreen from '../screens/VoucherScreen';
+
+
+
     import color from "../assets/color.json";
     const Stack = createNativeStackNavigator();
     const AuthenticatedUserContext = createContext({ AsyncStorage: null });
@@ -66,6 +72,9 @@
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="MyTrip" component={MyTrip} options={{ headerShown: true }} />
+            <Stack.Screen name="BookingDetails" component={BookingDetails} />
+            <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
+            <Stack.Screen name="VoucherScreen" component={VoucherScreen} />
         </Stack.Navigator>
     );
 
