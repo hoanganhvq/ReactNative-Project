@@ -5,7 +5,6 @@
     import { createNativeStackNavigator } from '@react-navigation/native-stack';
     import { onAuthStateChanged } from 'firebase/auth';
     import { auth } from '../config/firebase';
-    import { Icon } from 'react-native-elements';
     import Booking from "../screens/BookingScreen"
     import SignIn from '../screens/SignIn';
     import SignUp from '../screens/SignUp';
@@ -20,12 +19,10 @@
     import Searching from '../screens/SearchScreen';
     import MyTrip from '../screens/MyTrip';
     import BookingDetails from '../screens/BDetailScreen';
-    import PaymentScreen from '../screens/PaymentScreen';
     import VoucherScreen from '../screens/VoucherScreen';
+    import color from '../assets/color.json';
 
 
-
-    import color from "../assets/color.json";
     const Stack = createNativeStackNavigator();
     const AuthenticatedUserContext = createContext({ AsyncStorage: null });
 
@@ -57,7 +54,14 @@
                     },
                 }}/>
             <Stack.Screen name="Hotel" component={HotelScreen} />
-            <Stack.Screen name="FeedBack" component={FeedBackScreen} />
+            <Stack.Screen name="FeedBack" component={FeedBackScreen}  options={
+                {title: 'Nhận xét', 
+                headerShown:true, 
+                headerStyle:{backgroundColor:color.item_background_dark},
+                headerTitleStyle:{fontWeight:'bold', fontSize:25},
+                headerTintColor:color.tilte,
+                headerBackVisible:false
+                }}/>
             <Stack.Screen name="UserProfile" component={UserProfile} options={{
             headerShown: false,
             headerStyle: { backgroundColor: color.background_dark },
@@ -72,9 +76,22 @@
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="SignUp" component={SignUp} />
             <Stack.Screen name="MyTrip" component={MyTrip} options={{ headerShown: true }} />
-            <Stack.Screen name="BookingDetails" component={BookingDetails} />
-            <Stack.Screen name="PaymentScreen" component={PaymentScreen} />
-            <Stack.Screen name="VoucherScreen" component={VoucherScreen} />
+            <Stack.Screen name="BookingDetails" component={BookingDetails}  options={
+                {title: 'Thanh toán', 
+                headerShown:true, 
+                headerStyle:{backgroundColor:color.item_background_dark},
+                headerTitleStyle:{fontWeight:'bold', fontSize:20},
+                headerTintColor:color.tilte,
+                headerBackVisible:false
+                }}/>
+            <Stack.Screen name="VoucherScreen" component={VoucherScreen} options={
+                {headerTitle:'Chọn voucher',
+                headerBackTitle:'',
+                headerShown:true, 
+                headerStyle:{backgroundColor:color.item_background_dark},
+                headerTitleStyle:{fontWeight:'bold', fontSize:20},
+                headerTintColor:color.tilte,
+                }} />
         </Stack.Navigator>
     );
 
@@ -85,7 +102,14 @@
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Image" component={ImageScreen} />
             <Stack.Screen name="Hotel" component={HotelScreen} />
-            <Stack.Screen name="FeedBack" component={FeedBackScreen} />
+            <Stack.Screen name="FeedBack" component={FeedBackScreen}  options={
+                {title: 'Nhận xét', 
+                headerShown:true, 
+                headerStyle:{backgroundColor:color.item_background_dark},
+                headerTitleStyle:{fontWeight:'bold', fontSize:25},
+                headerTintColor:color.tilte,
+                headerBackVisible:false
+                }}/>
             <Stack.Screen name="Booking" component={Booking} />
             <Stack.Screen name="Searching" component={Searching} />
             <Stack.Screen name="ChatRoom" component={Chat} />

@@ -64,7 +64,7 @@ const BookingDetails = ({ navigation, route }) => {
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView showsVerticalScrollIndicator={false}>
+            <ScrollView  showsVerticalScrollIndicator={false}>
                 <View style={styles.hotel}>
                     <View style={{flexDirection:'row'}}>
                         <Image
@@ -87,7 +87,7 @@ const BookingDetails = ({ navigation, route }) => {
                         marginVertical: 15,}}/>
                     <View style={styles.dates}>
                         <Text style={styles.dateText}>{checkInDate.toLocaleDateString('vi-VN', { weekday: 'short' })}, {checkInDate.getDate()}/{checkInDate.getMonth() + 1}/{checkInDate.getFullYear()}    </Text>
-                        <Icon name="arrow-right" type="font-awesome" size={16} color={color.tilte}/>
+                        <FontAwesome name="arrow-right" type="font-awesome" size={16} color={color.tilte}/>
                         <Text style={styles.dateText}>   {checkOutDate.toLocaleDateString('vi-VN', { weekday: 'short' })}, {checkOutDate.getDate()}/{checkOutDate.getMonth() + 1}/{checkOutDate.getFullYear()}</Text>
                     </View>
 
@@ -273,9 +273,9 @@ const BookingDetails = ({ navigation, route }) => {
 
 const styles = StyleSheet.create({
     container: {
-        padding: 16,
         backgroundColor: color.background_dark,
         flex: 1,
+
     },
     hotel: {
         flexDirection: 'column', 
@@ -292,6 +292,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 8,
         elevation: 5,
+
       },
       imageVertical: {
         width: 120,
@@ -304,7 +305,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         resizeMode: 'cover',
-    
     },
     
       textName: {

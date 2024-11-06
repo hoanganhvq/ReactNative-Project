@@ -11,8 +11,7 @@ import {
 } from 'react-native';
 import { hotelData } from '../Data/hotelData';
 import Icon from 'react-native-vector-icons/FontAwesome';
-import { NavigationContainer } from '@react-navigation/native';
-import { createStackNavigator } from '@react-navigation/native-stack';
+import color from '../assets/color.json';
 
 export default function RatingScreen({ route }) {
   const { reviews } = route.params;
@@ -67,9 +66,7 @@ export default function RatingScreen({ route }) {
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
-        <View style={styles.headerContainer}>
-          <Text style={styles.headerTitle}>Đánh giá</Text>
-        </View>
+
 
         <View style={styles.overallRatingContainer}>
           <Text style={styles.averageRating}>{hotelData.rating}/5</Text>
@@ -128,7 +125,7 @@ export default function RatingScreen({ route }) {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    backgroundColor: '#fff',
+    backgroundColor: color.background_dark,
   },
   headerContainer: {
     paddingVertical: 20,
@@ -146,12 +143,21 @@ const styles = StyleSheet.create({
     color: '#333',
   },
   overallRatingContainer: {
-    backgroundColor: '#fff',
-    padding: 20,
-    margin: 16,
-    borderRadius: 10,
+    padding: 15,
+    backgroundColor: color.item_background_dark, // Darker background for better contrast
+    borderRadius: 12,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
+    elevation: 5,
     alignItems: 'center',
-    elevation: 2,
+   
   },
   averageRating: {
     fontSize: 48,
@@ -174,33 +180,49 @@ const styles = StyleSheet.create({
     justifyContent: 'space-around',
     marginHorizontal: 16,
     marginVertical: 10,
-    backgroundColor: '#fff',
+    backgroundColor: color.item_background_dark,
     paddingVertical: 10,
     borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
     elevation: 2,
   },
   starButton: {
     alignItems: 'center',
   },
   selectedStarButton: {
-    backgroundColor: '#FFE58F',
+    backgroundColor: color.tilte,
     borderRadius: 10,
     padding: 5,
   },
   starLabel: {
     marginTop: 4,
     fontSize: 14,
-    color: '#333',
+    color: 'white',
   },
   reviewsList: {
     paddingHorizontal: 16,
     paddingBottom: 20,
   },
   reviewCard: {
-    backgroundColor: '#fff',
     padding: 16,
     marginVertical: 8,
     borderRadius: 10,
+    backgroundColor: color.item_background_dark,
+    paddingVertical: 10,
+    borderRadius: 10,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.5,
+    shadowRadius: 8,
     elevation: 2,
   },
   reviewHeader: {
@@ -211,7 +233,7 @@ const styles = StyleSheet.create({
   reviewTitle: {
     fontSize: 18,
     fontWeight: 'bold',
-    color: '#333',
+    color: color.tilte,
     flex: 1,
     marginRight: 10,
   },
@@ -220,12 +242,12 @@ const styles = StyleSheet.create({
   },
   reviewDate: {
     fontSize: 14,
-    color: '#999',
+    color: '#aaa',
     marginVertical: 4,
   },
   reviewDescription: {
     fontSize: 16,
-    color: '#555',
+    color: 'white',
     marginVertical: 8,
   },
   authorContainer: {
@@ -242,9 +264,9 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
   },
   author: {
-    fontSize: 16,
-    color: '#333',
-    fontWeight: '600',
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
   },
   noReviewsText: {
     textAlign: 'center',

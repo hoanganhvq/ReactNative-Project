@@ -83,7 +83,7 @@ const RoomModal = ({
 };
 
 const BookingScreen = ({ navigation, route }) => {
-  const { hotel } = route.params;
+  const { hotel, token } = route.params;
   const hotelData = hotel;
   const rooms = hotel.rooms;
   // Date Picker States
@@ -265,8 +265,7 @@ const BookingScreen = ({ navigation, route }) => {
                 setRoomCount={setRoomCount}
                 maxRooms={5} 
               />
-
-              <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('BookingDetails',
+              {token ?( <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('BookingDetails',
               { hotel: hotelData, 
                 checkInDate:checkInDate,
                 checkOutDate:checkOutDate,
@@ -276,6 +275,17 @@ const BookingScreen = ({ navigation, route }) => {
               })}>
                 <Text style={styles.bookButtonText}>Đặt</Text>
               </TouchableOpacity>
+              ) : ( <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('SignIn',
+                { hotel: hotelData, 
+                  checkInDate:checkInDate,
+                  checkOutDate:checkOutDate,
+                  roomCount:roomCount,
+                  roomName: item.name,
+                  roomPrice: item.price,
+                })}>
+                  <Text style={styles.bookButtonText}>Đặt</Text>
+                </TouchableOpacity>)}
+             
             </View>
           </View>
         </View>

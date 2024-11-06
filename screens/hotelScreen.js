@@ -30,7 +30,6 @@ export default function HotelScreen({ navigation, route }) {
   const checkToken = async () => {
     const Token = await AsyncStorage.getItem('userToken');
     setToken(Token);
-
   };
 
   const getData = async () => {
@@ -178,7 +177,7 @@ export default function HotelScreen({ navigation, route }) {
             </TouchableOpacity>
           )}
           <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews }); }}>
-            <Text style={styles.rating}>{rating}/{hotelData.ratingScale}⭐</Text>
+            <Text style={styles.rating}>{rating} / {hotelData.ratingScale} ⭐</Text>
             <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>
           </TouchableOpacity>
         </View>
@@ -258,7 +257,7 @@ export default function HotelScreen({ navigation, route }) {
           <View style={styles.priceContainer}>
             <Text style={styles.priceText}>{hotel.price} {hotelData.currency}</Text>
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { hotel: hotel })}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { hotel: hotel , token:tokenUser})}>
             <Text style={styles.buttonText}>Booking Now!</Text>
           </TouchableOpacity>
         </View>
