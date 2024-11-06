@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, ScrollView , Modal} from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
@@ -12,12 +12,19 @@ import payment from '../assets/payment/payment.json';
 const BookingDetails = ({ navigation, route }) => {
     const { hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice} = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
-    const discount = 0;
+    const total = roomCount * roomPrice;
     const [selectedPayment, setSelectedPayment] = useState('hotel');
     const [value, setValue] = useState(null);
     const [selected, setSelected] = useState("Credit Card");
     const [successfullyModal, setSuccessfullyModal] = useState(false);
+    const [voucher, setVoucher] = useState(null);
+    const discount = voucher ? (parseInt(voucher.discount.replace('%', '')) / 100) * total : 0;
 
+ 
+
+    const handleSelectVoucher = (voucher)=>{
+        setVoucher(voucher);
+    }
 
     const DigitalPayment = [
         { 
@@ -98,9 +105,10 @@ const BookingDetails = ({ navigation, route }) => {
                 <View style={styles.priceSection}>
                     <View style={styles.voucherSection}>
                         <Text style={styles.voucherInput}>Thêm voucher</Text>
-                        <Text style={styles.voucherCode}>MKB22 </Text>
-                        <AntDesign name="right" size={20} color={color.tilte}  />
-
+                        <TouchableOpacity style={{flexDirection:'row'}}  onPress={() => navigation.navigate('VoucherScreen', { onGoBack: handleSelectVoucher, total: total })}>
+                            {voucher && <Text style={styles.voucherCode}>{voucher.code}</Text>}
+                            <AntDesign name="right" size={20} color={color.tilte}  />
+                        </TouchableOpacity>
                     </View>
                     <View style={styles.totalSection}>
                         <Text style={styles.totalLabel}>Giá phòng</Text>
