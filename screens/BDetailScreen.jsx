@@ -82,7 +82,7 @@ const BookingDetails = ({ navigation, route }) => {
                         </View>
                     </View>
                     <View style={
-                        {backgroundColor: '#888',
+                        {backgroundColor: '#bbb',
                         height: 1,
                         marginVertical: 15,}}/>
                     <View style={styles.dates}>
@@ -92,7 +92,7 @@ const BookingDetails = ({ navigation, route }) => {
                     </View>
 
                     <View style={
-                        {backgroundColor: '#888',
+                        {backgroundColor: '#bbb',
                         height: 1,
                         marginVertical: 15,}}/>
 
@@ -104,10 +104,10 @@ const BookingDetails = ({ navigation, route }) => {
             
                 <View style={styles.priceSection}>
                     <View style={styles.voucherSection}>
-                        <Text style={styles.voucherInput}>Thêm voucher</Text>
-                        <TouchableOpacity style={{flexDirection:'row'}}  onPress={() => navigation.navigate('VoucherScreen', { onGoBack: handleSelectVoucher, total: total })}>
+                        <TouchableOpacity style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}  onPress={() => navigation.navigate('VoucherScreen', { onGoBack: handleSelectVoucher, total: total })}>
+                            <Text style={styles.voucherInput}>Thêm voucher</Text>
                             {voucher && <Text style={styles.voucherCode}>{voucher.code}</Text>}
-                            <AntDesign name="right" size={20} color={color.tilte}  />
+                            <AntDesign name="right" size={20} color={color.tilte} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.totalSection}>
@@ -119,7 +119,7 @@ const BookingDetails = ({ navigation, route }) => {
                         <Text style={styles.saleAmount}>{discount}</Text>
                     </View>
                     <View style={
-                        {backgroundColor: '#888',
+                        {backgroundColor: '#bbb',
                         height: 1,
                         marginVertical: 15,}}/>
                     <View style={styles.finalSection}>
@@ -131,7 +131,7 @@ const BookingDetails = ({ navigation, route }) => {
                 <View style={styles.paymentMethodSection}>
                     <Text style={styles.sectionTitle}>Phương thức thanh toán</Text>
                     <View style = {{flexDirection:"row", padding:5}}>  
-                         <AntDesign style={styles.icon} color={color.tilte} name="Safety" size={16} />
+                         <AntDesign style={styles.icon} color='#00bb38' name="Safety" size={16} />
                         <Text style={styles.secureText}> Mọi dữ liệu thanh toán được mã hóa và bảo mật</Text>
                     </View>
 
@@ -154,15 +154,16 @@ const BookingDetails = ({ navigation, route }) => {
                     {selectedPayment=='immediate' &&  <View style={styles.paymentProcess}>
                         <View style={styles.creditCardSection}>
                             <View style={{flexDirection:'row'}}>
-                                <RadioButton.IOS
-                                    value="Credit Card"
-                                    status={selected === 'Credit Card'?
-                                        'checked':'unchecked'
-                                    }
-                                    onPress={()=>setSelected("Credit Card")}
+                            <TouchableOpacity
+                                style={{flexDirection:"row"}}
+                                onPress={() =>setSelected('Credit Card')}
+                                >
+                                    <Icon
+                                    name={selected === 'Credit Card' ? 'radio-button-checked' : 'radio-button-unchecked'}
+                                    size={20}
                                     color={color.tilte}
-                                />
-                                <View>
+                                    />
+                                    <View style={{marginLeft:18}}>
                                     <Text style={styles.cardLabel}>Thẻ tín dụng/thẻ ghi nợ</Text>
                                     <View style={styles.cardIcons}>
                                          <FontAwesome name="cc-visa" size={30} color="white" style={styles.cardIcon}/>
@@ -171,9 +172,11 @@ const BookingDetails = ({ navigation, route }) => {
                                          <FontAwesome name="cc-amex" size={30} color="white" style={styles.cardIcon}/> 
                                     </View>
                                 </View>
+                                </TouchableOpacity>
+                                
                             </View>
                            
-                            <Text style={{color:'white'}}>Số thẻ tín dụng / thẻ ghi nợ</Text>
+                            <Text style={{color:'white', marginLeft:15,opacity:0.8}}>Số thẻ tín dụng / thẻ ghi nợ</Text>
                                 <TextInput
                                     style={styles.cardInput}
                                     keyboardType="numeric"
@@ -189,16 +192,17 @@ const BookingDetails = ({ navigation, route }) => {
                         marginVertical: 15,}}/>
 
                         <View style={styles.digitalPaymentSection}>
-                            <View style={{flexDirection:'row'}}>
-                                    <RadioButton.IOS
-                                        value="Digital"
-                                        status={selected === 'Digital'?
-                                            'checked':'unchecked'
-                                        }
-                                        onPress={()=>setSelected("Digital")}
-                                        color={color.tilte}
+                            <View >
+                            <TouchableOpacity
+                                    style={{flexDirection:'row', marginBottom:20}}
+                                    onPress={() => setSelected('Digital')}
+                                >
+                                    <Icon
+                                    name={selected === 'Digital' ? 'radio-button-checked' : 'radio-button-unchecked'}
+                                    size={20}
+                                    color={color.tilte}
                                     />
-                                <View>
+                                <View style={{marginLeft:18}}>
                                     <Text style={styles.sectionSubtitle}>Thanh toán kỹ thuật số</Text>
                                     <View style={styles.cardIcons}>
                                         <Image style={styles.cardIcon} source={{uri: payment.Momo}}/>
@@ -207,6 +211,8 @@ const BookingDetails = ({ navigation, route }) => {
                                         <Image style={styles.cardIcon} source={{uri: payment.ZaloPay}}/>
                                     </View>
                                 </View>
+                                </TouchableOpacity>
+                               
                             </View>
                            
                             
@@ -275,10 +281,11 @@ const styles = StyleSheet.create({
     container: {
         backgroundColor: color.background_dark,
         flex: 1,
-
     },
     hotel: {
         flexDirection: 'column', 
+        borderWidth:0.2,
+        borderColor:'#555',
         padding: 15,
         backgroundColor: color.item_background_dark, 
         borderRadius: 12,
@@ -292,7 +299,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 8,
         elevation: 5,
-
+      
       },
       imageVertical: {
         width: 120,
@@ -308,21 +315,22 @@ const styles = StyleSheet.create({
     },
     
       textName: {
-        fontSize: 18,
+        fontSize: 20,
         color: '#ffffff', // Keeping the text white for visibility
         fontWeight: 'bold',
-        marginBottom:20,
+        marginBottom:8,
         marginTop:10,
+        opacity:1
       },
       textCity: {
-        fontSize: 14,
+        fontSize: 15,
         color: '#b0b0b0',
-        marginBottom:20,
+        marginBottom:30,
       },
       ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginTop: 5,
+        
       },
       rating: {
         fontSize: 16,
@@ -338,13 +346,14 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent:'center',
-        marginVertical: 10,
+        marginVertical: 2,
     },
     dateText: {
-        fontSize: 18,
+        fontSize: 16,
         color: color.tilte,
         marginHorizontal: 4,
-        fontWeight:"bold"
+        opacity:0.8,
+        fontWeight:"500"
     },
     roomInfo: {
         paddingLeft: 12,
@@ -357,9 +366,10 @@ const styles = StyleSheet.create({
         alignItems:'center'
     },
     roomTitle: {
-        fontSize: 20,
-        fontWeight: 'bold',
+        fontSize: 16,
+        fontWeight: '500',
         color: color.tilte,
+        opacity:0.8
     },
     priceSection: {
         flexDirection: 'column', 
@@ -375,6 +385,8 @@ const styles = StyleSheet.create({
         },
         shadowOpacity: 0.5,
         shadowRadius: 8,
+        borderWidth:0.2,
+        borderColor:'#555',
         elevation: 5,
     },
     voucherSection: {
@@ -453,6 +465,8 @@ const styles = StyleSheet.create({
         borderRadius: 12,
         marginVertical: 10,
         marginHorizontal: 5,
+        borderWidth:0.2,
+        borderColor:'#555',
         shadowColor: '#000',
         shadowOffset: {
           width: 0,
@@ -461,6 +475,7 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.5,
         shadowRadius: 8,
         elevation: 5,
+
     },
     sectionTitle: {
         fontSize: 20,
@@ -469,13 +484,15 @@ const styles = StyleSheet.create({
         color: 'white',
     },
     secureText: {
-        color: '#4CAF50',
+        color: '#00bb38',
         marginBottom: 16,
         fontSize:13,
     },
     paymentMethodSection: {
         flexDirection: 'column',
         padding: 15,
+        borderWidth:0.2,
+        borderColor:'#555',
         backgroundColor: color.item_background_dark,
         borderRadius: 12,
         marginVertical: 10,
@@ -498,30 +515,34 @@ const styles = StyleSheet.create({
         flex: 1,
         padding: 10,
         borderWidth: 1,
-        alignItems: 'center',
         borderRadius: 40,
         marginLeft:2,
         marginRight: 8,
         backgroundColor: 'gray',
         justifyContent:'center',
-        alignItems:'center'
+        alignItems:'center',
+        opacity:0.35
 
     },
     optionButtonActive: {
         backgroundColor: color.tilte,
+        opacity:1
     },
     optionButtonText: {
         fontSize: 16,
         fontWeight:'bold',
-        color: '#555',
+        color: 'white',
         textAlign:'center',
         borderColor:color.title
     },
     optionButtonTextActive: {
-        color: '#ffffff',
+        color: 'black',
+        opacity:0.65
     },
     paymentProcess:{
         flexDirection: 'column', 
+        borderWidth:0.2,
+        borderColor:'gray',
         padding: 15,
         backgroundColor: color.item_background_dark, // Darker background for better contrast
         borderRadius: 12,
@@ -541,11 +562,12 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 8,
         color:'white',
+        fontWeight:'bold'
     },
     cardIcons: {
         flexDirection: 'row',
         marginVertical: 8,
-        marginLeft:4
+        marginLeft:20
         
     },
     cardIcon: {
@@ -564,6 +586,7 @@ const styles = StyleSheet.create({
         color:'white',
         backgroundColor:'#444',
         height:50,
+        marginLeft:10,
     },
 
     digitalPaymentSection: {
@@ -573,6 +596,7 @@ const styles = StyleSheet.create({
         fontSize: 18,
         marginBottom: 8,
         color:'white',
+        fontWeight:"bold"
     },
     digitalOptions: {
         flexDirection: 'row',

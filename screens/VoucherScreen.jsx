@@ -13,10 +13,10 @@ export default function VoucherScreen({ route, navigation }) {
 
   
   const vouchers = [
-    { id: '1', discount: '22%', code: 'MKB22', condition: 'Đơn từ 1.000.000 đ', applicable: total > 1000 ? true: false },
-    { id: '2', discount: '10%', code: 'MKB10', condition: 'Đơn từ 500.000 đ', applicable: total > 500 ? true: false },
-    { id: '3', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: total > 5000 ? true: false },
-    { id: '4', discount: '35%', code: 'MKB35', condition: 'Đơn từ 3.000.000 đ', applicable: total > 3000 ? true: false },
+    { id: '1', discount: '10%', code: 'MKB10', condition: 'Đơn từ 500.000 đ', applicable: total > 500 ? true: false },
+    { id: '2', discount: '22%', code: 'MKB22', condition: 'Đơn từ 550.000 đ', applicable: total > 550 ? true: false },
+    { id: '3', discount: '35%', code: 'MKB35', condition: 'Đơn từ 3.000.000 đ', applicable: total > 3000 ? true: false },
+    { id: '4', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: total > 5000 ? true: false },
   ];
 
   const handleSelectVoucher = (voucher) => {
@@ -47,35 +47,7 @@ export default function VoucherScreen({ route, navigation }) {
       >
         <Text style={[styles.discountText, isUnavailable && styles.unavailableText]}>Giảm {item.discount}</Text>
         <Text style={[styles.codeText, isUnavailable && styles.unavailableText]}>Mã voucher: {item.code}</Text>
-        <Text style={[styles.conditionText, isUnavailable && styles.unavailableText]}>Điều kiện: {item.condition}</Text>
-
-        <View style={styles.radioContainer}>
-          <TouchableOpacity
-            style={styles.radioButton}
-            onPress={() => handleOptionSelect(item.id, 'Discount')}
-            disabled={isUnavailable}
-          >
-            <Icon
-              name={selectedOption[item.id] === 'Discount' ? 'radio-button-checked' : 'radio-button-unchecked'}
-              size={20}
-              color={isUnavailable ? '#A9A9A9' : color.tilte}
-            />
-            <Text style={[styles.radioText, isUnavailable && styles.unavailableText]}>Giảm giá</Text>
-          </TouchableOpacity>
-
-          <TouchableOpacity
-            style={styles.radioButton}
-            onPress={() => handleOptionSelect(item.id, 'Cashback')}
-            disabled={isUnavailable}
-          >
-            <Icon
-              name={selectedOption[item.id] === 'Cashback' ? 'radio-button-checked' : 'radio-button-unchecked'}
-              size={20}
-              color={isUnavailable ? '#A9A9A9' : color.tilte}
-            />
-            <Text style={[styles.radioText, isUnavailable && styles.unavailableText]}>Hoàn tiền</Text>
-          </TouchableOpacity>
-        </View>
+        <Text style={[styles.conditionText, isUnavailable && styles.unavailableTextCondition]}>Điều kiện: {item.condition}</Text>
       </TouchableOpacity>
     );
   };
@@ -118,6 +90,8 @@ const styles = StyleSheet.create({
   voucherItem: {
     flexDirection: 'column',
     padding: 15,
+    borderWidth:0.2,
+    borderColor:'#555',
     backgroundColor: color.item_background_dark,
     borderRadius: 12,
     marginVertical: 10,
@@ -157,6 +131,9 @@ const styles = StyleSheet.create({
   unavailableText: {
     color: '#A9A9A9',
   },
+  unavailableTextCondition:{
+    color:'orange'
+  },  
   applyButton: {
     backgroundColor: color.tilte,
     padding: 15,
