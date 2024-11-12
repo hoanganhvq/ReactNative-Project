@@ -1,4 +1,4 @@
-import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator, Platform , Button} from "react-native";
+import { View, StyleSheet, Text, ImageBackground, TouchableOpacity, TextInput, ActivityIndicator, Platform , Button, Alert} from "react-native";
 import Feather from '@expo/vector-icons/Feather';
 import color from "../assets/color.json";
 import React, { useEffect, useState , useLayoutEffect} from "react";
@@ -8,51 +8,20 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL , uploadBytes} fr
 import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db, storage , auth} from '../config/firebase';
 
-import { getMe } from "../handleAPI/viewAPI";
 import { Icon } from 'react-native-elements';
 
 
-function EditProfile({ navigation }) {
-    const [user, setUser] = useState(null);
-    const [isLoading, setIsLoading] = useState(true);
-    const [image, setImage] = useState(null);
+function EditProfile({ navigation , route}) {
+    const {user} = route.params;
     const currentDate = new Date();
     const formattedCurrentDate = currentDate.toLocaleDateString();
     const [name, setName] = useState('');
+    const [email, setEmail] = useState('');
     const [birth, setBirth] = useState(currentDate);
     const [showPicker, setShowPicker] = useState(false);
 
     const currentUser = auth.currentUser;
 
-    const fetchUser = async () => {
-        setIsLoading(true);
-        const currentUser = await auth.currentUser;
-        try{
-            if(!currentUser){
-                console.log("No user is currently");
-                return;
-            }
-    
-            const userRef = doc(db,"users", currentUser.uid);
-            const userDoc = await getDoc(userRef);
-    
-            if(userDoc.exists()){
-                const data = userDoc.data();
-                setUser(data);
-                console.log("userA", user);
-                setImage(data.profileUrl);
-                setName(data.name)
-                console.log("Fetch ok");
-            } else{
-                setImage("default.jpg");
-            }
-    
-        } catch (error) {
-            console.error("Error fetching profile picture:", error);
-        } finally {
-            setIsLoading(false);
-        }
-    }
 
     useLayoutEffect(() => {
         navigation.setOptions({
@@ -72,10 +41,6 @@ function EditProfile({ navigation }) {
         });
     }, [navigation]);
     
-
-    useEffect(() => {
-        fetchUser();
-    }, [])
 
     const onChange = (event, selectedDate) => {
         const chosenDate = selectedDate || date;
@@ -105,7 +70,7 @@ function EditProfile({ navigation }) {
             return result.assets[0]; // Return the selected image asset
         } else {
             console.log("Image selection failed.");
-            return null; // Exit if there's no valid image asset
+            return null; 
         }
     };
     
@@ -156,28 +121,22 @@ const uploadProfilePicture = async () => {
         try {
             const userRef = doc(db, "users", currentUser.uid);
             await updateDoc(userRef, {
-                name: name, // Ensure 'name' is the state variable holding the new name
+                name: name, 
+                email: email,
             });
             console.log("User name updated successfully!");
+            Alert.alert("Thay đổi thông tin thành công");
+
         } catch (error) {
             console.error("Error updating user name:", error);
         }
     };
 
-    const Content = () => {
-        if (isLoading) {
-            return <ActivityIndicator size="large" color={color.title} />;
-        }
-
-        if (!user) {
-            return <Text>No user data available</Text>;
-        }
-       
-        return (
-            <>
-                <View style={styles.avatarUser}>
+    return (
+        <View style={styles.container}>
+               <View style={styles.avatarUser}>
                     <ImageBackground source={{
-                        uri:image
+                        uri: user.profileUrl
                     }} imageStyle={{ borderRadius: 50 }} style={styles.avatarImg}>
                         <TouchableOpacity style={{ width: 30, 
                             height: 30, 
@@ -194,12 +153,19 @@ const uploadProfilePicture = async () => {
                 </View>
                 <Text style={styles.txtShow}>Name</Text>
                 <View style={styles.txtBox}>
-                    <TextInput placeholder={user.name} style={{ fontSize: 20, width: 300 }} 
-                    onChangeText={(text) => setName(text)}/>
+                    <TextInput 
+                        placeholder={user.name} 
+                        style={{ fontSize: 20, width: 300 }} 
+                        value={name} 
+                        onChangeText={(text) => setName(text)}
+                    />
                 </View>
                 <Text style={styles.txtShow}>Email Adress</Text>
                 <View style={styles.txtBox}>
-                    <TextInput placeholder={user.email} style={{ fontSize: 20, width: 300 }}></TextInput>
+                    <TextInput placeholder={user.email} style={{ fontSize: 20, width: 300 }} 
+                    autoCapitalize = "none" 
+                    value={email} 
+                    onChangeText={(text)=>{setEmail(text)}}></TextInput>
                 </View>
                 <Text style={styles.txtShow}>Password</Text>
                 <View style={styles.txtBox}>
@@ -209,9 +175,9 @@ const uploadProfilePicture = async () => {
                 <Text style={styles.txtShow}>Date Of Birth</Text>
                 <View style={styles.txtBox}>
                     <TextInput
-                      placeholder={formattedCurrentDate} // Placeholder ban đầu là ngày hiện tại
-                      value={birth.toLocaleDateString()}  // Hiển thị ngày đã chọn
-                      editable={false}  // Không cho phép người dùng chỉnh sửa trực tiếp
+                      placeholder={formattedCurrentDate}
+                      value={birth.toLocaleDateString()}  
+                      editable={false} 
                       onPressIn={showDatePicker} 
                      style={{ fontSize: 20, width: 300 }}></TextInput>
 
@@ -232,13 +198,6 @@ const uploadProfilePicture = async () => {
                     </TouchableOpacity>
                 </View>
 
-            </>
-        );
-    }
-
-    return (
-        <View style={styles.container}>
-            <Content />
         </View> 
     );
 }

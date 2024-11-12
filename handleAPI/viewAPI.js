@@ -1,6 +1,6 @@
 import axios from "axios";
 const ip = ' 172.16.7.244:3000';
-const ip2 = '192.168.1.5:3000';
+const ip2 = '192.168.1.5:3000'; 
 const api = 'https://be-rnative.onrender.com'
 export const home = async (ip) => {
     // const data = await axios.get(`http://${ip}/BE_React/home`);

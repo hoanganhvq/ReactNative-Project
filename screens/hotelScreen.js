@@ -237,7 +237,7 @@ export default function HotelScreen({ navigation, route }) {
         </View>
 
         <View style={styles.contactContainer}>
-          <Text style={styles.headerContact}>Contact</Text>
+          <Text style={styles.headerContact}>Liên hệ</Text>
           <View style={styles.contactOption}>
             <FontAwesome name="phone" size={24} color={colorTheme.tilte}/>
             <Text style={styles.contactText}>{hotel.phone}</Text>
@@ -258,7 +258,7 @@ export default function HotelScreen({ navigation, route }) {
             <Text style={styles.priceText}>{hotel.price} {hotelData.currency}</Text>
           </View>
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { hotel: hotel , token:tokenUser})}>
-            <Text style={styles.buttonText}>Booking Now!</Text>
+            <Text style={styles.buttonText}>Xem mọi phòng</Text>
           </TouchableOpacity>
         </View>
 

@@ -36,7 +36,7 @@
     };
 
     const AppStackNavigator = () => (
-        <Stack.Navigator initialRouteName="Main" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Chat" component={Chat} options={{headerShown: true, headerStyle: {backgroundColor: color.background_dark,},

@@ -4,7 +4,6 @@ import { doc, updateDoc, getDoc } from 'firebase/firestore';
 import { db, storage , auth} from '../config/firebase';
 import Ionicons from '@expo/vector-icons/Ionicons';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { getMe } from "../handleAPI/viewAPI";
 import color from "../assets/color.json";
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { useFocusEffect } from '@react-navigation/native';
@@ -30,7 +29,6 @@ function User({navigation}) {
             if(userDoc.exists()){
                 const data = userDoc.data();
                 setUser(data);
-                console.log("userA", user);
                 setImage(data.profileUrl);
                 console.log("Fetch ok");
             } else{
@@ -54,11 +52,11 @@ function User({navigation}) {
       };
 
       const handleLogOut = async () => {
-        //CLear của m bị hư nè
         await AsyncStorage.multiRemove(['userToken', 'userPhoto', 'user', 'userName', 'tokenFirebase']);
         clearAsync();
         navigation.navigate('Main');
     }
+
     useFocusEffect(
         React.useCallback(() => {
                 fetchUser();
@@ -93,7 +91,7 @@ function User({navigation}) {
 
             <View style={{marginTop: 25,height: 1,width:330,backgroundColor: '#555'}}></View>
 
-            <TouchableOpacity style={styles.funItem}  onPress={()=>navigation.navigate('Edit Profile')}>
+            <TouchableOpacity style={styles.funItem}  onPress={()=>navigation.navigate('Edit Profile', {user: user})}>
             <View style={styles.iconBox}>
             <Ionicons name="person-outline" size={24} color={color.tilte} />
             </View>
