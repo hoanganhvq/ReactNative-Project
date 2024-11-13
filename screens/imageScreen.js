@@ -64,9 +64,7 @@ export default function ImageScreen({ route }) {
 
     const [selectedAlbumId, setSelectedAlbumId] = useState(null);
 
-    const handleShowImages = (item, index, albumIndex) => {
-        const images = imageAlbums[albumIndex].images.map(img => (img.src));
-        setImagesForViewer(images);
+    const handleShowImages = (item, index) => {
         setCurrentImageIndex(index);
         setIsImageViewerVisible(true);
     };

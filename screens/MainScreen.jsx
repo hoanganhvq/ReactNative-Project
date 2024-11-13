@@ -5,7 +5,7 @@ import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { MasonryFlashList } from '@shopify/flash-list';
 import { home } from '../handleAPI/viewAPI.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
-import { doc, updateDoc, getDoc } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, collection , getDocs} from 'firebase/firestore';
 import { db, storage , auth} from '../config/firebase';
 import color from '../assets/color.json';
 import { Extrapolation, interpolate, useAnimatedScrollHandler, useAnimatedStyle, useSharedValue } from 'react-native-reanimated';
@@ -22,10 +22,12 @@ export default function MainScreen({ navigation }) {
   const [name, setName] = useState('');
   const [searchQuery, setSearchQuery] = useState('');
   const [data, setData] = useState(null);
-  const [user, setUser] = useState(null);
   const [standoutDestination, setStandoutDestination] = useState(null);
   const scrollX = React.useRef(new Animated.Value(0)).current;
- 
+  const [loading, setIsLoading] = useState(true);
+  const [hotels, setHotels] = useState([]);
+
+
   const getData = async () => {
     try {
       const data = await home();
@@ -45,6 +47,29 @@ export default function MainScreen({ navigation }) {
     setStandoutDestination(dataStandoutDestination);
   };
    
+  const fetchHotels = async () => {
+    try {
+      const hotelsCollection = collection(db, 'hotels');
+      const hotelsSnapshot = await getDocs(hotelsCollection);
+      const hotelsList = hotelsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          images: Object.values(data.images || {}),
+          name: data.name,
+          city:data.city,
+          ratingsAverage: data.ratingsAverage,
+          ratingsQuantity:data.ratingsQuantity,
+        };
+      });
+      setHotels(hotelsList);
+
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+      throw error;
+    }
+    
+  };
 
   const fetchToken = async () => {
     const storedToken = await AsyncStorage.getItem('userToken');
@@ -57,7 +82,6 @@ export default function MainScreen({ navigation }) {
                 console.log("No user is currently");
                 return;
             }
-            console.log("Data A", currentUser.uid);
 
             const userRef = doc(db,"users", currentUser.uid);
             const userDoc = await getDoc(userRef);
@@ -85,11 +109,11 @@ export default function MainScreen({ navigation }) {
   }, []);
   
 
-
   useLayoutEffect(() => {
+    fetchHotels();
     fetchData();
-    
   }, []);
+
 
 
   const updateSearch = (text) => {
@@ -113,8 +137,6 @@ export default function MainScreen({ navigation }) {
 
   const [scrollY] = useState(new Animated.Value(0));
 
-
-// Define the function rnAnimatedStyle that takes index as a parameter
 
 
 const renderHorizontalItem = ({ item, index }) => {
@@ -153,14 +175,14 @@ const renderHorizontalItem = ({ item, index }) => {
     const rating = item.ratingsAverage ? item.ratingsAverage.toFixed(1) : 0; 
     
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item._id })}>
+      <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item.id, hotels:hotels})}>
         <View style={styles.verticalItem}>
           <Image
-            source={{ uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item.imgCover}` }}
+            source={{ uri: item.images[0]}}
             style={styles.imageVertical}
             resizeMode="cover"
           />
-          <View style = {styles.hotelInfo}> 
+          <View style = {styles.hotelInfo}>  
             <Text style={styles.textName}>{item.name}</Text>
             <Text style={styles.textCity}>{item.city}</Text>
             <View style = {styles.ratingContainer}>
@@ -180,8 +202,6 @@ const renderHorizontalItem = ({ item, index }) => {
         <LoadingScreen/>
       );
     }
-
-   
 
     return (
       <>
@@ -261,7 +281,7 @@ const renderHorizontalItem = ({ item, index }) => {
           <Text style={{ fontSize: 25, color: "white" , fontStyle: "bold", fontFamily: "Viga-Regular", marginLeft: 10  }}>Nổi bật</Text>
 
           <MasonryFlashList
-            data={data}
+            data={hotels}
             renderItem={renderVerticalItem}
             keyExtractor={item => item.id}
             showsVerticalScrollIndicator={false}

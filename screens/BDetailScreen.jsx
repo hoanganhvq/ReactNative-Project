@@ -12,7 +12,8 @@ import payment from '../assets/payment/payment.json';
 const BookingDetails = ({ navigation, route }) => {
     const { hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice} = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
-    const total = roomCount * roomPrice;
+    const days = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);
+    const total = roomCount * roomPrice * days;
     const [selectedPayment, setSelectedPayment] = useState('hotel');
     const [value, setValue] = useState(null);
     const [selected, setSelected] = useState("Credit Card");
@@ -20,7 +21,7 @@ const BookingDetails = ({ navigation, route }) => {
     const [voucher, setVoucher] = useState(null);
     const discount = voucher ? (parseInt(voucher.discount.replace('%', '')) / 100) * total : 0;
 
- 
+  
 
     const handleSelectVoucher = (voucher)=>{
         setVoucher(voucher);
@@ -111,8 +112,12 @@ const BookingDetails = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.totalSection}>
-                        <Text style={styles.totalLabel}>Giá phòng</Text>
+                        <Text style={styles.totalLabel}>Giá phòng </Text>
                         <Text style={styles.totalAmount}>{roomPrice * roomCount}</Text>
+                    </View>
+                    <View style={styles.totalSection}>
+                        <Text style={styles.totalLabel}>Số ngày </Text>
+                        <Text style={styles.totalAmount}>{days}</Text>
                     </View>
                     <View style={styles.sale}>
                         <Text style={styles.saleLable}>Giảm giá</Text>
@@ -124,7 +129,7 @@ const BookingDetails = ({ navigation, route }) => {
                         marginVertical: 15,}}/>
                     <View style={styles.finalSection}>
                         <Text style={styles.finalLabel}>Giá tiền</Text>
-                        <Text style={styles.finalAmount}>{(roomPrice * roomCount) - discount}</Text>
+                        <Text style={styles.finalAmount}>{(roomPrice * roomCount * days) - discount}</Text>
                     </View>
                 </View>
 
@@ -219,7 +224,7 @@ const BookingDetails = ({ navigation, route }) => {
                             <Dropdown
                             style={styles.dropdown}
                             placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}s
+                            selectedTextStyle={styles.selectedTextStyle}
                             iconStyle={styles.iconStyle}
                             data={DigitalPayment}
                             maxHeight={300}

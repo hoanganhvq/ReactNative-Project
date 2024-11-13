@@ -167,7 +167,7 @@ const BookingScreen = ({ navigation, route }) => {
               <Carousel
                 data={item.images}
                 renderItem={renderImageItem}
-                width={width}
+                width={width}   
                 height={IMG_HEIGHT}
                 autoPlay={true}
                 autoPlayInterval={3000}

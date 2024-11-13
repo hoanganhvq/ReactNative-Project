@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useState, useLayoutEffect } from 'react';
 import {
   View,
   Text,
@@ -10,14 +10,33 @@ import {
   ScrollView
 } from 'react-native';
 import { hotelData } from '../Data/hotelData';
-import Icon from 'react-native-vector-icons/FontAwesome';
+import FontAwesome from 'react-native-vector-icons/FontAwesome';
+import { Icon } from 'react-native-elements';
 import color from '../assets/color.json';
 
-export default function RatingScreen({ route }) {
+export default function RatingScreen({ route, navigation }) {
   const { reviews } = route.params;
 
   const [selectedRating, setSelectedRating] = useState(null);
   const [filteredReviews, setFilteredReviews] = useState(reviews);
+
+  useLayoutEffect(() => {
+    navigation.setOptions({
+        headerLeft: () => (
+            <Icon
+                name="arrow-back" 
+                size={29}
+                color="#fff" 
+                style={{ marginLeft: 5 }} 
+                onPress={() => navigation.goBack()} 
+            />
+        ),
+        headerStyle: {
+            backgroundColor: color.background_dark, 
+        },
+        headerTintColor: 'white',
+    });
+}, [navigation]);
 
   const handleStarPress = (rating) => {
     setSelectedRating(rating);
@@ -36,7 +55,7 @@ export default function RatingScreen({ route }) {
         <Text style={styles.reviewTitle}>{item.title}</Text>
         <View style={styles.ratingContainer}>
           {Array.from({ length: 5 }, (_, index) => (
-            <Icon
+            <FontAwesome
               key={index}
               name="star"
               size={16}
@@ -72,7 +91,7 @@ export default function RatingScreen({ route }) {
           <Text style={styles.averageRating}>{hotelData.rating}/5</Text>
           <View style={styles.starsContainer}>
             {Array.from({ length: 5 }, (_, index) => (
-              <Icon
+              <FontAwesome
                 key={index}
                 name="star"
                 size={24}
@@ -94,7 +113,7 @@ export default function RatingScreen({ route }) {
               ]}
               onPress={() => handleStarPress(index + 1)}
             >
-              <Icon
+              <FontAwesome
                 name="star"
                 size={24}
                 color={selectedRating === index + 1 ? '#FFD700' : '#CCCCCC'}

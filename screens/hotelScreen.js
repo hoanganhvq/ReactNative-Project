@@ -10,8 +10,9 @@ import { auth, db } from '../config/firebase.js';
 import { collection, getDoc, getDocs, query, where } from 'firebase/firestore';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import Carousel from 'react-native-reanimated-carousel';
-import { color } from 'react-native-elements/dist/helpers/index.js';
 import colorTheme from '../assets/color.json';
+import ImageViewing from 'react-native-image-viewing';
+
 
 const { width, height } = Dimensions.get('window');
 const ITEM_WIDTH = width;
@@ -20,13 +21,42 @@ const NOTIFICATION_HEIGHT = 500;
 export default function HotelScreen({ navigation, route }) {
   LogBox.ignoreAllLogs(true);
   const user = auth.currentUser;
-  const { hotelId } = route.params;
+  const { hotelId , hotels} = route.params;
+
+  const hotelImages = hotels.find(hotel => hotel.id === hotelId)?.images || [];
+  const formattedHotel = hotelImages.map(url => ({uri: url}));
+
   const [hotelierId, setHotelierId] = useState('');
   const [hotel, setHotel] = useState(null);
   const [tokenUser, setToken] = useState(null);
   const [detailModalVisible, setDetailModalVisible] = useState(false);
   const [currentIndex, setCurrentIndex] = useState(0);
 
+
+  const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
+  const [currentImageIndex, setCurrentImageIndex] = useState(0);
+  const fadeAnim = useRef(new Animated.Value(1)).current;
+
+  const images = [
+    {
+      uri: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
+    },
+    {
+      uri: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
+    },
+    {
+      uri: "https://images.unsplash.com/photo-1569569970363-df7b6160d111",
+    },
+  ];
+
+  const handleShowImages = (item, index) => {
+
+    setCurrentImageIndex(index);
+    setIsImageViewerVisible(true);
+};
+const handleHideImages = () => {
+  setIsImageViewerVisible(false);
+};
   const checkToken = async () => {
     const Token = await AsyncStorage.getItem('userToken');
     setToken(Token);
@@ -52,7 +82,12 @@ export default function HotelScreen({ navigation, route }) {
 
   useEffect(() => {
     fetchData();
+    console.log("hotel", hotelImages);
   }, [])
+
+  useEffect(()=>{
+    console.log("currentIndex " , currentIndex)
+  },[currentIndex])
 
   useEffect(() => {
     checkToken();
@@ -127,36 +162,34 @@ export default function HotelScreen({ navigation, route }) {
       >
         <View style={styles.scrollImages}>
           <Carousel
-            loop
+            data={hotelImages}
             width={width}
             height={200}
             autoPlay={false}
-            data={hotel.images}
             onSnapToItem={(index) => setCurrentIndex(index)}
-            scrollAnimationDuration={1000}
+            useScrollView={true}
             renderItem={({ item, index }) => (
               <TouchableOpacity
                 style={styles.imageContainer}
-                onPress={() =>
-                  navigation.navigate('Image', {
-                    image: hotel.images,
-                    room: hotel.rooms,
-                  })
+                onPress={()=> {
+                    handleShowImages(item, index);
+                  }
                 }
               >
                 <Image
                   source={{
-                    uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item}`,
+                    uri: item,
                   }}
                   style={styles.image}
-                  resizeMode="cover"
+                  // resizeMode="cover"
                 />
               </TouchableOpacity>
             )}
           />
+
           <View style={styles.imageIndicator}>
             <Text style={styles.imageText}>
-              {currentIndex + 1}/{hotel.images.length}
+              {currentIndex + 1}/{hotelImages.length}
             </Text>
           </View>
         </View>
@@ -275,10 +308,22 @@ export default function HotelScreen({ navigation, route }) {
             </Animated.View>
           )
         }
+        {isImageViewerVisible && (
+                <Animated.View style={{ opacity: fadeAnim }}>
+                    <ImageViewing
+                        images={formattedHotel}
+                        imageIndex={currentImageIndex}
+                        visible={isImageViewerVisible}
+                        onRequestClose={handleHideImages}
+                        swipeToCloseEnabled={true}
+                        doubleTapToZoomEnabled={true}
+                        animationType='fade'
+                    />
+                </Animated.View>
+            )}
       </>
     )
   }
-
   return (
     <SafeAreaView style={styles.container}>
       <Content />
