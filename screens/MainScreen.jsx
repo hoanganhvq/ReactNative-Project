@@ -42,12 +42,12 @@ export default function MainScreen({ navigation }) {
     const res = await getData();
     const data = res.data.data.hotel
     const dataStandoutDestination = res.data.data.standoutDestination;
-    console.log("Du lieu khach san", data);
+    // console.log("Du lieu khach san", data);
     setData(data)
     setStandoutDestination(dataStandoutDestination);
   };
    
-  const fetchHotels = async () => {
+  const fetchImages = async () => {
     try {
       const hotelsCollection = collection(db, 'hotels');
       const hotelsSnapshot = await getDocs(hotelsCollection);
@@ -60,9 +60,11 @@ export default function MainScreen({ navigation }) {
           city:data.city,
           ratingsAverage: data.ratingsAverage,
           ratingsQuantity:data.ratingsQuantity,
+          imgCover:data.imgCover
         };
       });
       setHotels(hotelsList);
+      console.log("hotel Images: ", hotelsList);
 
     } catch (error) {
       console.error("Error fetching hotels:", error);
@@ -110,7 +112,7 @@ export default function MainScreen({ navigation }) {
   
 
   useLayoutEffect(() => {
-    fetchHotels();
+    fetchImages();
     fetchData();
   }, []);
 
@@ -178,7 +180,7 @@ const renderHorizontalItem = ({ item, index }) => {
       <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item.id, hotels:hotels})}>
         <View style={styles.verticalItem}>
           <Image
-            source={{ uri: item.images[0]}}
+            source={{ uri: item.imgCover}}
             style={styles.imageVertical}
             resizeMode="cover"
           />
@@ -267,16 +269,7 @@ const renderHorizontalItem = ({ item, index }) => {
             // onScroll={onScrollHandler}
             style={styles.horizontalFlatlist}
           />
-            {/* <Carousel
-            data={standoutDestination} // Dữ liệu bạn đã lấy
-            renderItem={renderItem}
-            sliderWidth={sliderWidth}
-            itemWidth={width}
-            layout={'default'} // Hoặc layout="stack" để có hiệu ứng xếp chồng
-            inactiveSlideScale={0.9} // Tỉ lệ phóng to/thu nhỏ của item không được chọn
-            inactiveSlideOpacity={0.7} // Độ mờ của item không được chọn
-            /> */}
-
+  
 
           <Text style={{ fontSize: 25, color: "white" , fontStyle: "bold", fontFamily: "Viga-Regular", marginLeft: 10  }}>Nổi bật</Text>
 

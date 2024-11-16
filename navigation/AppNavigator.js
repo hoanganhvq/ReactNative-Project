@@ -21,8 +21,8 @@
     import BookingDetails from '../screens/BDetailScreen';
     import VoucherScreen from '../screens/VoucherScreen';
     import color from '../assets/color.json';
-
-
+    import { ManagementScreen } from '../screens/managementScreen';
+    import { AdminScreen } from '../screens/AdminScreen';
     const Stack = createNativeStackNavigator();
     const AuthenticatedUserContext = createContext({ AsyncStorage: null });
 
@@ -36,7 +36,9 @@
     };
 
     const AppStackNavigator = () => (
-        <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="AdminScreen" screenOptions={{ headerShown: false }}>
+            <Stack.Screen name ="AdminScreen" component={AdminScreen}/>
+            <Stack.Screen name ="ManagementScreen" component={ManagementScreen}/>
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
             <Stack.Screen name="Main" component={MainScreen} />
             <Stack.Screen name="Chat" component={Chat} options={{headerShown: true, headerStyle: {backgroundColor: color.background_dark,},
@@ -81,7 +83,7 @@
                 headerShown:true, 
                 headerStyle:{backgroundColor:color.item_background_dark},
                 headerTitleStyle:{fontWeight:'bold', fontSize:20},
-                headerTintColor:color.tilte,
+                headerTintColor:"white",
                 headerBackVisible:false
                 }}/>
             <Stack.Screen name="VoucherScreen" component={VoucherScreen} options={

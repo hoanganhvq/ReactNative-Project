@@ -37,17 +37,6 @@ export default function HotelScreen({ navigation, route }) {
   const [currentImageIndex, setCurrentImageIndex] = useState(0);
   const fadeAnim = useRef(new Animated.Value(1)).current;
 
-  const images = [
-    {
-      uri: "https://images.unsplash.com/photo-1571501679680-de32f1e7aad4",
-    },
-    {
-      uri: "https://images.unsplash.com/photo-1573273787173-0eb81a833b34",
-    },
-    {
-      uri: "https://images.unsplash.com/photo-1569569970363-df7b6160d111",
-    },
-  ];
 
   const handleShowImages = (item, index) => {
 
@@ -153,7 +142,8 @@ const handleHideImages = () => {
 
 
     return (
-      <><Animated.ScrollView
+      <>
+      <Animated.ScrollView
         onScroll={Animated.event(
           [{ nativeEvent: { contentOffset: { y: scrollY } } }],
           { useNativeDriver: true }

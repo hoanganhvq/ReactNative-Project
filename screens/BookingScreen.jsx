@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import React, { useLayoutEffect, useState } from "react";
 import {
   View,
   StyleSheet,
@@ -12,7 +12,6 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
-import ImageViewing from "react-native-image-viewing";
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Carousel from "react-native-reanimated-carousel";
@@ -117,7 +116,9 @@ const BookingScreen = ({ navigation, route }) => {
       setFormattedCheckOut(formatDate(currentDate));
     }
   };
-
+  useLayoutEffect(()=>{
+    console.log("hotel Rooms: ", hotel);
+  })
   const formatDate = (date) => {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   };

@@ -104,7 +104,6 @@ const uploadProfilePicture = async () => {
         await updateDoc(doc(db, "users", currentUser.uid), {
             profileUrl: downloadURL,
         });
-        fetchUser();
         console.log("Profile picture uploaded successfully!");
 
     } catch (error) {
