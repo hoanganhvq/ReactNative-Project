@@ -1,4 +1,8 @@
+<<<<<<< HEAD
 import React, { useState } from "react";
+=======
+import React, { useLayoutEffect, useState } from "react";
+>>>>>>> demoProduct
 import {
   View,
   StyleSheet,
@@ -12,19 +16,28 @@ import {
   SafeAreaView,
   ScrollView,
 } from "react-native";
+<<<<<<< HEAD
 import ImageViewing from "react-native-image-viewing";
+=======
+>>>>>>> demoProduct
 import MaterialCommunityIcons from "@expo/vector-icons/MaterialCommunityIcons";
 import FontAwesome from "@expo/vector-icons/FontAwesome";
 import Carousel from "react-native-reanimated-carousel";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import DateTimePicker from "@react-native-community/datetimepicker";
 import EvilIcons from "@expo/vector-icons/EvilIcons";
+<<<<<<< HEAD
 import Feather from "@expo/vector-icons/Feather";
 import { NavigationContainer } from '@react-navigation/native';
 import { createStackNavigator } from '@react-navigation/native-stack';
 import imgData from "../Data/imgData.js";
 import vdtData from "../Data/vdtData.js";
 import dtData from "../Data/dtData.js";
+=======
+import vdtData from "../Data/vdtData.js";
+import color from "../assets/color.json";
+
+>>>>>>> demoProduct
 
 const { width } = Dimensions.get("window");
 const IMG_WIDTH = width * 0.9;
@@ -36,9 +49,14 @@ const RoomModal = ({
   onClose,
   roomCount,
   setRoomCount,
+<<<<<<< HEAD
   maxRooms = 5, // Default maximum number of rooms
 }) => {
   // Generate room options dynamically based on maxRooms
+=======
+  maxRooms = 5, 
+}) => {
+>>>>>>> demoProduct
   const roomOptions = Array.from({ length: maxRooms }, (_, i) => `${i + 1} Phòng`);
 
   const handleSelect = (count) => {
@@ -70,7 +88,11 @@ const RoomModal = ({
         <View style={styles.modalContent}>
           <Text style={styles.modalHeader}>Số phòng</Text>
           <TouchableOpacity style={styles.modalCloseButton} onPress={onClose}>
+<<<<<<< HEAD
             <EvilIcons name="close" size={30} color="black" />
+=======
+            <EvilIcons name="close" size={30} color="white" />
+>>>>>>> demoProduct
           </TouchableOpacity>
           <View style={styles.modalDivider} />
 
@@ -79,13 +101,24 @@ const RoomModal = ({
             renderItem={renderOption}
             keyExtractor={(item, index) => index.toString()}
           />
+<<<<<<< HEAD
+=======
+          
+>>>>>>> demoProduct
         </View>
       </View>
     </Modal>
   );
 };
 
+<<<<<<< HEAD
 const BookingScreen = (navigation) => {
+=======
+const BookingScreen = ({ navigation, route }) => {
+  const { hotel, token } = route.params;
+  const hotelData = hotel;
+  const rooms = hotel.rooms;
+>>>>>>> demoProduct
   // Date Picker States
   const [checkInDate, setCheckInDate] = useState(new Date());
   const [checkOutDate, setCheckOutDate] = useState(new Date());
@@ -96,11 +129,15 @@ const BookingScreen = (navigation) => {
 
   // Modal States
   const [isRoomModalVisible, setRoomModalVisible] = useState(false);
+<<<<<<< HEAD
   const [isGuestModalVisible, setGuestModalVisible] = useState(false);
+=======
+>>>>>>> demoProduct
   const [isDetailModalVisible, setDetailModalVisible] = useState(false);
 
   // Guest Counts
   const [roomCount, setRoomCount] = useState(1);
+<<<<<<< HEAD
   const [adultCount, setAdultCount] = useState(1);
   const [childCount, setChildCount] = useState(0);
 
@@ -108,6 +145,12 @@ const BookingScreen = (navigation) => {
   const [activeIndex, setActiveIndex] = useState(0);
   const [isViewerVisible, setIsViewerVisible] = useState(false);
   const [selectedImageIndex, setSelectedImageIndex] = useState(0);
+=======
+
+  // Carousel States
+  const [activeIndex, setActiveIndex] = useState(0);
+
+>>>>>>> demoProduct
 
   // Handlers for Date Picker
   const handleDateChange = (event, selectedDate) => {
@@ -121,7 +164,13 @@ const BookingScreen = (navigation) => {
       setFormattedCheckOut(formatDate(currentDate));
     }
   };
+<<<<<<< HEAD
 
+=======
+  useLayoutEffect(()=>{
+    console.log("hotel Rooms: ", hotel);
+  })
+>>>>>>> demoProduct
   const formatDate = (date) => {
     return `${date.getDate()}/${date.getMonth() + 1}/${date.getFullYear()}`;
   };
@@ -131,15 +180,19 @@ const BookingScreen = (navigation) => {
     setCurrentPicker(pickerType);
   };
 
+<<<<<<< HEAD
   // Handlers for Guest Modals
   const increment = (setter, count) => setter(count + 1);
   const decrement = (setter, count) => {
     if (count > 0) setter(count - 1);
   };
+=======
+>>>>>>> demoProduct
 
   // Render Functions
   const renderVdtItem = ({ item }) => (
     <View style={styles.iconRow}>
+<<<<<<< HEAD
       <AntDesign name="check" size={20} color="#2FB33B" />
       <Text style={styles.vdtText}>{item.txt}</Text>
     </View>
@@ -158,6 +211,18 @@ const BookingScreen = (navigation) => {
     </View>
   );
 
+=======
+      <AntDesign name="check" size={20} color={color.tilte} />
+      <Text style={styles.vdtText}>  {item.txt}</Text>
+    </View>
+  );
+
+  const renderDetailItem = ({ item }) => (
+    <Text style={styles.detailText}>{item}</Text>
+  );
+
+
+>>>>>>> demoProduct
   const renderImageItem = ({ item, index }) => (
     <TouchableOpacity
       style={styles.imageContainer}
@@ -166,6 +231,7 @@ const BookingScreen = (navigation) => {
         setIsViewerVisible(true);
       }}
     >
+<<<<<<< HEAD
       <Image source={item.src} style={styles.imageStyle} />
     </TouchableOpacity>
   );
@@ -174,17 +240,178 @@ const BookingScreen = (navigation) => {
     <SafeAreaView style={styles.safeArea}>
       <ScrollView contentContainerStyle={styles.container}>
         {/* Date Selection */}
+=======
+      <Image
+        source={{
+          uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Room/${item}`
+        }}
+        style={styles.imageStyle} />
+    </TouchableOpacity>
+  );
+
+  const renderContent = ({ item }) => {
+    return (
+      <>
+
+        <View style={{ alignItems: 'center' }}>
+          <View style={styles.headerKindRoom}>
+            <View style={styles.carouselContainer}>
+              <Carousel
+                data={item.images}
+                renderItem={renderImageItem}
+                width={width}   
+                height={IMG_HEIGHT}
+                autoPlay={true}
+                autoPlayInterval={3000}
+                onSnapToItem={(index) => setActiveIndex(index)}
+                loop={true}
+              />
+        
+              
+              <View style={styles.counter}>
+                <Text style={styles.counterText}>
+                  {activeIndex + 1}/{item.images.length}
+                </Text>
+              </View>
+            </View>
+
+            <View style={styles.roomDetailsBox}>
+              <Text style={styles.roomTitle}>{item.name}</Text>
+              <View style={styles.roomInfoRow}>
+                  <Text style={styles.roomInfoText}>{item.area}m²</Text>
+                  <View style={styles.divider} />
+                  <Text style={styles.roomInfoText}>{item.bedQuantity} giường lớn</Text>
+        
+                <TouchableOpacity onPress={() => setDetailModalVisible(true)}>
+                  <Text style={styles.detailLink}>Chi tiết</Text>
+                </TouchableOpacity>
+              </View>
+              <View style={styles.featuresRow}>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons name="shower" size={24} color={color.tilte} />
+                  <Text style={styles.featureText}>Bồn tắm/Vòi sen riêng</Text>
+                </View>
+                <View style={styles.featureItem}>
+                  <MaterialCommunityIcons name="smoking-off" size={24} color={color.tilte} />
+                  <Text style={styles.featureText}>Không hút thuốc</Text>
+                </View>
+              </View>
+            </View>
+          </View>
+         
+
+          <Modal
+            animationType="slide"
+            transparent={true}
+            visible={isDetailModalVisible}
+            onRequestClose={() => setDetailModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.detailModalContent}>
+                <Text style={styles.modalHeader}>Chi tiết phòng</Text>
+                <TouchableOpacity
+                  style={styles.modalCloseButton}
+                  onPress={() => setDetailModalVisible(false)}
+                >
+                  <EvilIcons name="close" size={30} color="black" />
+                </TouchableOpacity>
+                <View style={styles.modalDivider} />
+                <FlatList
+                  data={item.utilities}
+                  renderItem={renderDetailItem}
+                  keyExtractor={(item, index) => index.toString()}
+                />
+              </View>
+            </View>
+          </Modal>
+
+          <View style={styles.bookingBox}>
+            <View style={styles.bookingRow}>
+              <FontAwesome name="money" size={24} color={color.tilte} />
+              <Text style={styles.bookingLabel}> {item.price}đ/phòng</Text>
+            </View>
+
+            <FlatList
+              data={vdtData}
+              renderItem={renderVdtItem}
+              keyExtractor={(item, index) => index.toString()}
+              style={styles.vdtList}
+            />
+
+            <View style={styles.roomSelectionRow}>
+              <TouchableOpacity
+                style={styles.roomSelector}
+                onPress={() => setRoomModalVisible(true)}
+              >
+                <View >
+                  <Text style={styles.roomSelectorLabel}>Số phòng</Text>
+                  <Text style={styles.roomCountText}>{roomCount}</Text>
+                </View>
+                <AntDesign name="down" size={20} color="white" />
+              </TouchableOpacity>
+
+              <RoomModal
+                visible={isRoomModalVisible}
+                onClose={() => setRoomModalVisible(false)}
+                roomCount={roomCount}
+                setRoomCount={setRoomCount}
+                maxRooms={5} 
+              />
+              {token ?( <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('BookingDetails',
+              { hotel: hotelData, 
+                checkInDate:checkInDate,
+                checkOutDate:checkOutDate,
+                roomCount:roomCount,
+                roomName: item.name,
+                roomPrice: item.price,
+              })}>
+                <Text style={styles.bookButtonText}>Đặt</Text>
+              </TouchableOpacity>
+              ) : ( <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('SignIn',
+                { hotel: hotelData, 
+                  checkInDate:checkInDate,
+                  checkOutDate:checkOutDate,
+                  roomCount:roomCount,
+                  roomName: item.name,
+                  roomPrice: item.price,
+                })}>
+                  <Text style={styles.bookButtonText}>Đặt</Text>
+                </TouchableOpacity>)}
+             
+            </View>
+          </View>
+        </View>
+
+      </>
+    )
+  }
+
+  return (
+    <SafeAreaView style={styles.safeArea}>
+      <ScrollView contentContainerStyle={styles.container}>
+>>>>>>> demoProduct
         <View style={styles.dateSelectionContainer}>
           {/* Check-In Date */}
           <View style={styles.dateBox}>
             <Text style={styles.label}>Ngày nhận phòng</Text>
+<<<<<<< HEAD
+=======
+
+>>>>>>> demoProduct
             <TouchableOpacity
               style={styles.datePicker}
               onPress={() => showDatePickerMode("date", "checkIn")}
             >
+<<<<<<< HEAD
               <MaterialCommunityIcons name="calendar" size={22} color="#8f8e8e" />
               <Text style={styles.dateText}>{formattedCheckIn || "Chọn ngày"}</Text>
             </TouchableOpacity>
+=======
+              <MaterialCommunityIcons name="calendar" size={22} color={color.tilte} />
+              <Text style={styles.dateText}>{formattedCheckIn || "Chọn ngày"}</Text>
+            </TouchableOpacity>
+            
+>>>>>>> demoProduct
             {showDatePicker && currentPicker === "checkIn" && (
               <DateTimePicker
                 value={checkInDate}
@@ -202,7 +429,11 @@ const BookingScreen = (navigation) => {
               style={styles.datePicker}
               onPress={() => showDatePickerMode("date", "checkOut")}
             >
+<<<<<<< HEAD
               <MaterialCommunityIcons name="calendar" size={22} color="#8f8e8e" />
+=======
+              <MaterialCommunityIcons name="calendar" size={22} color={color.tilte} />
+>>>>>>> demoProduct
               <Text style={styles.dateText}>{formattedCheckOut || "Chọn ngày"}</Text>
             </TouchableOpacity>
             {showDatePicker && currentPicker === "checkOut" && (
@@ -216,6 +447,7 @@ const BookingScreen = (navigation) => {
           </View>
         </View>
 
+<<<<<<< HEAD
         {/* Guest and Room Selection */}
         <TouchableOpacity
           style={styles.guestRoomBox}
@@ -424,6 +656,15 @@ const BookingScreen = (navigation) => {
             </TouchableOpacity>
           </View>
         </View>
+=======
+
+        <FlatList
+          data={rooms}
+          renderItem={renderContent}
+          keyExtractor={item => item.id}
+          scrollEnabled={false}
+        />
+>>>>>>> demoProduct
       </ScrollView>
     </SafeAreaView>
   );
@@ -433,10 +674,18 @@ const BookingScreen = (navigation) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
+<<<<<<< HEAD
     backgroundColor: '#fff',
   },
   container: {
     alignItems: "center",
+=======
+  backgroundColor: color.background_dark,
+  },
+  container: {
+    alignItems: "center",
+    justifyContent: 'center',
+>>>>>>> demoProduct
     paddingVertical: 20,
   },
   dateSelectionContainer: {
@@ -444,10 +693,18 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "90%",
     marginBottom: 20,
+<<<<<<< HEAD
   },
   dateBox: {
     width: "48%",
     backgroundColor: "white",
+=======
+    backgroundColor:color.item_background_dark
+  },
+  dateBox: {
+    width: "48%",
+    backgroundColor:color.item_background_dark,
+>>>>>>> demoProduct
     borderRadius: 10,
     padding: 10,
     borderWidth: 1,
@@ -456,6 +713,10 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 5,
+<<<<<<< HEAD
+=======
+    color:"#ccc"
+>>>>>>> demoProduct
   },
   datePicker: {
     flexDirection: "row",
@@ -463,8 +724,14 @@ const styles = StyleSheet.create({
   },
   dateText: {
     fontSize: 16,
+<<<<<<< HEAD
     color: "#bf592b",
     marginLeft: 10,
+=======
+    color: color.tilte,
+    marginLeft: 10,
+    fontWeight:"bold"
+>>>>>>> demoProduct
   },
   guestRoomBox: {
     width: "90%",
@@ -493,7 +760,11 @@ const styles = StyleSheet.create({
   },
   modalContent: {
     width: "80%",
+<<<<<<< HEAD
     backgroundColor: "white",
+=======
+    backgroundColor: color.item_background_dark,
+>>>>>>> demoProduct
     borderRadius: 10,
     padding: 20,
   },
@@ -501,6 +772,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
+<<<<<<< HEAD
   },
   modalCloseButton: {
     position: "absolute",
@@ -511,6 +783,20 @@ const styles = StyleSheet.create({
     backgroundColor: "#e8e8e8",
     height: 1,
     marginVertical: 10,
+=======
+    color:"white"
+  },
+  modalCloseButton: {
+    position: "absolute",
+    top: 20,
+    right: 10,
+
+  },
+  modalDivider: {
+    backgroundColor: '#888',
+    height: 1,
+    marginVertical: 15,
+>>>>>>> demoProduct
   },
   modalRow: {
     flexDirection: "row",
@@ -522,6 +808,7 @@ const styles = StyleSheet.create({
     fontSize: 18,
   },
   counter: {
+<<<<<<< HEAD
     position: "absolute",
     bottom: 8,
     left: 26,
@@ -540,6 +827,19 @@ const styles = StyleSheet.create({
     fontWeight: "400",
     alignContent:'flex-start',
     justifyContent:'flex-start'
+=======
+    position: 'absolute',
+    bottom: 10,
+    right: 23,
+    backgroundColor: 'rgba(128, 128, 128, 0.7)',
+    paddingHorizontal: 15,
+    paddingVertical: 8,
+    borderRadius: 20,
+  },
+  counterText: {
+    color: 'white',
+    fontWeight: 'bold',
+>>>>>>> demoProduct
   },
   applyButton: {
     backgroundColor: "#4b47f2",
@@ -553,10 +853,28 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
+<<<<<<< HEAD
   carouselContainer: {
     width: "100%",
     alignItems: "center",
     marginBottom: 20,
+=======
+  headerKindRoom:{
+    backgroundColor: color.item_background_dark,
+    borderColor: "#ccc",
+    marginBottom: 20,
+    justifyContent:"center",
+    alignItems:"center",
+    width:"100%"
+  },
+  carouselContainer: {
+    width: width,
+    alignItems: "center",
+    borderBlockColor:"red",
+    justifyContent:"center",
+    marginRight:5,
+    marginTop:20
+>>>>>>> demoProduct
   },
   imageContainer: {
     alignItems: "center",
@@ -568,6 +886,7 @@ const styles = StyleSheet.create({
     resizeMode: "cover",
     borderRadius: 10,
   },
+<<<<<<< HEAD
   carouselCounter: {
     position: "absolute",
     bottom: 10,
@@ -590,21 +909,46 @@ const styles = StyleSheet.create({
     fontSize: 20, 
     fontWeight: 'bold', 
     marginBottom: 5, 
+=======
+
+  roomDetailsBox: {
+    backgroundColor: color.item_background_dark,
+    borderRadius: 10,
+    padding: 15,
+    borderColor: "#ccc",
+    marginEnd:20
+  },
+  roomTitle: {
+    fontSize: 20,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    color:"white"
+>>>>>>> demoProduct
   },
   roomInfoRow: {
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
     marginBottom: 10,
+<<<<<<< HEAD
+=======
+    color:"#ccc",
+    padding:7
+>>>>>>> demoProduct
 
   },
   roomInfoText: {
     fontSize: 12.5,
     fontWeight: "600",
+<<<<<<< HEAD
+=======
+    color:"#ccc"
+>>>>>>> demoProduct
   },
   divider: {
     width: 1,
     height: 20,
+<<<<<<< HEAD
     backgroundColor: "black",
     marginHorizontal: 10,
   },
@@ -613,6 +957,22 @@ const styles = StyleSheet.create({
     fontSize: 14,
     fontWeight: "bold",
     marginLeft: 10,
+=======
+    backgroundColor: "#999",
+    marginHorizontal: 10,
+  },
+  detailLink: {
+
+    color: color.tilte,
+    fontSize: 16,
+    fontWeight: "bold",
+    marginLeft:20,
+  },
+  detailText:{
+    fontSize:16,
+    color:"white",
+
+>>>>>>> demoProduct
   },
   featuresRow: {
     flexDirection: "row",
@@ -626,21 +986,45 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 12,
+<<<<<<< HEAD
   },
   detailModalContent: {
     width: "90%",
     height: "80%",
     backgroundColor: "white",
+=======
+    color:"#ccc"
+  },
+  detailModalContent: {
+    width: "90%",
+    height: "50%",
+    backgroundColor: color.item_background_dark,
+>>>>>>> demoProduct
     borderRadius: 10,
     padding: 20,
   },
   bookingBox: {
     width: "90%",
+<<<<<<< HEAD
     backgroundColor: "white",
     borderRadius: 10,
     padding: 15,
     borderWidth: 1,
     borderColor: "#ccc",
+=======
+    backgroundColor: color.item_background_dark,
+    borderRadius: 10,
+    padding: 15,
+    shadowColor: '#000',
+    shadowOffset: {
+      width: 0,
+      height: 2,
+    },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3,
+    borderWidth: 1,
+>>>>>>> demoProduct
     marginBottom: 30,
   },
   bookingRow: {
@@ -649,8 +1033,15 @@ const styles = StyleSheet.create({
     marginBottom: 10,
   },
   bookingLabel: {
+<<<<<<< HEAD
     fontSize: 14,
     marginLeft: 10,
+=======
+    fontSize: 18,
+    marginLeft: 10,
+    color:'white',
+    fontWeight:"bold"
+>>>>>>> demoProduct
   },
   vdtList: {
     marginBottom: 10,
@@ -661,7 +1052,12 @@ const styles = StyleSheet.create({
     marginVertical: 5,
   },
   vdtText: {
+<<<<<<< HEAD
     fontSize: 12,
+=======
+    fontSize: 14,
+    color:"#ccc"
+>>>>>>> demoProduct
   },
   seeDetailsLink: {
     fontSize: 14,
@@ -673,12 +1069,21 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
+<<<<<<< HEAD
+=======
+  
+>>>>>>> demoProduct
   },
   roomSelector: {
     flexDirection: "row",
     alignItems: "center",
+<<<<<<< HEAD
     borderWidth: 1,
     borderColor: "#4b47f2",
+=======
+    backgroundColor:'#444',
+    borderWidth: 1,
+>>>>>>> demoProduct
     borderRadius: 10,
     padding: 10,
     flex: 1,
@@ -688,6 +1093,7 @@ const styles = StyleSheet.create({
   roomSelectorLabel: {
     fontSize: 14,
     fontWeight: "bold",
+<<<<<<< HEAD
   },
   roomCountText: {
     fontSize: 16,
@@ -696,20 +1102,40 @@ const styles = StyleSheet.create({
   },
   bookButton: {
     backgroundColor: "#4b47f2",
+=======
+    color:color.tilte
+  },
+  roomCountText: {
+    fontSize: 16,
+    color: "white",
+    marginLeft: 5,
+  },
+  bookButton: {
+    backgroundColor: color.tilte,
+>>>>>>> demoProduct
     borderRadius: 10,
     paddingVertical: 12,
     paddingHorizontal: 20,
   },
   bookButtonText: {
     color: "white",
+<<<<<<< HEAD
     fontSize: 16,
+=======
+    fontSize: 18,
+>>>>>>> demoProduct
     fontWeight: "bold",
   },
   radioSelected: {
     width: 16,
     height: 16,
     borderRadius: 8,
+<<<<<<< HEAD
     backgroundColor: "#4B47F2",
+=======
+    backgroundColor: color.tilte,
+    borderColor:"black"
+>>>>>>> demoProduct
   },
   // Modal Styles
   modalOptionContainer: {
@@ -719,10 +1145,18 @@ const styles = StyleSheet.create({
     paddingVertical: 15,
     paddingHorizontal: 10,
     borderBottomWidth: 1,
+<<<<<<< HEAD
     borderBottomColor: "#f0f0f0",
   },
   modalOptionText: {
     fontSize: 18,
+=======
+    borderBottomColor: "#555",
+  },
+  modalOptionText: {
+    fontSize: 18,
+    color:"#ccc"
+>>>>>>> demoProduct
   },
 });
 

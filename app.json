@@ -22,6 +22,22 @@
     },
     "web": {
       "favicon": "./assets/favicon.png"
+<<<<<<< HEAD
     }
+=======
+    },
+    "extra": {
+      "apiKey": "AIzaSyCnhUXMh1jzLMbnLes68SYwY1EpKYVUKKs",
+      "authDomain": "chatapptest-f62b3.firebaseapp.com",
+      "projectId": "chatapptest-f62b3",
+      "storageBucket": "chatapptest-f62b3.appspot.com",
+      "messagingSenderId": "56576013200",
+      "appId": "1:56576013200:web:e1d14f692be36f16fd7915",
+      "measurementId": "G-ZXZ7RBHQP"
+    },
+    "plugins": [
+      "expo-font"
+    ]
+>>>>>>> demoProduct
   }
 }

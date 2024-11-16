@@ -1,4 +1,5 @@
 import React, { useState, useRef, useEffect } from 'react';
+<<<<<<< HEAD
 import { 
     StyleSheet, 
     Text, 
@@ -50,6 +51,64 @@ export default function ImageScreen() {
     const [showNav, setShowNav] = useState(false);
     const [sectionOffsets, setSectionOffsets] = useState([]); 
     const scrollViewRef = useRef(null); 
+=======
+import {
+    StyleSheet,
+    Text,
+    View,
+    Image,
+    SafeAreaView,
+    Animated,
+    Dimensions,
+    FlatList,
+    TouchableOpacity
+} from 'react-native';
+import ImageViewing from 'react-native-image-viewing';
+import { hotelData } from '../Data/hotelData.js';
+import { NavigationContainer } from '@react-navigation/native';
+import { createStackNavigator } from '@react-navigation/native-stack';
+const { width } = Dimensions.get('window');
+const ITEM_WIDTH = width * 0.45;
+const IMAGE_NOTIFICATION_HEIGHT = 500;
+
+const imageAlbums = [
+    {
+        id: 1,
+        title: 'Khách sạn',
+        images: hotelData.images.imageHotel,
+        first: hotelData.images.imageHotel[0]
+    },
+    {
+        id: 2,
+        title: 'Phòng',
+        images: hotelData.images.imagesRoom,
+        first: hotelData.images.imagesRoom[0]
+    },
+    {
+        id: 3,
+        title: 'Thức ăn',
+        images: hotelData.images.imagesFood,
+        first: hotelData.images.imagesFood[0]
+    },
+    {
+        id: 4,
+        title: 'Tiện nghi',
+        images: hotelData.images.imagesAmenities,
+        first: hotelData.images.imagesAmenities[0]
+    },
+];
+
+export default function ImageScreen({ route }) {
+    const { image, room } = route.params;
+    let total = 0;
+    room.forEach(i => {
+        total += i.images.length;
+    })
+    const [scrollY] = useState(new Animated.Value(0));
+    const [showNav, setShowNav] = useState(false);
+    const [sectionOffsets, setSectionOffsets] = useState([]);
+    const scrollViewRef = useRef(null);
+>>>>>>> demoProduct
     const sectionRefs = useRef([]);
 
     const [isImageViewerVisible, setIsImageViewerVisible] = useState(false);
@@ -59,9 +118,13 @@ export default function ImageScreen() {
 
     const [selectedAlbumId, setSelectedAlbumId] = useState(null);
 
+<<<<<<< HEAD
     const handleShowImages = (item, index, albumIndex) => {
         const images = imageAlbums[albumIndex].images.map(img => ( img.src ));
         setImagesForViewer(images);
+=======
+    const handleShowImages = (item, index) => {
+>>>>>>> demoProduct
         setCurrentImageIndex(index);
         setIsImageViewerVisible(true);
     };
@@ -73,7 +136,11 @@ export default function ImageScreen() {
     const handleScroll = Animated.event(
         [{ nativeEvent: { contentOffset: { y: scrollY } } }],
         {
+<<<<<<< HEAD
             useNativeDriver: false, 
+=======
+            useNativeDriver: false,
+>>>>>>> demoProduct
             listener: (event) => {
                 const offsetY = event.nativeEvent.contentOffset.y;
                 setShowNav(offsetY > 150);
@@ -106,21 +173,67 @@ export default function ImageScreen() {
         scrollToSection(index);
     };
 
+<<<<<<< HEAD
     const renderImagesView = ({ item }) => (
+=======
+    // const RenderImagesView = ({ item }) => (
+    //     <TouchableOpacity
+    //         style={[
+    //             styles.imageViewContainer,
+    //         ]}
+    //         onPress={() => handleSelectAlbum(item, item.id - 1)}
+    //     >
+    //         <Image
+    //             source={{
+    //                 uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item[0]}`
+    //             }}
+    //             style={styles.imageView} />
+    //         <Text style={styles.imageText}>Khách Sạn</Text>
+    //     </TouchableOpacity>
+    // );
+
+    // const RenderImagesViewRoom = ({ room }) => (
+    //     <TouchableOpacity
+    //         style={[
+    //             styles.imageViewContainer,
+    //         ]}
+    //         onPress={() => handleSelectAlbum(room, room.id - 1)}
+    //     >
+    //         <Image
+    //             source={{
+    //                 uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Room/${room.images[0]}`
+    //             }}
+    //             style={styles.imageView} />
+    //         <Text style={styles.imageText}>Phòng</Text>
+    //     </TouchableOpacity>
+    // );
+
+    
+ const renderImagesView = ({ item }) => (
+>>>>>>> demoProduct
         <TouchableOpacity 
             style={[
                 styles.imageViewContainer, 
             ]} 
             onPress={() => handleSelectAlbum(item, item.id - 1)}
         >
+<<<<<<< HEAD
             <Image source={item.first.src} style={styles.imageView} />
+=======
+            <Image source={{uri :item.first.src}} style={styles.imageView} />
+>>>>>>> demoProduct
             <Text style={styles.imageText}>{item.title}</Text> 
         </TouchableOpacity>
     );
 
     const renderImage = ({ item, index }, albumIndex) => (
+<<<<<<< HEAD
         <TouchableOpacity 
             style={styles.roomImageContainer} 
+=======
+        <TouchableOpacity
+            style={styles.roomImageContainer}
+>>>>>>> demoProduct
             onPress={() => {
                 handleShowImages(item, index, albumIndex);
             }}
@@ -131,17 +244,29 @@ export default function ImageScreen() {
 
     const renderAlbum = ({ item, index }) => {
         return (
+<<<<<<< HEAD
             <View 
                 style={styles.imageSectionContainer} 
                 ref={el => sectionRefs.current[index] = el} 
                 onLayout={getSectionPosition} 
+=======
+            <View
+                style={styles.imageSectionContainer}
+                ref={el => sectionRefs.current[index] = el}
+                onLayout={getSectionPosition}
+>>>>>>> demoProduct
             >
                 <Text style={styles.sectionTitle}>{item.title}</Text>
                 <FlatList
                     data={item.images}
                     renderItem={({ item, index: imgIndex }) => renderImage({ item, index: imgIndex }, index)}
+<<<<<<< HEAD
                     keyExtractor={(imgItem, imgIndex) => imgIndex.toString()} 
                     numColumns={2} 
+=======
+                    keyExtractor={(imgItem, imgIndex) => imgIndex.toString()}
+                    numColumns={2}
+>>>>>>> demoProduct
                     contentContainerStyle={styles.flatListContainer}
                 />
             </View>
@@ -161,7 +286,11 @@ export default function ImageScreen() {
     return (
         <SafeAreaView style={styles.container}>
             <View style={styles.header}>
+<<<<<<< HEAD
                 <Text style={styles.title}>Ảnh ({imageAlbums.length})</Text>
+=======
+                <Text style={styles.title}>Ảnh ({image.length + total})</Text>
+>>>>>>> demoProduct
                 <Text style={styles.hotelName}>{hotelData.name}</Text>
             </View>
 
@@ -192,16 +321,27 @@ export default function ImageScreen() {
             {showNav && (
                 <View style={styles.navContainer}>
                     {imageAlbums.map((album, index) => (
+<<<<<<< HEAD
                         <TouchableOpacity 
                             key={album.id} 
                             style={[
                                 styles.navButton, 
+=======
+                        <TouchableOpacity
+                            key={album.id}
+                            style={[
+                                styles.navButton,
+>>>>>>> demoProduct
                                 selectedAlbumId === album.id && styles.selectedNavButton
                             ]} //Xu ly them khi luot len thi hien thi qua tung muc
                             onPress={() => handleSelectAlbum(album, index)}
                         >
                             <Text style={[
+<<<<<<< HEAD
                                 styles.navText, 
+=======
+                                styles.navText,
+>>>>>>> demoProduct
                                 selectedAlbumId === album.id && styles.selectedNavText
                             ]}>{album.title}</Text>
                         </TouchableOpacity>
@@ -211,7 +351,11 @@ export default function ImageScreen() {
 
             {isImageViewerVisible && (
                 <Animated.View style={{ opacity: fadeAnim }}>
+<<<<<<< HEAD
                   <ImageViewing
+=======
+                    <ImageViewing
+>>>>>>> demoProduct
                         images={imagesForViewer}
                         imageIndex={currentImageIndex}
                         visible={isImageViewerVisible}
@@ -248,6 +392,10 @@ const styles = StyleSheet.create({
     },
     overview: {
         marginBottom: 20,
+<<<<<<< HEAD
+=======
+       
+>>>>>>> demoProduct
     },
     overviewText: {
         fontSize: 18,
@@ -299,7 +447,11 @@ const styles = StyleSheet.create({
         margin: 5,
     },
     image: {
+<<<<<<< HEAD
         width: '100%', 
+=======
+        width: '100%',
+>>>>>>> demoProduct
         height: 140,
         resizeMode: 'cover',
         borderRadius: 10,
