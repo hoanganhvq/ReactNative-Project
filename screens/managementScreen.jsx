@@ -14,14 +14,17 @@ import { db, storage } from '../config/firebase.js';
 
 import AntDesign from "@expo/vector-icons/AntDesign";
 
-import { hotelDetail } from '../handleAPI/viewAPI.js';
 
 const { width, height } = Dimensions.get("window");
 const IMG_WIDTH = width * 0.9;
 const IMG_HEIGHT = IMG_WIDTH * 0.5;
 const ITEM_WIDTH = width;
 
-export const ManagementScreen = () => {
+export const ManagementScreen = ({ route }) => {
+  // Ensure route.params is defined
+  const { hotel , hotelImageCover, hotelImages} = route.params || {}; // Default to an empty object if undefined
+
+
   const [hotelName, setHotelName] = useState("");
   const [hotelLocation, setHotelLocation] = useState("");
   const [hotelCity, setHotelCity] = useState("");
@@ -29,15 +32,14 @@ export const ManagementScreen = () => {
   const [roomName, setRoomName] = useState("");
   const [roomArea, setRoomArea] = useState(0);
   const [roomPrice, setRoomPrice] = useState(0);
-  const [hotelImagesID, setHotelImagesID] = useState(null);
-  const [hotelImages, setHotelImages] = useState([]);
+  // const [hotelImages, setHotelImages] = useState([]);
+  // const [hotelImageCover, setHotelImageCover] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
   const [modalAddRoom, setModalAddRoom] = useState(false);
   const [modalUtilities, setModalUtilities] = useState(false);
   const [modalVoucher, setModalVoucher] = useState(false);
   const [modalSuccessSave, setModalSuccessSave] = useState(false);
   const [modalNameHotel, setModalNameHotel] = useState(false);
-  const [hotelImageCover, setHotelImageCover] = useState("");
 
   const [utility, setUtility] = useState('');
   const [utilities, setUtilities] = useState([]);
@@ -50,33 +52,6 @@ export const ManagementScreen = () => {
   ]; //Data t fake de lam. m nhớ tạo voucher data rồi pull dữ liệu về xử lý nhe
 
 
-
-
-  const fetchHotels = async () => {
-    try {
-      const hotelsCollection = collection(db, 'hotels');
-      const hotelsSnapshot = await getDocs(hotelsCollection);
-      const hotelsList = hotelsSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          images: Object.values(data.images || {}),
-          name: data.name,
-          imgCover: data.imgCover
-        };
-      });
-
-      setHotelImagesID(hotelsList);
-      setHotelImages(hotelsList.find(hotel => hotel.id === "67047e37640239aaa10d370a")?.images);
-      setHotelImageCover(hotelsList.find(hotel => hotel.id === "67047e37640239aaa10d370a")?.imgCover);
-      console.log("hotels images: ", hotelImages);
-      console.log("imgCover", hotelImageCover);
-    } catch (error) {
-      console.error("Error fetching hotels:", error);
-      throw error;
-    }
-
-  };
 
   const addUtility = () => {
     if (utility.trim()) {
@@ -113,7 +88,7 @@ export const ManagementScreen = () => {
 
 
   const handleAddVoucher = () => {
-    console.log("Add voucher successfully");
+    console.log("Add voucher s1uccessfully");
   }
 
   const onDeleteVoucher = (index) => {
@@ -126,17 +101,14 @@ export const ManagementScreen = () => {
   }, 3000)
 
   useLayoutEffect(() => {
-    fetchHotels();
-    console.log("HAnh");
+    console.log("hotel Data in management Screen: ", hotel)
   }, []);
 
 
   const renderImageItem = ({ item, index }) => (
     <TouchableOpacity
       style={styles.imageContainer}
-      onPress={() => {
-        setIsViewerVisible(true);
-      }}
+     
     >
       <Image
         source={{
@@ -207,8 +179,8 @@ export const ManagementScreen = () => {
     try {
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        allowsMultipleSelection: true, // Cho phép chọn nhiều ảnh
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, // Chỉ chọn ảnh
+        allowsMultipleSelection: true, 
+        mediaTypes: ImagePicker.MediaTypeOptions.Images, 
       });
 
       if (!result.canceled) {
@@ -237,7 +209,7 @@ export const ManagementScreen = () => {
         const { uri } = asset;
 
 
-        const fileName = `${hotelId}_${Date.now()}.jpg`; // Đặt tên file độc nhất
+        const fileName = `${hotelId}_${Date.now()}.jpg`; 
         const storageRef = ref(storage, `hotel/${hotelId}/${fileName}`);
 
         const response = await fetch(uri);
@@ -245,12 +217,10 @@ export const ManagementScreen = () => {
 
         await uploadBytes(storageRef, blob);
 
-        // Lấy đường dẫn tải ảnh
         const downloadURL = await getDownloadURL(storageRef);
 
-        // Cập nhật ảnh vào Firestore dưới dạng Map
         await updateDoc(doc(db, "hotels", hotelId), {
-          ["images." + Date.now()]: downloadURL, // Thêm URL mới với key unique
+          ["images." + Date.now()]: downloadURL, 
         });
       }
       console.log("Profile picture uploaded successfully!");
@@ -311,7 +281,7 @@ export const ManagementScreen = () => {
 
 
   const Content = () => {
-    if (!hotelImagesID) {
+    if (!hotelImages) {
       return (
         <LoadingScreen />
       );
@@ -577,7 +547,7 @@ export const ManagementScreen = () => {
 
         </Modal>
         <View style={styles.amenitiesContainer}>
-          <Text style={styles.headerImage}>Tiện Nghi</Text>
+          <Text style={styles.headerImage}>Ti���n Nghi</Text>
           <FlatList
             data={hotel.utilities}
             renderItem={renderAmenities}

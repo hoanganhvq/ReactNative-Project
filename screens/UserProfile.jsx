@@ -101,7 +101,7 @@ function User({navigation}) {
             </TouchableOpacity>
 
 
-            <TouchableOpacity style={styles.funItem}  onPress={()=>navigation.navigate('MyTrip')}>
+            <TouchableOpacity style={styles.funItem}  onPress={()=>navigation.navigate('MyTour')}>
             <View style={styles.iconBox}>
             <Ionicons name="airplane-outline" size={24} color={color.tilte} />
             </View>

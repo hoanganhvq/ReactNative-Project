@@ -7,7 +7,8 @@ import {
   Image,
   TouchableOpacity,
   SafeAreaView,
-  ScrollView
+  ScrollView, TextInput,
+   Button
 } from 'react-native';
 import { hotelData } from '../Data/hotelData';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
@@ -19,6 +20,8 @@ export default function RatingScreen({ route, navigation }) {
 
   const [selectedRating, setSelectedRating] = useState(null);
   const [filteredReviews, setFilteredReviews] = useState(reviews);
+  const [newReview, setNewReview] = useState('');  // Feedback input
+  const [newRating, setNewRating] = useState(0);   // Rating input
 
   useLayoutEffect(() => {
     navigation.setOptions({
@@ -46,6 +49,26 @@ export default function RatingScreen({ route, navigation }) {
     } else {
       const filtered = reviews.filter(review => review.rating === rating);
       setFilteredReviews(filtered);
+    }
+  };
+
+  const handleSubmitReview = () => {
+    if (newReview && newRating) {
+      // Add the new review
+      const newReviewData = {
+        id: Math.random().toString(),
+        title: 'New Review',
+        rating: newRating,
+        review: newReview,
+        createAt: new Date(),
+        user: {
+          name: 'Anonymous',
+          photo: 'default_photo.png'
+        }
+      };
+      setFilteredReviews([...reviews, newReviewData]);
+      setNewReview('');
+      setNewRating(0);  // Reset after submit
     }
   };
 
@@ -123,6 +146,33 @@ export default function RatingScreen({ route, navigation }) {
           ))}
         </View>
 
+        <View style={styles.newReviewContainer}>
+          <Text style={styles.newReviewTitle}>Thêm Đánh Giá </Text>
+          <View style={styles.starsContainer}>
+            {Array.from({ length: 5 }, (_, index) => (
+              <TouchableOpacity key={index} onPress={() => setNewRating(index + 1)}>
+                <FontAwesome
+                  name="star"
+                  size={30}
+                  color={index < newRating ? '#FFD700' : '#CCCCCC'}
+                />
+              </TouchableOpacity>
+            ))}
+          </View>
+          <TextInput
+            style={styles.feedbackInput}
+            placeholder="Viết phản hồi của bạn..."
+            placeholderTextColor="white"
+            multiline
+            value={newReview}
+            onChangeText={setNewReview}
+          />
+          <TouchableOpacity style={styles.openButton} onPress={handleSubmitReview}>
+            <Text style={styles.openButtonText}>Gửi đánh giá</Text>
+          </TouchableOpacity>
+        </View>
+
+
         <FlatList
           data={filteredReviews}
           renderItem={renderItem}
@@ -186,6 +236,7 @@ const styles = StyleSheet.create({
   starsContainer: {
     flexDirection: 'row',
     marginVertical: 8,
+    
   },
   starIcon: {
     marginHorizontal: 2,
@@ -292,5 +343,44 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: '#999',
     marginTop: 20,
+  },
+  newReviewContainer: {
+    padding: 16,
+    backgroundColor: color.item_background_dark,
+    borderRadius: 12,
+    marginVertical: 10,
+    marginHorizontal: 20,
+    alignItems: 'center',
+  },
+  newReviewTitle: {
+    fontSize: 18,
+    color: 'white',
+    fontWeight: 'bold',
+    marginBottom: 10,
+  },
+  feedbackInput: {
+    height: 100,
+    width: '100%',
+    backgroundColor: '#999',
+    color: '#333',
+    padding: 10,
+    marginVertical: 10,
+    borderRadius: 8,
+  },
+  openButton: {
+    marginVertical: 10,
+    flexDirection: "row",
+    justifyContent: "center",
+    alignItems: "center",
+    alignSelf: "center",
+    padding: 10,
+    backgroundColor: color.tilte,
+    borderRadius: 8,
+    width: 220,
+  },
+   openButtonText: {
+    fontSize: 20,
+    fontWeight:"500",
+    color: "#fff",
   },
 });

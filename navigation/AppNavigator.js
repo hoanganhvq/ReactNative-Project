@@ -17,7 +17,7 @@
     import HomeScreen from '../screens/HomeScreen';
     import Chat from '../screens/ChatScreen';
     import Searching from '../screens/SearchScreen';
-    import MyTrip from '../screens/MyTrip';
+    import MyTour from '../screens/MyTour';
     import BookingDetails from '../screens/BDetailScreen';
     import VoucherScreen from '../screens/VoucherScreen';
     import color from '../assets/color.json';
@@ -36,7 +36,7 @@
     };
 
     const AppStackNavigator = () => (
-        <Stack.Navigator initialRouteName="AdminScreen" screenOptions={{ headerShown: false }}>
+        <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
             <Stack.Screen name ="AdminScreen" component={AdminScreen}/>
             <Stack.Screen name ="ManagementScreen" component={ManagementScreen}/>
             <Stack.Screen name="HomeScreen" component={HomeScreen} />
@@ -77,7 +77,13 @@
             <Stack.Screen name="Searching" component={Searching} />
             <Stack.Screen name="SignIn" component={SignIn} />
             <Stack.Screen name="SignUp" component={SignUp} />
-            <Stack.Screen name="MyTrip" component={MyTrip} options={{ headerShown: true }} />
+            <Stack.Screen name="MyTour" component={MyTour}  options={{headerShown:true,
+                headerBackTitleVisible: false,
+                headerBackTitle:{color: "white"}, 
+                headerTitle: "Chi tiết", 
+                headerStyle: { backgroundColor: '#2c2c2c' }, 
+                headerTitleStyle: { color: '#fff' }, 
+            }} />
             <Stack.Screen name="BookingDetails" component={BookingDetails}  options={
                 {title: 'Thanh toán', 
                 headerShown:true, 

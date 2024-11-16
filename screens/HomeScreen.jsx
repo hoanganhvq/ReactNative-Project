@@ -4,7 +4,7 @@ import Icon from 'react-native-vector-icons/FontAwesome';
 import MainScreen from './MainScreen';
 import color from "../assets/color.json";
 
-import CartScreen from "./CartScreen";
+import MyTour from "./MyTour";
 import UserProfile from "./UserProfile";
 
   const Tab = createBottomTabNavigator();
@@ -19,8 +19,8 @@ export default function HomeScreen() {
               case 'Trang chủ':
                 iconName = 'home';
                 break;
-              case 'Xe đẩy hàng':
-                iconName = 'shopping-cart';
+              case 'Chuyến đi':
+                iconName = 'plane';
                 break;
               case 'Thêm':
                 iconName = 'user';
@@ -38,7 +38,12 @@ export default function HomeScreen() {
         })}
       >
         <Tab.Screen name="Trang chủ" component={MainScreen} options={{ headerShown: false }} />
-        <Tab.Screen name="Xe đẩy hàng" component={CartScreen} />
+        <Tab.Screen name="Chuyến đi" component={MyTour} options={{headerShown: true, headerStyle: {backgroundColor: color.background_dark,},
+                    headerTitleStyle: {
+                        color: "white",
+                        fontSize:20 
+                    },
+                }}/>
         <Tab.Screen name="Thêm" component={UserProfile} options={{ headerShown: false}}  />
         
       </Tab.Navigator>

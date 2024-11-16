@@ -1,17 +1,25 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
-import color from "../assets/color.json";
+import { hotelDetail } from '../handleAPI/viewAPI.js';
+import { doc, updateDoc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { db, storage } from '../config/firebase.js';
 
-export const AdminScreen = (navigation) => {
+import color from "../assets/color.json";
+import LoadingScreen from '../screens/LoadingScreen';
+
+export const AdminScreen = ({ navigation }) => {
   const [hotel, setHotel] = useState(null);
+  const [hotelImages, setHotelImages] = useState([]);
+  const [hotelImageCover, setHotelImageCover] = useState("");
+  const [loading, setLoading] = useState(true); // Trạng thái loading
+  const hotelId = "67047e37640239aaa10d370a";
 
   const getData = async () => {
     try {
-      const data = await hotelDetail("67047e37640239aaa10d370a"); //Test thử với của thằng đầu tiên
+      const data = await hotelDetail(hotelId); // Fetch thông tin khách sạn
       return data.data.doc;
-
     } catch (error) {
       console.error("Error fetching data:", error);
       return null;
@@ -20,39 +28,96 @@ export const AdminScreen = (navigation) => {
 
   const fetchData = async () => {
     const res = await getData();
-    setHotel(res);
-    console.log("fetchData");
-    await getHotelier(res.hotelier.email);
+    if (res) {
+      setHotel(res);
+      console.log("fetchData database ok:", res);
+    }
   };
-  useLayoutEffect(()=>{
-    fetchData();
-  })
-  const Content =()=>{
-  
+
+  const fetchHotels = async () => {
+    try {
+      const hotelsCollection = collection(db, 'hotels');
+      const hotelsSnapshot = await getDocs(hotelsCollection);
+      const hotelsList = hotelsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          images: Object.values(data.images || {}),
+          name: data.name,
+          imgCover: data.imgCover || "",
+        };
+      });
+
+      const currentHotel = hotelsList.find(hotel => hotel.id === hotelId);
+      if (currentHotel) {
+        setHotelImages(currentHotel.images);
+        setHotelImageCover(currentHotel.imgCover);
+        console.log("fetch firebase ok: ", currentHotel)
+      } else {
+        console.warn("Không tìm thấy khách sạn!");
+      }
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchData(), fetchHotels()]);
+      } catch (error) {
+        console.error("Error fetching all data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
+  const Content = () => {
+    if (loading) {
+      return <LoadingScreen />;
+    }
+    if (!hotel && !hotelImages) {
+      return (
+        <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+          <Text style={{ color: color.text_dark }}>Không có dữ liệu khách sạn!</Text>
+        </View>
+      );
+    }
+
     return (
       <SafeAreaView style={styles.container}>
         {/* Header */}
         <View style={styles.header}>
           <Image
-            source={{ uri: 'https://via.placeholder.com/60' }} // URL ảnh demo, thay bằng ảnh khách sạn thực tế
+            source={{ uri: hotelImageCover || 'https://via.placeholder.com/60' }} // URL ảnh khách sạn
             style={styles.hotelImage}
           />
-          <Text style={styles.hotelName}>Tên khách sạn</Text>
+          <Text style={styles.hotelName}>{hotel?.name || "Tên khách sạn"}</Text>
         </View>
-  
+
         <View style={styles.iconContainer}>
           <View style={styles.row}>
-            <TouchableOpacity style={styles.card} onPress={()=>{navigation.navigate("ManagementScreen")}}>
+            <TouchableOpacity
+              style={styles.card}
+              onPress={() => navigation.navigate("ManagementScreen", { 
+                hotel: hotel , 
+                hotelImageCover:hotelImageCover, 
+                hotelImages: hotelImages})}
+            >
               <FontAwesome5 name="hotel" solid color={color.tilte} size={70} />
               <Text style={styles.label}>Thông tin</Text>
             </TouchableOpacity>
-  
+
             <TouchableOpacity style={styles.card}>
               <FontAwesome5 name="comment-dots" solid color={color.tilte} size={70} />
               <Text style={styles.label}>Tin nhắn</Text>
             </TouchableOpacity>
           </View>
-  
+
           {/* Row 2 */}
           <View style={styles.row}>
             <TouchableOpacity style={styles.card}>
@@ -63,8 +128,9 @@ export const AdminScreen = (navigation) => {
         </View>
       </SafeAreaView>
     );
-  }
- 
+  };
+
+  return <Content />;
 };
 
 const styles = StyleSheet.create({
@@ -87,12 +153,12 @@ const styles = StyleSheet.create({
     borderRadius: 30,
     marginRight: 15,
     borderWidth: 2,
-    borderColor: color.tilte, // Viền ảnh
+    borderColor: color.tilte,
   },
   hotelName: {
     fontSize: 22,
     fontWeight: 'bold',
-    color: color.text_dark, // Tiêu đề sáng màu
+    color: color.text_dark,
   },
   iconContainer: {
     flex: 1,
@@ -107,7 +173,7 @@ const styles = StyleSheet.create({
   card: {
     width: 140,
     height: 140,
-    backgroundColor: color.item_background_dark, // Nền card
+    backgroundColor: color.item_background_dark,
     borderRadius: 15,
     justifyContent: 'center',
     alignItems: 'center',
@@ -121,6 +187,6 @@ const styles = StyleSheet.create({
     marginTop: 10,
     fontSize: 18,
     fontWeight: '500',
-    color: color.text_dark, // Văn bản màu sáng
+    color: color.text_dark,
   },
 });
