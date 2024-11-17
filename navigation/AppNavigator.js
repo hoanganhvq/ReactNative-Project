@@ -39,7 +39,7 @@ const AuthenticatedUserContextProvider = ({ children }) => {
 };
 
 const AppStackNavigator = () => (
-    <Stack.Navigator initialRouteName="manageBooking" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
         <Stack.Screen name="manageBooking" component={manageBooking}options={{
             headerShown: true,
             headerBackTitleVisible: false,
@@ -92,13 +92,12 @@ const AppStackNavigator = () => (
         <Stack.Screen name="SignIn" component={SignIn} />
         <Stack.Screen name="SignUp" component={SignUp} />
         <Stack.Screen name="MyTour" component={MyTour} options={{
-            headerShown: true,
-            headerBackTitleVisible: false,
-            headerBackTitle: { color: "white" },
-            headerTitle: "Chi tiết",
-            headerStyle: { backgroundColor: '#2c2c2c' },
-            headerTitleStyle: { color: '#fff' },
-        }} />
+        headerShown: true, headerStyle: { backgroundColor: color.background_dark, },
+        headerTitleStyle: {
+          color: "white",
+          fontSize: 20
+        },
+      }} />
         <Stack.Screen name="BookingDetails" component={BookingDetails} options={
             {
                 title: 'Thanh toán',

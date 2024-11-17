@@ -234,7 +234,23 @@ export const ManagementScreen = ({ route }) => {
     }
   };
 
- 
+  const updateCity = async() =>{
+    if (!hotelCity){
+      console.log("User ID or new name is missing");
+      return;
+    }
+    const hotelRef = doc(db,"hotels", hotelId);
+    try {
+      await updateDoc(hotelRef,{
+        city: hotelCity
+      });
+      console.log("String field updated successfully!");
+    } catch (error){
+      console.log("Error updating string field:", error);
+    }
+    
+   }
+
   const renderAmenities = ({ item }) => (
     <View style={styles.amenityContainer}>
       <FontAwesome name="check" size={15} color={color.tilte} />
@@ -253,6 +269,7 @@ export const ManagementScreen = ({ route }) => {
               width={width}
               height={IMG_HEIGHT}
               autoPlayInterval={3000}
+              onSnapToItem={(index) => setActiveIndex(index)}
               loop={true}
             />
             <View style={styles.counter}>
@@ -294,6 +311,7 @@ export const ManagementScreen = ({ route }) => {
   const updateInformationHotel = async () => {
 
     const rs = await updateInforHotel(hotelId, hotelLocation, hotelCity, hotelDescription);
+    updateCity();
     if (rs.data.status == 'success') {
       setModalSuccessSave(true)
     }
@@ -323,9 +341,7 @@ export const ManagementScreen = ({ route }) => {
       <ScrollView>
         <View style={styles.hotelNameContainer}>
 
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-      <View style={styles.hotelNameContainer}>
+
           <View >
 
             <Text
@@ -563,12 +579,12 @@ export const ManagementScreen = ({ route }) => {
                   </View>
 
                 </View>
-                <View style={styles.modalAddImage}>
+                {/* <View style={styles.modalAddImage}>
                   <TouchableOpacity style={styles.iconUpload}>
                     <FontAwesome name="camera" size={40} color="white" />
                     <Text style={{ color: "white", marginTop: 10 }}>Avatar</Text>
                   </TouchableOpacity>
-                </View>
+                </View> */}
               </View>
 
               <View style={{ justifyContent: "center" }}>

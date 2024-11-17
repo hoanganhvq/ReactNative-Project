@@ -260,13 +260,7 @@ const BookingScreen = ({ navigation, route }) => {
                 <AntDesign name="down" size={20} color="white" />
               </TouchableOpacity>
 
-              <RoomModal
-                visible={isRoomModalVisible}
-                onClose={() => setRoomModalVisible(false)}
-                roomCount={roomCount}
-                setRoomCount={setRoomCount}
-                maxRooms={5}
-              />
+             
               {token ? (<TouchableOpacity style={styles.bookButton} onPress={() => navigation.navigate('BookingDetails',
                 {
                   roomId: item._id,
@@ -354,6 +348,13 @@ const BookingScreen = ({ navigation, route }) => {
           keyExtractor={item => item.id}
           scrollEnabled={false}
         />
+         <RoomModal
+                visible={isRoomModalVisible}
+                onClose={() => setRoomModalVisible(false)}
+                roomCount={roomCount}
+                setRoomCount={setRoomCount}
+                maxRooms={5}
+              />
       </ScrollView>
     </SafeAreaView>
   );

@@ -276,9 +276,9 @@ export default function HotelScreen({ navigation, route }) {
 
         </Animated.ScrollView>
         <View style={styles.footerContainer}>
-          <View style={styles.priceContainer}>
+          {/* <View style={styles.priceContainer}>
             <Text style={styles.priceText}>{hotel.price} {hotelData.currency}</Text>
-          </View>
+          </View> */}
           <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { hotel: hotel, token: tokenUser })}>
             <Text style={styles.buttonText}>Xem mọi phòng</Text>
           </TouchableOpacity>
@@ -575,6 +575,7 @@ const styles = StyleSheet.create({
     elevation: 5,
     borderTopLeftRadius: 25,
     borderTopRightRadius: 25,
+    justifyContent:"center"
   },
   startingPrice: {
     fontSize: 14,
@@ -590,13 +591,14 @@ const styles = StyleSheet.create({
     backgroundColor: colorTheme.tilte,
     borderRadius: 150,
     padding: 20,
-    width: '45%',
+    width: '80%',
     alignItems: 'center',
+    alignSelf:"center"
   },
   buttonText: {
     color: '#fff',
     fontWeight: 'bold',
-    fontSize: 15,
+    fontSize: 20,
   },
   loadingContainer: {
     flex: 1,

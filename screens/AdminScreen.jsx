@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, TouchableOpacity, Image } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, Image, ActivityIndicator } from 'react-native';
 import { FontAwesome5 } from '@expo/vector-icons';
 import { hotelDetail } from '../handleAPI/viewAPI.js';
 import { doc, updateDoc, getDoc, collection, getDocs } from 'firebase/firestore';
@@ -13,7 +13,7 @@ export const AdminScreen = ({ navigation }) => {
   const [hotel, setHotel] = useState(null);
   const [hotelImages, setHotelImages] = useState([]);
   const [hotelImageCover, setHotelImageCover] = useState("");
-  const [loading, setLoading] = useState(true); // Trạng thái loading
+  const [loading, setLoading] = useState(false); // Trạng thái loading
   const hotelId = "67047e37640239aaa10d370a";
 
   const getData = async () => {
@@ -78,7 +78,9 @@ export const AdminScreen = ({ navigation }) => {
 
   const Content = () => {
     if (loading) {
-      return <LoadingScreen />;
+      return (
+        <LoadingScreen />
+      );
     }
     if (!hotel && !hotelImages) {
       return (
@@ -121,7 +123,7 @@ export const AdminScreen = ({ navigation }) => {
 
           {/* Row 2 */}
           <View style={styles.row}>
-            <TouchableOpacity style={styles.card}>
+            <TouchableOpacity style={styles.card} onPress={()=>navigation.navigate("manageBooking")}>
               <FontAwesome5 name="list" solid color={color.tilte} size={70} />
               <Text style={styles.label}>Đặt phòng</Text>
             </TouchableOpacity>
