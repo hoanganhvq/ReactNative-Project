@@ -16,9 +16,10 @@ const firebaseConfig = {
 };
 
 const app = initializeApp(firebaseConfig);
-export const auth= initializeAuth(app, {
+export const auth = initializeAuth(app, {
     persistence: getReactNativePersistence(AsyncStorage)
 });
+// export const authen = getAuth(app);
 export const db = getFirestore(app);
 export const usersRef = collection(db, 'users');
 export const roomRef = collection(db, 'rooms');

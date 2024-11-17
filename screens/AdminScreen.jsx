@@ -14,25 +14,8 @@ export const AdminScreen = ({ navigation }) => {
   const [hotelImages, setHotelImages] = useState([]);
   const [hotelImageCover, setHotelImageCover] = useState("");
   const [loading, setLoading] = useState(true); // Trạng thái loading
-  const [hotelierId, setHotelierId] = useState('');
-
   const hotelId = "67047e37640239aaa10d370a";
 
-  const getHotelier = async (email) => {
-    try {
-      const hotelierRef = collection(db, 'users');
-      const q = query(hotelierRef, where('email', '==', email))
-      const querySnapshot = await getDocs(q);
-
-      querySnapshot.forEach((doc) => {
-        setHotelierId(doc.data());
-      })
-
-    } catch (error) {
-      console.log('Error from firebase: ', error);
-
-    }
-  }
   const getData = async () => {
     try {
       const data = await hotelDetail(hotelId); // Fetch thông tin khách sạn
@@ -49,8 +32,6 @@ export const AdminScreen = ({ navigation }) => {
       setHotel(res);
       console.log("fetchData database ok:", res);
     }
-    await getHotelier(res.hotelier.email);
-
   };
 
   const fetchHotels = async () => {
@@ -122,16 +103,17 @@ export const AdminScreen = ({ navigation }) => {
           <View style={styles.row}>
             <TouchableOpacity
               style={styles.card}
-              onPress={() => navigation.navigate("ManagementScreen", { 
-                hotel: hotel , 
-                hotelImageCover:hotelImageCover, 
-                hotelImages: hotelImages})}
+              onPress={() => navigation.navigate("ManagementScreen", {
+                hotel: hotel,
+                hotelImageCover: hotelImageCover,
+                hotelImages: hotelImages
+              })}
             >
               <FontAwesome5 name="hotel" solid color={color.tilte} size={70} />
               <Text style={styles.label}>Thông tin</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.card}  onPress={() => navigation.navigate('Chat', { hotelierId })}>
+            <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("ChatList")}>
               <FontAwesome5 name="comment-dots" solid color={color.tilte} size={70} />
               <Text style={styles.label}>Tin nhắn</Text>
             </TouchableOpacity>

@@ -1,6 +1,7 @@
+import { nullLiteralTypeAnnotation } from "@babel/types";
 import axios from "axios";
 const ip = ' 172.16.7.244:3000';
-const ip2 = '192.168.1.5:3000';
+// const api = 'http://192.168.1.9:3000';
 const api = 'https://be-rnative.onrender.com'
 export const home = async (ip) => {
     // const data = await axios.get(`http://${ip}/BE_React/home`);
@@ -83,6 +84,43 @@ export const getMyBooking = async (token) => {
             headers: { authorization: `Bearer ${token}` }
         }
     );
+
+    return data;
+}
+
+export const updateNameHotel = async (IdHotel, name) => {
+    console.log(name);
+    const data = await axios.put(`${api}/BE_React/hotel/${IdHotel}`, {
+        name
+    });
+
+    return data;
+
+}
+
+export const updateInforHotel = async (IdHotel, address, city, description) => {
+
+    const data = await axios.put(`${api}/BE_React/hotel/${IdHotel}`, {
+        address, city, description
+    });
+
+    return data;
+
+}
+
+export const addUtilityForHotel = async (IdHotel, utilities) => {
+
+    const data = await axios.put(`${api}/BE_React/hotel/addUtility/${IdHotel}`, {
+        utilities
+    });
+    return data;
+}
+
+
+export const addRoomforHotel = async (IdHotel, name, bedQuantity, area, price, quantity) => {
+    const data = await axios.post(`${api}/BE_React/${IdHotel}`, {
+        name, bedQuantity, area, price, quantity
+    });
 
     return data;
 }
