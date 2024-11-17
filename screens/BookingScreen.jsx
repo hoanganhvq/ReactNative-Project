@@ -32,7 +32,7 @@ const RoomModal = ({
   onClose,
   roomCount,
   setRoomCount,
-  maxRooms = 5, 
+  maxRooms = 5,
 }) => {
   const roomOptions = Array.from({ length: maxRooms }, (_, i) => `${i + 1} Phòng`);
 
@@ -74,7 +74,7 @@ const RoomModal = ({
             renderItem={renderOption}
             keyExtractor={(item, index) => index.toString()}
           />
-          
+
         </View>
       </View>
     </Modal>
@@ -85,6 +85,7 @@ const BookingScreen = ({ navigation, route }) => {
   const { hotel, token } = route.params;
   const hotelData = hotel;
   const rooms = hotel.rooms;
+
   // Date Picker States
   const [checkInDate, setCheckInDate] = useState(new Date());
   const [checkOutDate, setCheckOutDate] = useState(new Date());
@@ -116,7 +117,7 @@ const BookingScreen = ({ navigation, route }) => {
       setFormattedCheckOut(formatDate(currentDate));
     }
   };
-  useLayoutEffect(()=>{
+  useLayoutEffect(() => {
     console.log("hotel Rooms: ", hotel);
   })
   const formatDate = (date) => {
@@ -168,15 +169,15 @@ const BookingScreen = ({ navigation, route }) => {
               <Carousel
                 data={item.images}
                 renderItem={renderImageItem}
-                width={width}   
+                width={width}
                 height={IMG_HEIGHT}
                 autoPlay={true}
                 autoPlayInterval={3000}
                 onSnapToItem={(index) => setActiveIndex(index)}
                 loop={true}
               />
-        
-              
+
+
               <View style={styles.counter}>
                 <Text style={styles.counterText}>
                   {activeIndex + 1}/{item.images.length}
@@ -187,10 +188,10 @@ const BookingScreen = ({ navigation, route }) => {
             <View style={styles.roomDetailsBox}>
               <Text style={styles.roomTitle}>{item.name}</Text>
               <View style={styles.roomInfoRow}>
-                  <Text style={styles.roomInfoText}>{item.area}m²</Text>
-                  <View style={styles.divider} />
-                  <Text style={styles.roomInfoText}>{item.bedQuantity} giường lớn</Text>
-        
+                <Text style={styles.roomInfoText}>{item.area}m²</Text>
+                <View style={styles.divider} />
+                <Text style={styles.roomInfoText}>{item.bedQuantity} giường lớn</Text>
+
                 <TouchableOpacity onPress={() => setDetailModalVisible(true)}>
                   <Text style={styles.detailLink}>Chi tiết</Text>
                 </TouchableOpacity>
@@ -207,7 +208,7 @@ const BookingScreen = ({ navigation, route }) => {
               </View>
             </View>
           </View>
-         
+
 
           <Modal
             animationType="slide"
@@ -264,29 +265,33 @@ const BookingScreen = ({ navigation, route }) => {
                 onClose={() => setRoomModalVisible(false)}
                 roomCount={roomCount}
                 setRoomCount={setRoomCount}
-                maxRooms={5} 
+                maxRooms={5}
               />
-              {token ?( <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('BookingDetails',
-              { hotel: hotelData, 
-                checkInDate:checkInDate,
-                checkOutDate:checkOutDate,
-                roomCount:roomCount,
-                roomName: item.name,
-                roomPrice: item.price,
-              })}>
-                <Text style={styles.bookButtonText}>Đặt</Text>
-              </TouchableOpacity>
-              ) : ( <TouchableOpacity style={styles.bookButton} onPress={()=>navigation.navigate('SignIn',
-                { hotel: hotelData, 
-                  checkInDate:checkInDate,
-                  checkOutDate:checkOutDate,
-                  roomCount:roomCount,
+              {token ? (<TouchableOpacity style={styles.bookButton} onPress={() => navigation.navigate('BookingDetails',
+                {
+                  roomId: item._id,
+                  hotel: hotelData,
+                  checkInDate: checkInDate,
+                  checkOutDate: checkOutDate,
+                  roomCount: roomCount,
                   roomName: item.name,
                   roomPrice: item.price,
                 })}>
-                  <Text style={styles.bookButtonText}>Đặt</Text>
-                </TouchableOpacity>)}
-             
+                <Text style={styles.bookButtonText}>Đặt</Text>
+              </TouchableOpacity>
+              ) : (<TouchableOpacity style={styles.bookButton} onPress={() => navigation.navigate('SignIn',
+                {
+                  roomId: rooms._id,
+                  hotel: hotelData,
+                  checkInDate: checkInDate,
+                  checkOutDate: checkOutDate,
+                  roomCount: roomCount,
+                  roomName: item.name,
+                  roomPrice: item.price,
+                })}>
+                <Text style={styles.bookButtonText}>Đặt</Text>
+              </TouchableOpacity>)}
+
             </View>
           </View>
         </View>
@@ -310,7 +315,7 @@ const BookingScreen = ({ navigation, route }) => {
               <MaterialCommunityIcons name="calendar" size={22} color={color.tilte} />
               <Text style={styles.dateText}>{formattedCheckIn || "Chọn ngày"}</Text>
             </TouchableOpacity>
-            
+
             {showDatePicker && currentPicker === "checkIn" && (
               <DateTimePicker
                 value={checkInDate}
@@ -358,7 +363,7 @@ const BookingScreen = ({ navigation, route }) => {
 const styles = StyleSheet.create({
   safeArea: {
     flex: 1,
-  backgroundColor: color.background_dark,
+    backgroundColor: color.background_dark,
   },
   container: {
     alignItems: "center",
@@ -370,11 +375,11 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     width: "90%",
     marginBottom: 20,
-    backgroundColor:color.item_background_dark
+    backgroundColor: color.item_background_dark
   },
   dateBox: {
     width: "48%",
-    backgroundColor:color.item_background_dark,
+    backgroundColor: color.item_background_dark,
     borderRadius: 10,
     padding: 10,
     borderWidth: 1,
@@ -383,7 +388,7 @@ const styles = StyleSheet.create({
   label: {
     fontSize: 14,
     marginBottom: 5,
-    color:"#ccc"
+    color: "#ccc"
   },
   datePicker: {
     flexDirection: "row",
@@ -393,7 +398,7 @@ const styles = StyleSheet.create({
     fontSize: 16,
     color: color.tilte,
     marginLeft: 10,
-    fontWeight:"bold"
+    fontWeight: "bold"
   },
   guestRoomBox: {
     width: "90%",
@@ -430,7 +435,7 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
-    color:"white"
+    color: "white"
   },
   modalCloseButton: {
     position: "absolute",
@@ -477,21 +482,21 @@ const styles = StyleSheet.create({
     fontSize: 16,
     fontWeight: "bold",
   },
-  headerKindRoom:{
+  headerKindRoom: {
     backgroundColor: color.item_background_dark,
     borderColor: "#ccc",
     marginBottom: 20,
-    justifyContent:"center",
-    alignItems:"center",
-    width:"100%"
+    justifyContent: "center",
+    alignItems: "center",
+    width: "100%"
   },
   carouselContainer: {
     width: width,
     alignItems: "center",
-    borderBlockColor:"red",
-    justifyContent:"center",
-    marginRight:5,
-    marginTop:20
+    borderBlockColor: "red",
+    justifyContent: "center",
+    marginRight: 5,
+    marginTop: 20
   },
   imageContainer: {
     alignItems: "center",
@@ -509,27 +514,27 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     padding: 15,
     borderColor: "#ccc",
-    marginEnd:20
+    marginEnd: 20
   },
   roomTitle: {
     fontSize: 20,
     fontWeight: 'bold',
     marginBottom: 5,
-    color:"white"
+    color: "white"
   },
   roomInfoRow: {
     flexDirection: "row",
     alignItems: "center",
     flexWrap: "wrap",
     marginBottom: 10,
-    color:"#ccc",
-    padding:7
+    color: "#ccc",
+    padding: 7
 
   },
   roomInfoText: {
     fontSize: 12.5,
     fontWeight: "600",
-    color:"#ccc"
+    color: "#ccc"
   },
   divider: {
     width: 1,
@@ -542,11 +547,11 @@ const styles = StyleSheet.create({
     color: color.tilte,
     fontSize: 16,
     fontWeight: "bold",
-    marginLeft:20,
+    marginLeft: 20,
   },
-  detailText:{
-    fontSize:16,
-    color:"white",
+  detailText: {
+    fontSize: 16,
+    color: "white",
 
   },
   featuresRow: {
@@ -561,7 +566,7 @@ const styles = StyleSheet.create({
   },
   featureText: {
     fontSize: 12,
-    color:"#ccc"
+    color: "#ccc"
   },
   detailModalContent: {
     width: "90%",
@@ -594,8 +599,8 @@ const styles = StyleSheet.create({
   bookingLabel: {
     fontSize: 18,
     marginLeft: 10,
-    color:'white',
-    fontWeight:"bold"
+    color: 'white',
+    fontWeight: "bold"
   },
   vdtList: {
     marginBottom: 10,
@@ -607,7 +612,7 @@ const styles = StyleSheet.create({
   },
   vdtText: {
     fontSize: 14,
-    color:"#ccc"
+    color: "#ccc"
   },
   seeDetailsLink: {
     fontSize: 14,
@@ -619,12 +624,12 @@ const styles = StyleSheet.create({
     flexDirection: "row",
     justifyContent: "space-between",
     alignItems: "center",
-  
+
   },
   roomSelector: {
     flexDirection: "row",
     alignItems: "center",
-    backgroundColor:'#444',
+    backgroundColor: '#444',
     borderWidth: 1,
     borderRadius: 10,
     padding: 10,
@@ -635,7 +640,7 @@ const styles = StyleSheet.create({
   roomSelectorLabel: {
     fontSize: 14,
     fontWeight: "bold",
-    color:color.tilte
+    color: color.tilte
   },
   roomCountText: {
     fontSize: 16,
@@ -658,7 +663,7 @@ const styles = StyleSheet.create({
     height: 16,
     borderRadius: 8,
     backgroundColor: color.tilte,
-    borderColor:"black"
+    borderColor: "black"
   },
   // Modal Styles
   modalOptionContainer: {
@@ -672,7 +677,7 @@ const styles = StyleSheet.create({
   },
   modalOptionText: {
     fontSize: 18,
-    color:"#ccc"
+    color: "#ccc"
   },
 });
 

@@ -1,6 +1,6 @@
 import axios from "axios";
 const ip = ' 172.16.7.244:3000';
-const ip2 = '192.168.1.5:3000'; 
+const ip2 = '192.168.1.5:3000';
 const api = 'https://be-rnative.onrender.com'
 export const home = async (ip) => {
     // const data = await axios.get(`http://${ip}/BE_React/home`);
@@ -49,5 +49,40 @@ export const getMe = async (token) => {
 export const findEmail = async (email) => {
     // const data = await axios.post(`http://${ip}/BE_React/checkUserEmail`, { email });
     const data = await axios.post(`${api}/BE_React/checkUserEmail`, { email });
+    return data;
+}
+
+export const booking = async (token, hotelId, roomId, checkIn, CheckOutDate, quantity, total, methodPayment) => {
+    console.log(total, methodPayment);
+
+    const data = await axios.post(`${api}/BE_React/hotel/${hotelId}/room/${roomId}/booking`,
+        {
+            checkIn, CheckOutDate, quantity, total, methodPayment
+        }, {
+        headers: { authorization: `Bearer ${token}` }
+    });
+    return data;
+}
+
+export const bookingWithVoucher = async (token, hotelId, roomId, checkIn, CheckOutDate, quantity, total, methodPayment, voucher) => {
+    console.log("end");
+
+    const data = await axios.post(`${api}/BE_React/hotel/${hotelId}/room/${roomId}/booking`,
+        { checkIn, CheckOutDate, quantity, total, methodPayment, voucher },
+        {
+            headers: { authorization: `Bearer ${token}` }
+        }
+    );
+    return data;
+}
+
+export const getMyBooking = async (token) => {
+
+    const data = await axios.get(`${api}/BE_React/myBooking`,
+        {
+            headers: { authorization: `Bearer ${token}` }
+        }
+    );
+
     return data;
 }

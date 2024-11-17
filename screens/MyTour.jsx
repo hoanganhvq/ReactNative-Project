@@ -1,9 +1,12 @@
-import { View, Text, StyleSheet, FlatList, Image } from "react-native";
-import { useState } from "react";
+import { View, Text, StyleSheet, FlatList, Image, SafeAreaView } from "react-native";
+import { useEffect, useState } from "react";
 import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import color from "../assets/color.json";
+import { getMyBooking } from "../handleAPI/viewAPI";
+import AsyncStorage from "@react-native-async-storage/async-storage";
+import LoadingScreen from "./LoadingScreen";
 // cái này tự lấy data nha này t demo thôi
 const HotelDatademo = [
   {
@@ -30,6 +33,32 @@ const HotelDatademo = [
   },
 ];
 const MyTour = () => {
+  const [myBooking, setMyBooking] = useState(null);
+
+
+  const getData = async () => {
+    try {
+      const token = await AsyncStorage.getItem("userToken");
+      const data = await getMyBooking(token);
+      return data.data;
+
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+
+  const fetchData = async () => {
+    const res = await getData();
+    setMyBooking(res.data);
+  };
+
+  useEffect(() => {
+    fetchData();
+  }, [])
+
+
+
   const getColor = (status) => {
     if (status === "Đã thanh toán") {
       return "#00BB38";
@@ -38,38 +67,44 @@ const MyTour = () => {
     }
   };
   const renderHotel = ({ item }) => {
+    let checkIn = new Date(item.checkInDate).toLocaleDateString()
+    let checkOut = new Date(item.checkOutDate).toLocaleDateString()
+    let status = (item.status == true) ? "Đã thanh toán" : "Chưa thanh toán";
+
+
+
     return (
       <View style={styles.flatlistcontainer}>
         <View style={styles.hotelBox}>
           <View style={styles.titleContainer}>
-            <Text style={styles.title}>{item.title}</Text>
+            <Text style={styles.title}>{item.hotel.name}</Text>
           </View>
           <View style={styles.line}></View>
           <View style={styles.rowCon}>
             <Image
               style={styles.imageStyle}
               source={{
-                uri: "https://cdn.pixabay.com/photo/2017/08/30/01/05/milky-way-2695569_960_720.jpg",
+                uri: `https://github.com/JINO25/IMG/raw/master/Hotel/${item.hotel.imgCover}`,
               }}
             />
             <View>
-              <Text style={styles.textBox}>Địa chỉ: {item.addres}</Text>
-              <Text style={styles.textBox}>Loại phòng: {item.type}</Text>
+              <Text style={styles.textBox}>Địa chỉ: {item.hotel.address}</Text>
+              <Text style={styles.textBox}>Loại phòng: {item.room.name}</Text>
               <View>
                 <View style={styles.rowCon}>
                   <AntDesign name="calendar" size={22} color="white" />
                   <Text style={styles.textDate}>
-                    {item.dateS} - {item.dateR}
+                    {checkIn} - {checkOut}
                   </Text>
                 </View>
-             
+
               </View>
             </View>
           </View>
           <View style={{ flexDirection: "row", columnGap: 80, marginTop: 10 }}>
-            <Text style={styles.priceText}>Giá: {item.price}</Text>
-            <Text style={{ fontWeight: "bold", color: getColor(item.status), fontSize:18 }}>
-              {item.status}
+            <Text style={styles.priceText}>Giá: {item.totalPrice}</Text>
+            <Text style={{ fontWeight: "bold", color: getColor(status), fontSize: 18 }}>
+              {status}
             </Text>
           </View>
         </View>
@@ -77,17 +112,26 @@ const MyTour = () => {
     );
   };
   const [checkText, setCheckText] = useState(false);
+
+  if (!myBooking) {
+    return (
+      <SafeAreaView style={styles.container}>
+        <LoadingScreen />
+      </SafeAreaView>
+    );
+  }
+
   return (
     <View style={styles.container}>
       <View style={{ height: 60 }}></View>
-      <FlatList data={HotelDatademo} renderItem={renderHotel} />
+      <FlatList data={myBooking} renderItem={renderHotel} />
     </View>
   );
 };
 const styles = StyleSheet.create({
-  container:{
-    backgroundColor:color.background_dark,
-    flex:1,
+  container: {
+    backgroundColor: color.background_dark,
+    flex: 1,
     alignItems: "center",
     justifyContent: "center",
   },
@@ -95,7 +139,7 @@ const styles = StyleSheet.create({
     alignItems: "center",
     justifyContent: "center",
     margin: 5,
-    marginBottom:10
+    marginBottom: 10
   },
   hotelBox: {
     width: 370,
@@ -104,13 +148,13 @@ const styles = StyleSheet.create({
     borderRadius: 10,
     borderWidth: 1,
     alignItems: "center",
-    borderColor:"#333",
-   
+    borderColor: "#333",
+
   },
   title: {
     fontSize: 24,
     fontWeight: "bold",
-    color:color.tilte
+    color: color.tilte
   },
   line: {
     height: 1,
@@ -133,12 +177,12 @@ const styles = StyleSheet.create({
     columnGap: 10,
     alignItems: "center",
   },
-  
+
   textBox: {
     fontSize: 16,
     color: "white",
     fontWeight: "500",
-    marginBottom:12
+    marginBottom: 12
   },
   textDate: {
     fontSize: 12,

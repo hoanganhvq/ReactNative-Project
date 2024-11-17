@@ -22,7 +22,7 @@ const ITEM_WIDTH = width;
 
 export const ManagementScreen = ({ route }) => {
   // Ensure route.params is defined
-  const { hotel , hotelImageCover, hotelImages} = route.params || {}; // Default to an empty object if undefined
+  const { hotel, hotelImageCover, hotelImages } = route.params || {}; // Default to an empty object if undefined
 
 
   const [hotelName, setHotelName] = useState("");
@@ -108,7 +108,7 @@ export const ManagementScreen = ({ route }) => {
   const renderImageItem = ({ item, index }) => (
     <TouchableOpacity
       style={styles.imageContainer}
-     
+
     >
       <Image
         source={{
@@ -179,8 +179,8 @@ export const ManagementScreen = ({ route }) => {
     try {
 
       const result = await ImagePicker.launchImageLibraryAsync({
-        allowsMultipleSelection: true, 
-        mediaTypes: ImagePicker.MediaTypeOptions.Images, 
+        allowsMultipleSelection: true,
+        mediaTypes: ImagePicker.MediaTypeOptions.Images,
       });
 
       if (!result.canceled) {
@@ -209,7 +209,7 @@ export const ManagementScreen = ({ route }) => {
         const { uri } = asset;
 
 
-        const fileName = `${hotelId}_${Date.now()}.jpg`; 
+        const fileName = `${hotelId}_${Date.now()}.jpg`;
         const storageRef = ref(storage, `hotel/${hotelId}/${fileName}`);
 
         const response = await fetch(uri);
@@ -220,7 +220,7 @@ export const ManagementScreen = ({ route }) => {
         const downloadURL = await getDownloadURL(storageRef);
 
         await updateDoc(doc(db, "hotels", hotelId), {
-          ["images." + Date.now()]: downloadURL, 
+          ["images." + Date.now()]: downloadURL,
         });
       }
       console.log("Profile picture uploaded successfully!");
@@ -339,13 +339,13 @@ export const ManagementScreen = ({ route }) => {
                 </View>
                 <View style={{ backgroundColor: '#bbb', height: 1, marginVertical: 15 }} />
                 <View>
-                <View style={{ flexDirection: "row", marginBottom: 10 }}>
-              <Text style={styles.infoLabel}>Tên: </Text>
-              <TextInput style={styles.inputInfo}  placeholder={hotel?.name || "Nhập tên khách sạn"}
-              placeholderTextColor="gray" 
-             ></TextInput>
-            </View>
-                  
+                  <View style={{ flexDirection: "row", marginBottom: 10 }}>
+                    <Text style={styles.infoLabel}>Tên: </Text>
+                    <TextInput style={styles.inputInfo} placeholder={hotel?.name || "Nhập tên khách sạn"}
+                      placeholderTextColor="gray"
+                    ></TextInput>
+                  </View>
+
                   <View style={styles.modalAddImage}>
                     <TouchableOpacity style={styles.iconUpload} onPress={uploadProfilePicture}>
                       <FontAwesome name="camera" size={40} color="white" />
@@ -392,7 +392,7 @@ export const ManagementScreen = ({ route }) => {
             />
 
           </View>
-        <TouchableOpacity style={styles.openButton} onPress={uploadImages}>
+          <TouchableOpacity style={styles.openButton} onPress={uploadImages}>
             <AntDesign name="pluscircle" size={25} style={styles.icon} />
 
             <Text style={styles.openButtonText}>Thêm ảnh</Text>
@@ -547,7 +547,7 @@ export const ManagementScreen = ({ route }) => {
 
         </Modal>
         <View style={styles.amenitiesContainer}>
-          <Text style={styles.headerImage}>Ti���n Nghi</Text>
+          <Text style={styles.headerImage}>Tiện Nghi</Text>
           <FlatList
             data={hotel.utilities}
             renderItem={renderAmenities}
@@ -608,7 +608,7 @@ export const ManagementScreen = ({ route }) => {
                     </View>
                   )}
                 />
-               <TouchableOpacity style={styles.addButton}>
+                <TouchableOpacity style={styles.addButton}>
                   <Text style={styles.addButtonText}>Lưu</Text>
                 </TouchableOpacity>
               </View>
@@ -791,7 +791,7 @@ const styles = StyleSheet.create({
     flexWrap: "wrap",
     flex: 1,
     paddingRight: 10,
-    fontSize:20
+    fontSize: 20
   },
   buttonModify: {
     backgroundColor: "black",
@@ -983,7 +983,7 @@ const styles = StyleSheet.create({
   },
   modalAddImage: {
     justifyContent: "center",
-    alignItems:"center",
+    alignItems: "center",
     marginLeft: 20
   },
   buttonAdd: {
@@ -994,7 +994,7 @@ const styles = StyleSheet.create({
     alignSelf: "center",
     alignItems: "center",
     borderRadius: 10,
-    marginTop:10
+    marginTop: 10
   },
   txtButtonAdd: {
     fontWeight: "500",

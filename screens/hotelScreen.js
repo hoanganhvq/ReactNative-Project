@@ -21,10 +21,10 @@ const NOTIFICATION_HEIGHT = 500;
 export default function HotelScreen({ navigation, route }) {
   LogBox.ignoreAllLogs(true);
   const user = auth.currentUser;
-  const { hotelId , hotels} = route.params;
+  const { hotelId, hotels } = route.params;
 
   const hotelImages = hotels.find(hotel => hotel.id === hotelId)?.images || [];
-  const formattedHotel = hotelImages.map(url => ({uri: url}));
+  const formattedHotel = hotelImages.map(url => ({ uri: url }));
 
   const [hotelierId, setHotelierId] = useState('');
   const [hotel, setHotel] = useState(null);
@@ -42,10 +42,10 @@ export default function HotelScreen({ navigation, route }) {
 
     setCurrentImageIndex(index);
     setIsImageViewerVisible(true);
-};
-const handleHideImages = () => {
-  setIsImageViewerVisible(false);
-};
+  };
+  const handleHideImages = () => {
+    setIsImageViewerVisible(false);
+  };
   const checkToken = async () => {
     const Token = await AsyncStorage.getItem('userToken');
     setToken(Token);
@@ -64,19 +64,19 @@ const handleHideImages = () => {
 
   const fetchData = async () => {
     const res = await getData();
-    console.log("Avb",res);
+    // console.log("Avb",res);
     setHotel(res);
     await getHotelier(res.hotelier.email);
   };
 
   useEffect(() => {
     fetchData();
-    console.log("hotel", hotelImages);
+    // console.log("hotel", hotelImages);
   }, [])
 
-  useEffect(()=>{
-    console.log("currentIndex " , currentIndex)
-  },[currentIndex])
+  useEffect(() => {
+    console.log("currentIndex ", currentIndex)
+  }, [currentIndex])
 
   useEffect(() => {
     checkToken();
@@ -130,7 +130,7 @@ const handleHideImages = () => {
   const Content = () => {
     if (!hotel) {
       return (
-        <LoadingScreen/>
+        <LoadingScreen />
       );
     }
     let rating;
@@ -143,144 +143,144 @@ const handleHideImages = () => {
 
     return (
       <>
-      <Animated.ScrollView
-        onScroll={Animated.event(
-          [{ nativeEvent: { contentOffset: { y: scrollY } } }],
-          { useNativeDriver: true }
-        )}
-        scrollEventThrottle={16}
-      >
-        <View style={styles.scrollImages}>
-          <Carousel
-            data={hotelImages}
-            width={width}
-            height={200}
-            autoPlay={false}
-            onSnapToItem={(index) => setCurrentIndex(index)}
-            useScrollView={true}
-            renderItem={({ item, index }) => (
-              <TouchableOpacity
-                style={styles.imageContainer}
-                onPress={()=> {
+        <Animated.ScrollView
+          onScroll={Animated.event(
+            [{ nativeEvent: { contentOffset: { y: scrollY } } }],
+            { useNativeDriver: true }
+          )}
+          scrollEventThrottle={16}
+        >
+          <View style={styles.scrollImages}>
+            <Carousel
+              data={hotelImages}
+              width={width}
+              height={200}
+              autoPlay={false}
+              onSnapToItem={(index) => setCurrentIndex(index)}
+              useScrollView={true}
+              renderItem={({ item, index }) => (
+                <TouchableOpacity
+                  style={styles.imageContainer}
+                  onPress={() => {
                     handleShowImages(item, index);
                   }
-                }
-              >
-                <Image
-                  source={{
-                    uri: item,
-                  }}
-                  style={styles.image}
-                  // resizeMode="cover"
-                />
-              </TouchableOpacity>
-            )}
-          />
-
-          <View style={styles.imageIndicator}>
-            <Text style={styles.imageText}>
-              {currentIndex + 1}/{hotelImages.length}
-            </Text>
-          </View>
-        </View>
-
-        <View style={styles.feedbackContainer}>
-          <Text style={styles.nameHotel}>{hotel.name}</Text>
-          {tokenUser ? (
-            <TouchableOpacity
-              style={styles.chatButton}
-              onPress={() => navigation.navigate('Chat', { hotelierId })}>
-              <FontAwesome name="comments" size={24} color="#fff" />
-            </TouchableOpacity>
-          ) : (
-            <TouchableOpacity
-              style={styles.chatButton}
-              onPress={() => navigation.navigate('SignIn')}>
-              <FontAwesome name="comments" size={24} color="#fff" />
-            </TouchableOpacity>
-          )}
-          <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews }); }}>
-            <Text style={styles.rating}>{rating} / {hotelData.ratingScale} ⭐</Text>
-            <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>
-          </TouchableOpacity>
-        </View>
-
-        <View style={styles.descriptionContainer}>
-          <View style={styles.descriptionHeader}>
-            <Text style={styles.descriptionTitle}>Mô tả Khách Sạn</Text>
-            <TouchableOpacity>
-              <Text  style={{ fontWeight:"500", fontSize:18, paddingLeft: 15 ,color:colorTheme.tilte}} onPress={handleShowDescription}>Tìm hiểu thêm</Text>
-            </TouchableOpacity>
-          </View>
-
-          <View style={styles.descriptionTextContainer}>
-            <Text style={styles.descriptionText}>
-              {hotel.description.substring(0, 100) + '...'}
-            </Text>
-          </View>
-        </View>
-        <Modal
-          animationType="fade"
-          transparent={true}
-          visible={detailModalVisible}
-          onRequestClose={() => setDetailModalVisible(false)}
-        >
-          <View style={styles.modalOverlay}>
-            <View style={styles.modalContent}>
-              {/* Header */}
-              <View style={styles.modalHeader}>
-                <Text style={styles.modalTitle}>Mô tả phòng</Text>
-                <TouchableOpacity
-                  style={styles.modalCloseButton}
-                  onPress={() => setDetailModalVisible(false)}
-                  accessibilityLabel="Close description modal"
+                  }
                 >
-                  <EvilIcons name="close" size={28} color="#ccc" />
+                  <Image
+                    source={{
+                      uri: item,
+                    }}
+                    style={styles.image}
+                  // resizeMode="cover"
+                  />
                 </TouchableOpacity>
-              </View>
+              )}
+            />
 
-              <View style={styles.modalDivider} />
-
-              <ScrollView contentContainerStyle={styles.modalBody}>
-                <Text style={styles.modalDescription}>{hotel.description}</Text>
-              </ScrollView>
+            <View style={styles.imageIndicator}>
+              <Text style={styles.imageText}>
+                {currentIndex + 1}/{hotelImages.length}
+              </Text>
             </View>
           </View>
-        </Modal>
 
-        <View style={styles.amenitiesContainer}>
-          <Text style={styles.amenitiesTitle}>Tiện Nghi</Text>
-          <FlatList
-            data={hotel.utilities}
-            renderItem={renderAmenities}
-            keyExtractor={(item) => item.toString()}
-            estimatedItemSize={255}
-            contentContainerStyle={styles.amenitiesList}
-            scrollEnabled={true} />
-        </View>
+          <View style={styles.feedbackContainer}>
+            <Text style={styles.nameHotel}>{hotel.name}</Text>
+            {tokenUser ? (
+              <TouchableOpacity
+                style={styles.chatButton}
+                onPress={() => navigation.navigate('Chat', { hotelierId })}>
+                <FontAwesome name="comments" size={24} color="#fff" />
+              </TouchableOpacity>
+            ) : (
+              <TouchableOpacity
+                style={styles.chatButton}
+                onPress={() => navigation.navigate('SignIn')}>
+                <FontAwesome name="comments" size={24} color="#fff" />
+              </TouchableOpacity>
+            )}
+            <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews }); }}>
+              <Text style={styles.rating}>{rating} / {hotelData.ratingScale} ⭐</Text>
+              <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>
+            </TouchableOpacity>
+          </View>
 
-        <View style={styles.contactContainer}>
-          <Text style={styles.headerContact}>Liên hệ</Text>
-          <View style={styles.contactOption}>
-            <FontAwesome name="phone" size={24} color={colorTheme.tilte}/>
-            <Text style={styles.contactText}>{hotel.phone}</Text>
-          </View>
-          <View style={styles.contactOption}>
-            <FontAwesome name="envelope" size={24} color= {colorTheme.tilte}/>
-            <Text style={styles.contactText}>{hotel.hotelier.email}</Text>
-          </View>
-          <View style={styles.contactOption}>
-            <FontAwesome name="location-arrow" size={24} color={colorTheme.tilte} />
-            <Text style={styles.contactText}>{hotel.address}</Text>
-          </View>
-        </View>
+          <View style={styles.descriptionContainer}>
+            <View style={styles.descriptionHeader}>
+              <Text style={styles.descriptionTitle}>Mô tả Khách Sạn</Text>
+              <TouchableOpacity>
+                <Text style={{ fontWeight: "500", fontSize: 18, paddingLeft: 15, color: colorTheme.tilte }} onPress={handleShowDescription}>Tìm hiểu thêm</Text>
+              </TouchableOpacity>
+            </View>
 
-      </Animated.ScrollView>
+            <View style={styles.descriptionTextContainer}>
+              <Text style={styles.descriptionText}>
+                {hotel.description.substring(0, 100) + '...'}
+              </Text>
+            </View>
+          </View>
+          <Modal
+            animationType="fade"
+            transparent={true}
+            visible={detailModalVisible}
+            onRequestClose={() => setDetailModalVisible(false)}
+          >
+            <View style={styles.modalOverlay}>
+              <View style={styles.modalContent}>
+                {/* Header */}
+                <View style={styles.modalHeader}>
+                  <Text style={styles.modalTitle}>Mô tả phòng</Text>
+                  <TouchableOpacity
+                    style={styles.modalCloseButton}
+                    onPress={() => setDetailModalVisible(false)}
+                    accessibilityLabel="Close description modal"
+                  >
+                    <EvilIcons name="close" size={28} color="#ccc" />
+                  </TouchableOpacity>
+                </View>
+
+                <View style={styles.modalDivider} />
+
+                <ScrollView contentContainerStyle={styles.modalBody}>
+                  <Text style={styles.modalDescription}>{hotel.description}</Text>
+                </ScrollView>
+              </View>
+            </View>
+          </Modal>
+
+          <View style={styles.amenitiesContainer}>
+            <Text style={styles.amenitiesTitle}>Tiện Nghi</Text>
+            <FlatList
+              data={hotel.utilities}
+              renderItem={renderAmenities}
+              keyExtractor={(item) => item.toString()}
+              estimatedItemSize={255}
+              contentContainerStyle={styles.amenitiesList}
+              scrollEnabled={true} />
+          </View>
+
+          <View style={styles.contactContainer}>
+            <Text style={styles.headerContact}>Liên hệ</Text>
+            <View style={styles.contactOption}>
+              <FontAwesome name="phone" size={24} color={colorTheme.tilte} />
+              <Text style={styles.contactText}>{hotel.phone}</Text>
+            </View>
+            <View style={styles.contactOption}>
+              <FontAwesome name="envelope" size={24} color={colorTheme.tilte} />
+              <Text style={styles.contactText}>{hotel.hotelier.email}</Text>
+            </View>
+            <View style={styles.contactOption}>
+              <FontAwesome name="location-arrow" size={24} color={colorTheme.tilte} />
+              <Text style={styles.contactText}>{hotel.address}</Text>
+            </View>
+          </View>
+
+        </Animated.ScrollView>
         <View style={styles.footerContainer}>
           <View style={styles.priceContainer}>
             <Text style={styles.priceText}>{hotel.price} {hotelData.currency}</Text>
           </View>
-          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { hotel: hotel , token:tokenUser})}>
+          <TouchableOpacity style={styles.button} onPress={() => navigation.navigate('Booking', { hotel: hotel, token: tokenUser })}>
             <Text style={styles.buttonText}>Xem mọi phòng</Text>
           </TouchableOpacity>
         </View>
@@ -299,18 +299,18 @@ const handleHideImages = () => {
           )
         }
         {isImageViewerVisible && (
-                <Animated.View style={{ opacity: fadeAnim }}>
-                    <ImageViewing
-                        images={formattedHotel}
-                        imageIndex={currentImageIndex}
-                        visible={isImageViewerVisible}
-                        onRequestClose={handleHideImages}
-                        swipeToCloseEnabled={true}
-                        doubleTapToZoomEnabled={true}
-                        animationType='fade'
-                    />
-                </Animated.View>
-            )}
+          <Animated.View style={{ opacity: fadeAnim }}>
+            <ImageViewing
+              images={formattedHotel}
+              imageIndex={currentImageIndex}
+              visible={isImageViewerVisible}
+              onRequestClose={handleHideImages}
+              swipeToCloseEnabled={true}
+              doubleTapToZoomEnabled={true}
+              animationType='fade'
+            />
+          </Animated.View>
+        )}
       </>
     )
   }
@@ -425,7 +425,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     paddingRight: 60,
-    color:'white'
+    color: 'white'
   },
   descriptionTextContainer: {
     maxHeight: 80,
@@ -464,12 +464,12 @@ const styles = StyleSheet.create({
     fontSize: 22,
     fontWeight: "bold",
     textAlign: "center",
-    color:"white"
+    color: "white"
   },
   modalCloseButton: {
     position: "absolute",
     top: 10,
-    right: 10,  
+    right: 10,
   },
 
   modalDivider: {
@@ -482,7 +482,7 @@ const styles = StyleSheet.create({
   },
   modalDescription: {
     fontSize: 16,
-    color:'#ccc',
+    color: '#ccc',
     lineHeight: 22,
   },
   amenitiesContainer: {
@@ -504,11 +504,11 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     paddingRight: 60,
-    color:'white'
+    color: 'white'
   },
   amenitiesList: {
     paddingVertical: 5,
-    color:'white'
+    color: 'white'
 
   },
   amenityContainer: {
@@ -558,7 +558,7 @@ const styles = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
     paddingRight: 60,
-    color:'white'
+    color: 'white'
   },
   footerContainer: {
     padding: 20,
@@ -574,13 +574,13 @@ const styles = StyleSheet.create({
     shadowOpacity: 0.2,
     shadowRadius: 4,
     elevation: 5,
-    borderTopLeftRadius:25,
-    borderTopRightRadius:25,
+    borderTopLeftRadius: 25,
+    borderTopRightRadius: 25,
   },
   startingPrice: {
     fontSize: 14,
     color: 'white',
-    paddingBottom:5
+    paddingBottom: 5
   },
   priceText: {
     fontSize: 24,
