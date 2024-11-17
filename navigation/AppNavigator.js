@@ -16,6 +16,7 @@ import HotelScreen from '../screens/hotelScreen';
 import UserProfile from '../screens/UserProfile';
 import HomeScreen from '../screens/HomeScreen';
 import Chat from '../screens/ChatScreen';
+import ChatList from '../screens/ChatListScreen';
 import Searching from '../screens/SearchScreen';
 import MyTour from '../screens/MyTour';
 import BookingDetails from '../screens/BDetailScreen';
@@ -42,6 +43,7 @@ const AppStackNavigator = () => (
         <Stack.Screen name="ManagementScreen" component={ManagementScreen} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />
         <Stack.Screen name="Main" component={MainScreen} />
+        <Stack.Screen name="ChatList" component={ChatList} />
         <Stack.Screen name="Chat" component={Chat} options={{
             headerShown: true, headerStyle: { backgroundColor: color.background_dark, },
             headerTitleStyle: {

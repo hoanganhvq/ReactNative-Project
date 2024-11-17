@@ -103,16 +103,17 @@ export const AdminScreen = ({ navigation }) => {
           <View style={styles.row}>
             <TouchableOpacity
               style={styles.card}
-              onPress={() => navigation.navigate("ManagementScreen", { 
-                hotel: hotel , 
-                hotelImageCover:hotelImageCover, 
-                hotelImages: hotelImages})}
+              onPress={() => navigation.navigate("ManagementScreen", {
+                hotel: hotel,
+                hotelImageCover: hotelImageCover,
+                hotelImages: hotelImages
+              })}
             >
               <FontAwesome5 name="hotel" solid color={color.tilte} size={70} />
               <Text style={styles.label}>Thông tin</Text>
             </TouchableOpacity>
 
-            <TouchableOpacity style={styles.card}>
+            <TouchableOpacity style={styles.card} onPress={() => navigation.navigate("ChatList")}>
               <FontAwesome5 name="comment-dots" solid color={color.tilte} size={70} />
               <Text style={styles.label}>Tin nhắn</Text>
             </TouchableOpacity>

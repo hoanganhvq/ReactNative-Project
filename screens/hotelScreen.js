@@ -64,7 +64,7 @@ export default function HotelScreen({ navigation, route }) {
 
   const fetchData = async () => {
     const res = await getData();
-    // console.log("Avb",res);
+    console.log("Avb", res);
     setHotel(res);
     await getHotelier(res.hotelier.email);
   };

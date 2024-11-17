@@ -12,15 +12,15 @@ import {
 } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { getRoomId } from '../utils/getId'
-import { ActivityIndicator, KeyboardAvoidingView, Platform, Text, View,StyleSheet } from 'react-native';
+import { ActivityIndicator, KeyboardAvoidingView, Platform, Text, View, StyleSheet } from 'react-native';
 import color from "../assets/color.json";
 import { Icon } from 'react-native-elements';
 
-export default function Chat({ route , navigation}) {
+export default function Chat({ route, navigation }) {
     const { hotelierId } = route.params;
     const user = auth.currentUser;
     const [tokenFireBase, setTokenFireBase] = useState(null);
-    // console.log('hotel:', hotelierId.userId);
+    console.log('hotel:', hotelierId.userId);
 
 
     const createRoomIfNotExist = async () => {
@@ -68,15 +68,15 @@ export default function Chat({ route , navigation}) {
         navigation.setOptions({
             headerLeft: () => (
                 <Icon
-                    name="arrow-back" 
+                    name="arrow-back"
                     size={29}
-                    color="#fff" 
-                    style={{ marginLeft: 5 }} 
-                    onPress={() => navigation.goBack()} 
+                    color="#fff"
+                    style={{ marginLeft: 5 }}
+                    onPress={() => navigation.goBack()}
                 />
             ),
             headerStyle: {
-                backgroundColor: color.background_dark, 
+                backgroundColor: color.background_dark,
             },
             headerTintColor: 'white',
         });
@@ -118,7 +118,7 @@ export default function Chat({ route , navigation}) {
 
         return (
             // <KeyboardAvoidingView behavior={Platform.OS === "ios" ? "padding" : "height"}>
-                     <GiftedChat
+            <GiftedChat
                 messages={messages}
                 showAvatarForEveryMessage={true}
                 showUserAvatar={false}
@@ -135,7 +135,7 @@ export default function Chat({ route , navigation}) {
                 }}
             />
             // </KeyboardAvoidingView>
-           
+
         )
     }
 

@@ -13,6 +13,7 @@ import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } fr
 import { db, storage } from '../config/firebase.js';
 
 import AntDesign from "@expo/vector-icons/AntDesign";
+import { addRoomforHotel, addUtilityForHotel, updateInforHotel, updateNameHotel } from '../handleAPI/viewAPI.js';
 
 
 const { width, height } = Dimensions.get("window");
@@ -31,7 +32,9 @@ export const ManagementScreen = ({ route }) => {
   const [hotelDescription, setHotelDescription] = useState("");
   const [roomName, setRoomName] = useState("");
   const [roomArea, setRoomArea] = useState(0);
+  const [bedQuantity, setBedQuantity] = useState(0);
   const [roomPrice, setRoomPrice] = useState(0);
+
   // const [hotelImages, setHotelImages] = useState([]);
   // const [hotelImageCover, setHotelImageCover] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -51,13 +54,14 @@ export const ManagementScreen = ({ route }) => {
     { id: '4', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: false },
   ]; //Data t fake de lam. m nhớ tạo voucher data rồi pull dữ liệu về xử lý nhe
 
-
+  const hotelId = "67047e37640239aaa10d370a";
 
   const addUtility = () => {
     if (utility.trim()) {
       setUtilities([...utilities, utility.trim()]);
       setUtility('');
     }
+
   };
 
 
@@ -279,15 +283,45 @@ export const ManagementScreen = ({ route }) => {
     )
   }
 
-
-  const Content = () => {
-    if (!hotelImages) {
-      return (
-        <LoadingScreen />
-      );
+  const updateName = async () => {
+    const hotelId = "67047e37640239aaa10d370a";
+    const rs = await updateNameHotel(hotelId, hotelName);
+    if (rs.data.status == 'success') {
+      setModalSuccessSave(true)
     }
-    return (
-      <>
+
+  }
+
+  const updateInformationHotel = async () => {
+
+    const rs = await updateInforHotel(hotelId, hotelLocation, hotelCity, hotelDescription);
+    if (rs.data.status == 'success') {
+      setModalSuccessSave(true)
+    }
+
+  }
+
+  const addRoom = async () => {
+
+    const rs = await addRoomforHotel(hotelId, roomName, bedQuantity, roomArea, roomPrice)
+    if (rs.data.status == 'success') {
+      setModalSuccessSave(true)
+    }
+  }
+
+  const addingUtility = async () => {
+
+    const rs = await addUtilityForHotel(hotelId, utilities);
+
+    if (rs.data.status == 'success') {
+      setModalSuccessSave(true);
+      handleSaveUtilityUpdated();
+    }
+  }
+
+  return (
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
         <View style={styles.hotelNameContainer}>
 
 
@@ -342,7 +376,7 @@ export const ManagementScreen = ({ route }) => {
                   <View style={{ flexDirection: "row", marginBottom: 10 }}>
                     <Text style={styles.infoLabel}>Tên: </Text>
                     <TextInput style={styles.inputInfo} placeholder={hotel?.name || "Nhập tên khách sạn"}
-                      placeholderTextColor="gray"
+                      placeholderTextColor="gray" onChangeText={(text) => setHotelName(text)}
                     ></TextInput>
                   </View>
 
@@ -353,7 +387,7 @@ export const ManagementScreen = ({ route }) => {
                     </TouchableOpacity>
                   </View>
                 </View>
-                <TouchableOpacity style={styles.buttonAdd}>
+                <TouchableOpacity style={styles.buttonAdd} onPress={updateName}>
                   <Text style={styles.txtButtonAdd}>Thêm</Text>
                 </TouchableOpacity>
               </View>
@@ -416,7 +450,7 @@ export const ManagementScreen = ({ route }) => {
               <Text style={styles.infoLabel}>Mô tả: </Text>
               <TextInput style={styles.inputInfo} placeholder={hotel.description} placeholderTextColor="gray" onChangeText={(text) => setHotelDescription(text)}></TextInput>
             </View>
-            <TouchableOpacity style={styles.openButton} onPress={() => { setModalSuccessSave(true) }}>
+            <TouchableOpacity style={styles.openButton} onPress={updateInformationHotel}>
               <Text style={styles.txtButtonModify}>Lưu thông tin</Text>
             </TouchableOpacity>
           </View>
@@ -490,7 +524,7 @@ export const ManagementScreen = ({ route }) => {
                         color: "white",
                         paddingLeft: 5
                       }}
-
+                        onChangeText={(text) => setRoomName(text)}
                       ></TextInput>
                     </View>
 
@@ -500,7 +534,7 @@ export const ManagementScreen = ({ route }) => {
                     <Text style={styles.modalTitleInput}>Diện tích: </Text>
                     <View style={{ flexDirection: "row" }}>
                       <TextInput style={styles.modalInputInfo} keyboardType='numeric'
-
+                        onChangeText={(text) => setRoomArea(text)}
                       ></TextInput>
                       <Text style={styles.modalUnit}> m²</Text>
                     </View>
@@ -510,7 +544,7 @@ export const ManagementScreen = ({ route }) => {
                     <Text style={styles.modalTitleInput}>Số giường</Text>
                     <View style={{ flexDirection: "row" }}>
                       <TextInput style={styles.modalInputInfo} keyboardType='numeric'
-
+                        onChangeText={(text) => setBedQuantity(text)}
                       ></TextInput>
                       <Text style={styles.modalUnit}>Giường</Text>
                     </View>
@@ -521,7 +555,7 @@ export const ManagementScreen = ({ route }) => {
                     <Text style={styles.modalTitleInput}>Giá</Text>
                     <View style={{ flexDirection: "row" }}>
                       <TextInput style={styles.modalInputInfo} keyboardType='numeric'
-
+                        onChangeText={(text) => setRoomPrice(text)}
                       ></TextInput>
                       <Text style={styles.modalUnit}>đ</Text>
                     </View>
@@ -537,7 +571,7 @@ export const ManagementScreen = ({ route }) => {
               </View>
 
               <View style={{ justifyContent: "center" }}>
-                <TouchableOpacity style={styles.buttonAdd}>
+                <TouchableOpacity style={styles.buttonAdd} onPress={addRoom}>
                   <Text style={styles.txtButtonAdd}>Thêm</Text>
                 </TouchableOpacity>
               </View>
@@ -608,7 +642,10 @@ export const ManagementScreen = ({ route }) => {
                     </View>
                   )}
                 />
-                <TouchableOpacity style={styles.addButton}>
+                <TouchableOpacity style={styles.addButton} onPress={() => {
+                  console.log('hehe');
+                  addingUtility()
+                }}>
                   <Text style={styles.addButtonText}>Lưu</Text>
                 </TouchableOpacity>
               </View>
@@ -695,13 +732,6 @@ export const ManagementScreen = ({ route }) => {
 
 
         </View>
-      </>
-    )
-  }
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Content />
       </ScrollView>
     </SafeAreaView>
   );
