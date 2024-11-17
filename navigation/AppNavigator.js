@@ -20,6 +20,7 @@ import Searching from '../screens/SearchScreen';
 import MyTour from '../screens/MyTour';
 import BookingDetails from '../screens/BDetailScreen';
 import VoucherScreen from '../screens/VoucherScreen';
+import manageBooking from '../screens/mananageBooking';
 import color from '../assets/color.json';
 import { ManagementScreen } from '../screens/managementScreen';
 import { AdminScreen } from '../screens/AdminScreen';
@@ -37,7 +38,14 @@ const AuthenticatedUserContextProvider = ({ children }) => {
 };
 
 const AppStackNavigator = () => (
-    <Stack.Navigator initialRouteName="HomeScreen" screenOptions={{ headerShown: false }}>
+    <Stack.Navigator initialRouteName="manageBooking" screenOptions={{ headerShown: false }}>
+        <Stack.Screen name="manageBooking" component={manageBooking}options={{
+            headerShown: true,
+            headerBackTitleVisible: false,
+            headerTitle: "Chi tiết",
+            headerStyle: { backgroundColor: color.item_background_dark },
+            headerTitleStyle: { color: '#fff' , fontSize:26},
+        }} />
         <Stack.Screen name="AdminScreen" component={AdminScreen} />
         <Stack.Screen name="ManagementScreen" component={ManagementScreen} />
         <Stack.Screen name="HomeScreen" component={HomeScreen} />

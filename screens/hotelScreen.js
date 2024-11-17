@@ -39,7 +39,6 @@ export default function HotelScreen({ navigation, route }) {
 
 
   const handleShowImages = (item, index) => {
-
     setCurrentImageIndex(index);
     setIsImageViewerVisible(true);
   };

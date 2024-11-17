@@ -32,8 +32,7 @@ export const ManagementScreen = ({ route }) => {
   const [roomName, setRoomName] = useState("");
   const [roomArea, setRoomArea] = useState(0);
   const [roomPrice, setRoomPrice] = useState(0);
-  // const [hotelImages, setHotelImages] = useState([]);
-  // const [hotelImageCover, setHotelImageCover] = useState("");
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [modalAddRoom, setModalAddRoom] = useState(false);
   const [modalUtilities, setModalUtilities] = useState(false);
@@ -230,7 +229,7 @@ export const ManagementScreen = ({ route }) => {
     }
   };
 
-
+ 
   const renderAmenities = ({ item }) => (
     <View style={styles.amenityContainer}>
       <FontAwesome name="check" size={15} color={color.tilte} />
@@ -249,7 +248,6 @@ export const ManagementScreen = ({ route }) => {
               width={width}
               height={IMG_HEIGHT}
               autoPlayInterval={3000}
-              onSnapToItem={(index) => setActiveIndex(index)}
               loop={true}
             />
             <View style={styles.counter}>
@@ -280,17 +278,16 @@ export const ManagementScreen = ({ route }) => {
   }
 
 
-  const Content = () => {
-    if (!hotelImages) {
-      return (
-        <LoadingScreen />
-      );
-    }
+  if (!hotelImages) {
     return (
-      <>
-        <View style={styles.hotelNameContainer}>
+      <LoadingScreen />
+    );
+  }
+  return (
 
-
+    <SafeAreaView style={styles.container}>
+      <ScrollView>
+      <View style={styles.hotelNameContainer}>
           <View >
 
             <Text
@@ -695,13 +692,6 @@ export const ManagementScreen = ({ route }) => {
 
 
         </View>
-      </>
-    )
-  }
-  return (
-    <SafeAreaView style={styles.container}>
-      <ScrollView>
-        <Content />
       </ScrollView>
     </SafeAreaView>
   );

@@ -111,25 +111,33 @@ const uploadProfilePicture = async () => {
     }
 };
 
-    const handleSaveInf = async () => {
-        if (!currentUser) {
-            console.error("No user is currently logged in.");
-            return;
-        }
+const handleSaveInf = async () => {
+    if (!currentUser) {
+        console.error("No user is currently logged in.");
+        return;
+    }
 
-        try {
-            const userRef = doc(db, "users", currentUser.uid);
-            await updateDoc(userRef, {
-                name: name, 
-                email: email,
-            });
-            console.log("User name updated successfully!");
-            Alert.alert("Thay đổi thông tin thành công");
+    const updatedData = {};
+    if (name) updatedData.name = name;
+    if (email) updatedData.email = email;
 
-        } catch (error) {
-            console.error("Error updating user name:", error);
-        }
-    };
+    if (Object.keys(updatedData).length === 0) {
+        // Không có trường nào để cập nhật
+        console.error("No valid data to update.");
+        Alert.alert("Không có thông tin nào để thay đổi.");
+        return;
+    }
+
+    try {
+        const userRef = doc(db, "users", currentUser.uid);
+        await updateDoc(userRef, updatedData);
+        console.log("User information updated successfully!");
+        Alert.alert("Thay đổi thông tin thành công");
+    } catch (error) {
+        console.error("Error updating user information:", error);
+    }
+};
+
 
     return (
         <View style={styles.container}>

@@ -107,7 +107,6 @@ export default function MainScreen({ navigation }) {
     navigation.addListener('focus', () => {
       fetchToken();
     })
-
   }, []);
 
 
@@ -148,7 +147,7 @@ export default function MainScreen({ navigation }) {
       outputRange: [0, -30, 0],
     })
     return (
-      <TouchableOpacity onPress={() => navigation.navigate('Searching', { searching: item.city })}>
+      <TouchableOpacity onPress={() => navigation.navigate('Searching', { searching: item.city ,  hotelId: item.id, hotels: hotels })}>
         <Animated.View style={{
           padding: 10,
           alignItems: 'center',

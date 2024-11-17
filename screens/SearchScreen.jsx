@@ -10,7 +10,7 @@ const width = Dimensions.get('window').width;
 const ITEM_WIDTH = width / 2 - 15;
 
 const SearchScreen = ({ navigation, route }) => {
-    const { searching } = route.params;
+    const { searching, hotelsId, hotels } = route.params;
     const [search, setSearch] = useState(searching);
     const [searchDelay, setSearchDelay] = useState(null);
     const [hotel, setHotel] = useState(null);
@@ -61,7 +61,7 @@ const SearchScreen = ({ navigation, route }) => {
         const rating = item.ratingsAverage ? item.ratingsAverage.toFixed(1) : 0; 
         
         return (
-          <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item._id })}>
+          <TouchableOpacity onPress={() => navigation.navigate('Hotel', { hotelId: item._id , hotels: hotels})}>
             <View style={styles.verticalItem}>
               <Image
                 source={{ uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${item.imgCover}` }}

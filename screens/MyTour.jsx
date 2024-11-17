@@ -8,30 +8,7 @@ import { getMyBooking } from "../handleAPI/viewAPI";
 import AsyncStorage from "@react-native-async-storage/async-storage";
 import LoadingScreen from "./LoadingScreen";
 // cái này tự lấy data nha này t demo thôi
-const HotelDatademo = [
-  {
-    id: 1,
-    title: "Hotel cồn lường",
-    addres: "abc xyz",
-    type: "Phòng đôi",
-    dateS: "T5, tháng 10 10",
-    dateR: "T6, tháng 10 11 ",
-    customer: "2 người lớn",
-    price: "323.000đ",
-    status: "Đã thanh toán",
-  },
-  {
-    id: 2,
-    title: "Hotel cồn lường",
-    addres: "abc xyz",
-    type: "Phòng đôi",
-    dateS: "T5, tháng 10 10",
-    dateR: "T6, tháng 10 11 ",
-    customer: "2 người lớn",
-    price: "323.000đ",
-    status: "Chưa thanh toán",
-  },
-];
+
 const MyTour = () => {
   const [myBooking, setMyBooking] = useState(null);
 
