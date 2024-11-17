@@ -14,6 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const BookingDetails = ({ navigation, route }) => {
     const { roomId, hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice } = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
+    const days = checkInDate==checkOutDate? 1: Math.floor((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1;
     const total = roomCount * roomPrice;
     const [selectedPayment, setSelectedPayment] = useState('hotel');
     const [value, setValue] = useState(null);
@@ -157,8 +158,12 @@ const BookingDetails = ({ navigation, route }) => {
                         <Text style={styles.totalAmount}>{roomPrice * roomCount}</Text>
                     </View>
                     <View style={styles.sale}>
+                        <Text style={styles.saleLable}>Số ngày</Text>
+                        <Text style={styles.saleAmount}>x {days}</Text>
+                    </View>
+                    <View style={styles.sale}>
                         <Text style={styles.saleLable}>Giảm giá</Text>
-                        <Text style={styles.saleAmount}>{discount}</Text>
+                        <Text style={styles.saleAmount}>- {discount}</Text>
                     </View>
                     <View style={
                         {
@@ -575,7 +580,7 @@ const styles = StyleSheet.create({
         opacity: 1
     },
     optionButtonText: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
         color: 'white',
         textAlign: 'center',
