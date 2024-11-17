@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, ScrollView , Modal} from 'react-native';
+import { View, Text, StyleSheet, Image, TextInput, Button, TouchableOpacity, ScrollView, Modal } from 'react-native';
 import { Icon, CheckBox } from 'react-native-elements';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import { Dropdown } from 'react-native-element-dropdown';
@@ -8,45 +8,77 @@ import AntDesign from "@expo/vector-icons/AntDesign";
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import color from '../assets/color.json';
 import payment from '../assets/payment/payment.json';
+import { postBooking } from '../handleAPI/booking';
+import AsyncStorage from '@react-native-async-storage/async-storage';
 
 const BookingDetails = ({ navigation, route }) => {
-    const { hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice} = route.params;
+    const { roomId, hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice } = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
-    const days = (checkOutDate - checkInDate) / (1000 * 60 * 60 * 24);
-    const total = roomCount * roomPrice * days;
+    const total = roomCount * roomPrice;
     const [selectedPayment, setSelectedPayment] = useState('hotel');
     const [value, setValue] = useState(null);
-    const [selected, setSelected] = useState("Credit Card");
+    const [selected, setSelected] = useState("Cash");
     const [successfullyModal, setSuccessfullyModal] = useState(false);
     const [voucher, setVoucher] = useState(null);
     const discount = voucher ? (parseInt(voucher.discount.replace('%', '')) / 100) * total : 0;
 
-  
 
-    const handleSelectVoucher = (voucher)=>{
+
+    const getBooking = async () => {
+        const token = await AsyncStorage.getItem("userToken");
+
+        let methodPayment = "Cash";
+
+        if (selected == 'Credit Card' && selectedPayment != 'hotel') {
+            methodPayment = 'Credit Card';
+        } else if (selected == 'Digital') {
+            methodPayment = selectedItem.label.trim();
+        } else if (selected == 'Credit Card' && selectedPayment == 'hotel') {
+            methodPayment = 'Cash'
+        }
+
+        console.log(methodPayment);
+
+        console.log(roomId);
+
+        const rs = await postBooking(token, hotel._id, roomId, checkInDate, checkOutDate, roomCount, total, methodPayment, voucher);
+
+
+        if (rs.data.status == 'success') {
+            setSuccessfullyModal(true);
+        }
+
+    };
+
+    const getHome = () => {
+        setSuccessfullyModal(false);
+        navigation.navigate("HomeScreen");
+    }
+
+    const handleSelectVoucher = (voucher) => {
         setVoucher(voucher);
     }
 
     const DigitalPayment = [
-        { 
-            label: ' Momo', 
-            value: '1',  
-            icon: () => <Image source={{ uri: payment.Momo }} style={{ width: 40, height: 40 }} /> 
+        {
+            label: ' Momo',
+            value: '1',
+            icon: () => <Image source={{ uri: payment.Momo }} style={{ width: 40, height: 40 }} />
         },
-        { 
-            label: ' VNPay', 
-            value: '2',  
-            icon: () => <Image source ={{uri: payment.VNPay}} style={{ width: 40, height: 40 }}/>
+        {
+            label: ' VNPay',
+            value: '2',
+            icon: () => <Image source={{ uri: payment.VNPay }} style={{ width: 40, height: 40 }} />
         },
-        { 
-            label: ' Paypal', 
-            value: '3', 
-            icon: () => <Image source={{uri: payment.Paypal}} style ={{height:40, width:40}}/> 
+        {
+            label: ' Paypal',
+            value: '3',
+            icon: () => <Image source={{ uri: payment.Paypal }} style={{ height: 40, width: 40 }} />
         },
-        { 
-            label: ' ZaloPay', 
-            value: '4', 
-            icon: () => <Image source={{uri: payment.ZaloPay }} style ={{height:40, width:40}}/> 
+        {
+            label: ' ZaloPay',
+            value: '4',
+            icon: () => <Image source={{ uri: payment.ZaloPay }} style={{ height: 40, width: 40 }} />
         },
     ]
 
@@ -55,88 +87,95 @@ const BookingDetails = ({ navigation, route }) => {
 
     const renderItem = item => {
         return (
-          <View style={styles.item}>
-            {item.icon()}
-            <Text style={styles.textItem}>{item.label}</Text>
-    
-          </View>
+            <View style={styles.item}>
+                {item.icon()}
+                <Text style={styles.textItem}>{item.label}</Text>
+
+            </View>
         );
-      };
+    };
 
     return (
         <SafeAreaView style={styles.container}>
-            <ScrollView  showsVerticalScrollIndicator={false}>
+            <ScrollView showsVerticalScrollIndicator={false}>
+
+                {/* <TouchableOpacity style={styles.confirmButton} onPress={getBooking} >
+                    <Text style={styles.confirmText}>ĐẶT NGAY</Text>
+                </TouchableOpacity> */}
+
                 <View style={styles.hotel}>
-                    <View style={{flexDirection:'row'}}>
+                    <View style={{ flexDirection: 'row' }}>
                         <Image
                             source={{ uri: `https://raw.githubusercontent.com/JINO25/IMG/master/Hotel/${hotel.imgCover}` }}
                             style={styles.imageVertical}
                             resizeMode="cover"
                         />
-                        <View style = {styles.hotelInfo}> 
+                        <View style={styles.hotelInfo}>
                             <Text style={styles.textName}>{hotel.name}</Text>
                             <Text style={styles.textCity}>{hotel.city}</Text>
-                            <View style = {styles.ratingContainer}>
+                            <View style={styles.ratingContainer}>
                                 <Text style={styles.rating}>⭐ {rating}</Text>
                                 <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity} reviews)</Text>
                             </View>
                         </View>
                     </View>
                     <View style={
-                        {backgroundColor: '#bbb',
-                        height: 1,
-                        marginVertical: 15,}}/>
+                        {
+                            backgroundColor: '#bbb',
+                            height: 1,
+                            marginVertical: 15,
+                        }} />
                     <View style={styles.dates}>
                         <Text style={styles.dateText}>{checkInDate.toLocaleDateString('vi-VN', { weekday: 'short' })}, {checkInDate.getDate()}/{checkInDate.getMonth() + 1}/{checkInDate.getFullYear()}    </Text>
-                        <FontAwesome name="arrow-right" type="font-awesome" size={16} color={color.tilte}/>
+                        <FontAwesome name="arrow-right" type="font-awesome" size={16} color={color.tilte} />
                         <Text style={styles.dateText}>   {checkOutDate.toLocaleDateString('vi-VN', { weekday: 'short' })}, {checkOutDate.getDate()}/{checkOutDate.getMonth() + 1}/{checkOutDate.getFullYear()}</Text>
                     </View>
 
                     <View style={
-                        {backgroundColor: '#bbb',
-                        height: 1,
-                        marginVertical: 15,}}/>
+                        {
+                            backgroundColor: '#bbb',
+                            height: 1,
+                            marginVertical: 15,
+                        }} />
 
                     <View style={styles.roomInfo}>
-                    <Text style={styles.roomTitle}>{roomCount} x {roomName}</Text>
+                        <Text style={styles.roomTitle}>{roomCount} x {roomName}</Text>
+                    </View>
                 </View>
-                </View>
-                        
-            
+
+
                 <View style={styles.priceSection}>
                     <View style={styles.voucherSection}>
-                        <TouchableOpacity style={{flexDirection:'row', justifyContent:'center', alignItems:'center'}}  onPress={() => navigation.navigate('VoucherScreen', { onGoBack: handleSelectVoucher, total: total })}>
+                        <TouchableOpacity style={{ flexDirection: 'row', justifyContent: 'center', alignItems: 'center' }} onPress={() => navigation.navigate('VoucherScreen', { onGoBack: handleSelectVoucher, total: total })}>
                             <Text style={styles.voucherInput}>Thêm voucher</Text>
                             {voucher && <Text style={styles.voucherCode}>{voucher.code}</Text>}
                             <AntDesign name="right" size={20} color={color.tilte} />
                         </TouchableOpacity>
                     </View>
                     <View style={styles.totalSection}>
-                        <Text style={styles.totalLabel}>Giá phòng </Text>
+                        <Text style={styles.totalLabel}>Giá phòng</Text>
                         <Text style={styles.totalAmount}>{roomPrice * roomCount}</Text>
-                    </View>
-                    <View style={styles.totalSection}>
-                        <Text style={styles.totalLabel}>Số ngày </Text>
-                        <Text style={styles.totalAmount}>{days}</Text>
                     </View>
                     <View style={styles.sale}>
                         <Text style={styles.saleLable}>Giảm giá</Text>
                         <Text style={styles.saleAmount}>{discount}</Text>
                     </View>
                     <View style={
-                        {backgroundColor: '#bbb',
-                        height: 1,
-                        marginVertical: 15,}}/>
+                        {
+                            backgroundColor: '#bbb',
+                            height: 1,
+                            marginVertical: 15,
+                        }} />
                     <View style={styles.finalSection}>
                         <Text style={styles.finalLabel}>Giá tiền</Text>
-                        <Text style={styles.finalAmount}>{(roomPrice * roomCount * days) - discount}</Text>
+                        <Text style={styles.finalAmount}>{(roomPrice * roomCount) - discount}</Text>
                     </View>
                 </View>
 
                 <View style={styles.paymentMethodSection}>
                     <Text style={styles.sectionTitle}>Phương thức thanh toán</Text>
-                    <View style = {{flexDirection:"row", padding:5}}>  
-                         <AntDesign style={styles.icon} color='#00bb38' name="Safety" size={16} />
+                    <View style={{ flexDirection: "row", padding: 5 }}>
+                        <AntDesign style={styles.icon} color='#00bb38' name="Safety" size={16} />
                         <Text style={styles.secureText}> Mọi dữ liệu thanh toán được mã hóa và bảo mật</Text>
                     </View>
 
@@ -154,77 +193,79 @@ const BookingDetails = ({ navigation, route }) => {
                             <Text style={[styles.optionButtonText, selectedPayment === 'immediate' && styles.optionButtonTextActive]}>Thanh toán ngay</Text>
                         </TouchableOpacity>
                     </View>
-                    </View>
+                </View>
 
-                    {selectedPayment=='immediate' &&  <View style={styles.paymentProcess}>
-                        <View style={styles.creditCardSection}>
-                            <View style={{flexDirection:'row'}}>
+                {selectedPayment == 'immediate' && <View style={styles.paymentProcess}>
+                    <View style={styles.creditCardSection}>
+                        <View style={{ flexDirection: 'row' }}>
                             <TouchableOpacity
-                                style={{flexDirection:"row"}}
-                                onPress={() =>setSelected('Credit Card')}
-                                >
-                                    <Icon
+                                style={{ flexDirection: "row" }}
+                                onPress={() => setSelected('Credit Card')}
+                            >
+                                <Icon
                                     name={selected === 'Credit Card' ? 'radio-button-checked' : 'radio-button-unchecked'}
                                     size={20}
                                     color={color.tilte}
-                                    />
-                                    <View style={{marginLeft:18}}>
+                                />
+                                <View style={{ marginLeft: 18 }}>
                                     <Text style={styles.cardLabel}>Thẻ tín dụng/thẻ ghi nợ</Text>
                                     <View style={styles.cardIcons}>
-                                         <FontAwesome name="cc-visa" size={30} color="white" style={styles.cardIcon}/>
-                                         <FontAwesome name="cc-mastercard" size={30} color="white" style={styles.cardIcon} />
-                                         <FontAwesome name="cc-jcb" size={30} color="white" style={styles.cardIcon}/>
-                                         <FontAwesome name="cc-amex" size={30} color="white" style={styles.cardIcon}/> 
+                                        <FontAwesome name="cc-visa" size={30} color="white" style={styles.cardIcon} />
+                                        <FontAwesome name="cc-mastercard" size={30} color="white" style={styles.cardIcon} />
+                                        <FontAwesome name="cc-jcb" size={30} color="white" style={styles.cardIcon} />
+                                        <FontAwesome name="cc-amex" size={30} color="white" style={styles.cardIcon} />
                                     </View>
                                 </View>
-                                </TouchableOpacity>
-                                
-                            </View>
-                           
-                            <Text style={{color:'white', marginLeft:15,opacity:0.8}}>Số thẻ tín dụng / thẻ ghi nợ</Text>
-                                <TextInput
-                                    style={styles.cardInput}
-                                    keyboardType="numeric"
-                                    placeholderTextColor='#999' 
-                                    placeholder='0000-0000-0000-0000'
-                                    />
+                            </TouchableOpacity>
+
                         </View>
 
-                        
-                    <View style={
-                        {backgroundColor: '#888',
-                        height: 1,
-                        marginVertical: 15,}}/>
+                        <Text style={{ color: 'white', marginLeft: 15, opacity: 0.8 }}>Số thẻ tín dụng / thẻ ghi nợ</Text>
+                        <TextInput
+                            style={styles.cardInput}
+                            keyboardType="numeric"
+                            placeholderTextColor='#999'
+                            placeholder='0000-0000-0000-0000'
+                        />
+                    </View>
 
-                        <View style={styles.digitalPaymentSection}>
-                            <View >
+
+                    <View style={
+                        {
+                            backgroundColor: '#888',
+                            height: 1,
+                            marginVertical: 15,
+                        }} />
+
+                    <View style={styles.digitalPaymentSection}>
+                        <View >
                             <TouchableOpacity
-                                    style={{flexDirection:'row', marginBottom:20}}
-                                    onPress={() => setSelected('Digital')}
-                                >
-                                    <Icon
+                                style={{ flexDirection: 'row', marginBottom: 20 }}
+                                onPress={() => setSelected('Digital')}
+                            >
+                                <Icon
                                     name={selected === 'Digital' ? 'radio-button-checked' : 'radio-button-unchecked'}
                                     size={20}
                                     color={color.tilte}
-                                    />
-                                <View style={{marginLeft:18}}>
+                                />
+                                <View style={{ marginLeft: 18 }}>
                                     <Text style={styles.sectionSubtitle}>Thanh toán kỹ thuật số</Text>
                                     <View style={styles.cardIcons}>
-                                        <Image style={styles.cardIcon} source={{uri: payment.Momo}}/>
-                                        <Image style={styles.cardIcon} source={{uri: payment.VNPay}}/>
-                                        <Image style={styles.cardIcon} source={{uri: payment.Paypal}}/>
-                                        <Image style={styles.cardIcon} source={{uri: payment.ZaloPay}}/>
+                                        <Image style={styles.cardIcon} source={{ uri: payment.Momo }} />
+                                        <Image style={styles.cardIcon} source={{ uri: payment.VNPay }} />
+                                        <Image style={styles.cardIcon} source={{ uri: payment.Paypal }} />
+                                        <Image style={styles.cardIcon} source={{ uri: payment.ZaloPay }} />
                                     </View>
                                 </View>
-                                </TouchableOpacity>
-                               
-                            </View>
-                           
-                            
-                            <Dropdown
+                            </TouchableOpacity>
+
+                        </View>
+
+
+                        <Dropdown
                             style={styles.dropdown}
                             placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle}
+                            selectedTextStyle={styles.selectedTextStyle} s
                             iconStyle={styles.iconStyle}
                             data={DigitalPayment}
                             maxHeight={300}
@@ -239,14 +280,14 @@ const BookingDetails = ({ navigation, route }) => {
                                 setValue(item.value);
                             }}
                             renderItem={renderItem}
-                       
-                        />
-                         
-                     </View>
 
-                    </View>}
-                   
-                   
+                        />
+
+                    </View>
+
+                </View>}
+
+
                 <View style={styles.confirmationSection}>
                     <CheckBox checked={true} containerStyle={styles.checkBox} />
                     <Text style={styles.confirmationText}>
@@ -254,28 +295,28 @@ const BookingDetails = ({ navigation, route }) => {
                     </Text>
                 </View>
 
-                <TouchableOpacity style={styles.confirmButton} onPress={() => {setSuccessfullyModal(true)}} > 
+                <TouchableOpacity style={styles.confirmButton} onPress={getBooking} >
                     <Text style={styles.confirmText}>ĐẶT NGAY</Text>
                 </TouchableOpacity>
 
                 <Modal
-                animationType="slide"
-                transparent={true}
-                visible={successfullyModal}
-                onRequestClose={() => setSuccessfullyModal(false)}
+                    animationType="slide"
+                    transparent={true}
+                    visible={successfullyModal}
+                    onRequestClose={() => setSuccessfullyModal(false)}
                 >
-            <View style={styles.modalOverlay}>
-                <View style={styles.modalContent}>
-                    <AntDesign name="checkcircle" size={80} color="#4BB543" style={styles.successIcon} />
-                    <Text style={styles.successText}>Thanh Toán Thành Công!</Text>
-                    <Text style={styles.message}>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</Text>
-                    
-                    <TouchableOpacity style={styles.closeButton} onPress={() => setSuccessfullyModal(false)}>
-                        <Text style={styles.closeButtonText}>Đóng</Text>
-                    </TouchableOpacity>
-                </View>
-            </View>
-        </Modal>
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContent}>
+                            <AntDesign name="checkcircle" size={80} color="#4BB543" style={styles.successIcon} />
+                            <Text style={styles.successText}>Thanh Toán Thành Công!</Text>
+                            <Text style={styles.message}>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</Text>
+
+                            <TouchableOpacity style={styles.closeButton} onPress={getHome}>
+                                <Text style={styles.closeButtonText}>Đóng</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
 
             </ScrollView>
         </SafeAreaView>
@@ -288,25 +329,25 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     hotel: {
-        flexDirection: 'column', 
-        borderWidth:0.2,
-        borderColor:'#555',
+        flexDirection: 'column',
+        borderWidth: 0.2,
+        borderColor: '#555',
         padding: 15,
-        backgroundColor: color.item_background_dark, 
+        backgroundColor: color.item_background_dark,
         borderRadius: 12,
         marginVertical: 10,
         marginHorizontal: 5,
         shadowColor: '#000',
         shadowOffset: {
-          width: 0,
-          height: 2,
+            width: 0,
+            height: 2,
         },
         shadowOpacity: 0.5,
         shadowRadius: 8,
         elevation: 5,
-      
-      },
-      imageVertical: {
+
+    },
+    imageVertical: {
         width: 120,
         height: 120,
         borderRadius: 10,
@@ -318,47 +359,47 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         resizeMode: 'cover',
     },
-    
-      textName: {
+
+    textName: {
         fontSize: 20,
         color: '#ffffff', // Keeping the text white for visibility
         fontWeight: 'bold',
-        marginBottom:8,
-        marginTop:10,
-        opacity:1
-      },
-      textCity: {
+        marginBottom: 8,
+        marginTop: 10,
+        opacity: 1
+    },
+    textCity: {
         fontSize: 15,
         color: '#b0b0b0',
-        marginBottom:30,
-      },
-      ratingContainer: {
+        marginBottom: 30,
+    },
+    ratingContainer: {
         flexDirection: 'row',
         alignItems: 'center',
-        
-      },
-      rating: {
+
+    },
+    rating: {
         fontSize: 16,
         color: color.tilte,
         marginRight: 5,
         fontWeight: "bold",
-      },
-      ratingSubtitle: {
+    },
+    ratingSubtitle: {
         fontSize: 14,
         color: '#b0b0b0',
-      },
+    },
     dates: {
         flexDirection: 'row',
         alignItems: 'center',
-        justifyContent:'center',
+        justifyContent: 'center',
         marginVertical: 2,
     },
     dateText: {
         fontSize: 16,
         color: color.tilte,
         marginHorizontal: 4,
-        opacity:0.8,
-        fontWeight:"500"
+        opacity: 0.8,
+        fontWeight: "500"
     },
     roomInfo: {
         paddingLeft: 12,
@@ -367,17 +408,17 @@ const styles = StyleSheet.create({
         shadowOpacity: 0.1,
         shadowRadius: 4,
         elevation: 2,
-        justifyContent:'center',
-        alignItems:'center'
+        justifyContent: 'center',
+        alignItems: 'center'
     },
     roomTitle: {
         fontSize: 16,
         fontWeight: '500',
         color: color.tilte,
-        opacity:0.8
+        opacity: 0.8
     },
     priceSection: {
-        flexDirection: 'column', 
+        flexDirection: 'column',
         padding: 15,
         backgroundColor: color.item_background_dark, // Darker background for better contrast
         borderRadius: 12,
@@ -385,13 +426,13 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         shadowColor: '#000',
         shadowOffset: {
-          width: 0,
-          height: 2,
+            width: 0,
+            height: 2,
         },
         shadowOpacity: 0.5,
         shadowRadius: 8,
-        borderWidth:0.2,
-        borderColor:'#555',
+        borderWidth: 0.2,
+        borderColor: '#555',
         elevation: 5,
     },
     voucherSection: {
@@ -406,13 +447,13 @@ const styles = StyleSheet.create({
         marginRight: 8,
         fontSize: 20,
         paddingVertical: 8,
-        color:'white',
+        color: 'white',
         fontWeight: 'bold',
 
     },
     voucherCode: {
         color: color.tilte,
-        fontSize:16,
+        fontSize: 16,
         fontWeight: 'bold',
 
     },
@@ -464,18 +505,18 @@ const styles = StyleSheet.create({
         color: '#FF5722',
     },
     paymentMethodSection: {
-        flexDirection: 'column', 
+        flexDirection: 'column',
         padding: 15,
         backgroundColor: color.item_background_dark, // Darker background for better contrast
         borderRadius: 12,
         marginVertical: 10,
         marginHorizontal: 5,
-        borderWidth:0.2,
-        borderColor:'#555',
+        borderWidth: 0.2,
+        borderColor: '#555',
         shadowColor: '#000',
         shadowOffset: {
-          width: 0,
-          height: 2,
+            width: 0,
+            height: 2,
         },
         shadowOpacity: 0.5,
         shadowRadius: 8,
@@ -491,13 +532,13 @@ const styles = StyleSheet.create({
     secureText: {
         color: '#00bb38',
         marginBottom: 16,
-        fontSize:13,
+        fontSize: 13,
     },
     paymentMethodSection: {
         flexDirection: 'column',
         padding: 15,
-        borderWidth:0.2,
-        borderColor:'#555',
+        borderWidth: 0.2,
+        borderColor: '#555',
         backgroundColor: color.item_background_dark,
         borderRadius: 12,
         marginVertical: 10,
@@ -514,40 +555,40 @@ const styles = StyleSheet.create({
     paymentOptions: {
         flexDirection: 'row',
         marginBottom: 16,
-        justifyContent:'center',
+        justifyContent: 'center',
     },
     optionButton: {
         flex: 1,
         padding: 10,
         borderWidth: 1,
         borderRadius: 40,
-        marginLeft:2,
+        marginLeft: 2,
         marginRight: 8,
         backgroundColor: 'gray',
-        justifyContent:'center',
-        alignItems:'center',
-        opacity:0.35
+        justifyContent: 'center',
+        alignItems: 'center',
+        opacity: 0.35
 
     },
     optionButtonActive: {
         backgroundColor: color.tilte,
-        opacity:1
+        opacity: 1
     },
     optionButtonText: {
         fontSize: 16,
-        fontWeight:'bold',
+        fontWeight: 'bold',
         color: 'white',
-        textAlign:'center',
-        borderColor:color.title
+        textAlign: 'center',
+        borderColor: color.title
     },
     optionButtonTextActive: {
         color: 'black',
-        opacity:0.65
+        opacity: 0.65
     },
-    paymentProcess:{
-        flexDirection: 'column', 
-        borderWidth:0.2,
-        borderColor:'gray',
+    paymentProcess: {
+        flexDirection: 'column',
+        borderWidth: 0.2,
+        borderColor: 'gray',
         padding: 15,
         backgroundColor: color.item_background_dark, // Darker background for better contrast
         borderRadius: 12,
@@ -555,43 +596,43 @@ const styles = StyleSheet.create({
         marginHorizontal: 5,
         shadowColor: '#000',
         shadowOffset: {
-          width: 0,
-          height: 2,
+            width: 0,
+            height: 2,
         },
         shadowOpacity: 0.5,
         shadowRadius: 8,
         elevation: 5,
     },
- 
+
     cardLabel: {
         fontSize: 18,
         marginBottom: 8,
-        color:'white',
-        fontWeight:'bold'
+        color: 'white',
+        fontWeight: 'bold'
     },
     cardIcons: {
         flexDirection: 'row',
         marginVertical: 8,
-        marginLeft:20
-        
+        marginLeft: 20
+
     },
     cardIcon: {
         width: 40,
         height: 40,
         marginRight: 8,
-        marginLeft:3
+        marginLeft: 3
     },
     cardInput: {
         fontSize: 18,
         paddingVertical: 8,
         marginBottom: 8,
-        paddingLeft:8,
-        borderWidth:1, borderRadius:12,marginVertical:10, flexDirection:'row',
-        borderColor:color.item_background_dark,
-        color:'white',
-        backgroundColor:'#444',
-        height:50,
-        marginLeft:10,
+        paddingLeft: 8,
+        borderWidth: 1, borderRadius: 12, marginVertical: 10, flexDirection: 'row',
+        borderColor: color.item_background_dark,
+        color: 'white',
+        backgroundColor: '#444',
+        height: 50,
+        marginLeft: 10,
     },
 
     digitalPaymentSection: {
@@ -600,8 +641,8 @@ const styles = StyleSheet.create({
     sectionSubtitle: {
         fontSize: 18,
         marginBottom: 8,
-        color:'white',
-        fontWeight:"bold"
+        color: 'white',
+        fontWeight: "bold"
     },
     digitalOptions: {
         flexDirection: 'row',
@@ -629,43 +670,43 @@ const styles = StyleSheet.create({
         height: 50,
         backgroundColor: '#444',
         borderRadius: 12,
-        borderColor:color.item_background_dark,
+        borderColor: color.item_background_dark,
         padding: 12,
         shadowColor: '#000',
         shadowOffset: {
-          width: 0,
-          height: 1,
+            width: 0,
+            height: 1,
         },
         shadowOpacity: 0.2,
         shadowRadius: 1.41,
-  
+
         elevation: 2,
-      },
-      icon: {
+    },
+    icon: {
         marginRight: 5,
-      },
-      item: {
+    },
+    item: {
         padding: 17,
         flexDirection: 'row',
         justifyContent: 'space-between',
         alignItems: 'center',
-      },
-      textItem: {
+    },
+    textItem: {
         flex: 1,
         fontSize: 16,
-      },
-      placeholderStyle: {
+    },
+    placeholderStyle: {
         fontSize: 16,
-        color:'#999'
-      },
-      selectedTextStyle: {
+        color: '#999'
+    },
+    selectedTextStyle: {
         fontSize: 16,
-        color:'white'
-      },
-      iconStyle: {
+        color: 'white'
+    },
+    iconStyle: {
         width: 20,
         height: 20,
-      },
+    },
     confirmationSection: {
         flexDirection: 'row',
         alignItems: 'center',
@@ -679,18 +720,18 @@ const styles = StyleSheet.create({
     emailBold: {
         fontWeight: 'bold',
     },
-    confirmButton:{
-        backgroundColor:color.tilte,
-        height:55,
-        justifyContent:'center',
-        alignItems:'center',
-        borderRadius:40,
-        marginTop:10
+    confirmButton: {
+        backgroundColor: color.tilte,
+        height: 55,
+        justifyContent: 'center',
+        alignItems: 'center',
+        borderRadius: 40,
+        marginTop: 10
     },
-    confirmText:{
-        fontSize:20,
-        fontWeight:'bold',
-        color:'white'
+    confirmText: {
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: 'white'
     },
 
     modalOverlay: {
@@ -723,10 +764,10 @@ const styles = StyleSheet.create({
         marginBottom: 20,
     },
     closeButton: {
-        height:50,
-        justifyContent:'center',
-        alignItems:'center',
-        width:140,
+        height: 50,
+        justifyContent: 'center',
+        alignItems: 'center',
+        width: 140,
         backgroundColor: color.tilte,
         borderRadius: 40,
         paddingVertical: 10,
