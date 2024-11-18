@@ -146,10 +146,6 @@ const BookingScreen = ({ navigation, route }) => {
   const renderImageItem = ({ item, index }) => (
     <TouchableOpacity
       style={styles.imageContainer}
-      onPress={() => {
-        setSelectedImageIndex(index);
-        setIsViewerVisible(true);
-      }}
     >
       <Image
         source={{
@@ -171,7 +167,6 @@ const BookingScreen = ({ navigation, route }) => {
                 renderItem={renderImageItem}
                 width={width}
                 height={IMG_HEIGHT}
-                autoPlay={true}
                 autoPlayInterval={3000}
                 onSnapToItem={(index) => setActiveIndex(index)}
                 loop={true}

@@ -109,6 +109,7 @@ export default function MainScreen({ navigation }) {
 
 
   useLayoutEffect(() => {
+    fetchToken();
     fetchImages();
     fetchData();
   }, []);
@@ -196,7 +197,7 @@ export default function MainScreen({ navigation }) {
 
 
   const Content = () => {
-    if (!data) {
+    if (!data && loading) {
       return (
         <LoadingScreen />
       );

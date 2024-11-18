@@ -1,4 +1,4 @@
-import { View, Text, StyleSheet, FlatList, Image, SafeAreaView } from "react-native";
+import { View, Text, StyleSheet, FlatList, Image, SafeAreaView, ImageBackground, TouchableOpacity } from "react-native";
 import { useEffect, useState } from "react";
 import React from "react";
 import AntDesign from "@expo/vector-icons/AntDesign";
@@ -11,7 +11,7 @@ import LoadingScreen from "./LoadingScreen";
 
 const MyTour = () => {
   const [myBooking, setMyBooking] = useState(null);
-
+  const [doneFetch, setDoneFetch] = useState(false);
 
   const getData = async () => {
     try {
@@ -28,6 +28,7 @@ const MyTour = () => {
   const fetchData = async () => {
     const res = await getData();
     setMyBooking(res.data);
+    setDoneFetch(true);
   };
 
   useEffect(() => {
@@ -96,14 +97,37 @@ const MyTour = () => {
         <LoadingScreen />
       </SafeAreaView>
     );
+  } else if (doneFetch) {
+    return (
+       <SafeAreaView style={styles.container}>
+      <ImageBackground
+        source={{ uri: "https://hips.hearstapps.com/hmg-prod/images/banff-517747003-1494616292.jpg?crop=0.9997418022205009xw:1xh;center,top&resize=980:*" }}
+        style={styles.backgroundImage}
+        resizeMode="cover"
+      >
+        <View style={styles.overlay}> 
+          <Text style={{fontSize:16, color:"white" , marginBottom:20}}>Bạn chưa có chuyến đi nào !</Text>
+          <Text style={styles.slogan}>
+            "Khám phá thế giới - Hành trình của bạn bắt đầu tại đây!"
+          </Text>
+          {/* <TouchableOpacity style={styles.bookButton}>
+            <Text style={styles.buttonText}>Đặt ngay</Text>
+          </TouchableOpacity> */}
+      
+        </View>
+      </ImageBackground>
+    </SafeAreaView>
+    )
+
+  } else {
+    return (
+      <View style={styles.container}>
+        <View style={{ height: 60 }}></View>
+        <FlatList data={myBooking} renderItem={renderHotel} />
+      </View>
+    );
   }
 
-  return (
-    <View style={styles.container}>
-      <View style={{ height: 60 }}></View>
-      <FlatList data={myBooking} renderItem={renderHotel} />
-    </View>
-  );
 };
 const styles = StyleSheet.create({
   container: {
@@ -170,6 +194,45 @@ const styles = StyleSheet.create({
     color: "#da251d",
     fontSize: 18,
     fontWeight: "400",
+  },
+  overlay: {
+    backgroundColor: "rgba(0, 0, 0, 0.5)",
+    flex: 1,
+    justifyContent: "center",
+    alignItems: "center",
+    padding: 20,
+  },
+  slogan: {
+    fontSize: 24,
+    color: "white",
+    fontWeight: "bold",
+    textAlign: "center",
+    marginBottom: 20,
+  },
+  bookButton: {
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
+    backgroundColor:color.tilte,
+    paddingVertical: 15,
+    paddingHorizontal: 30,
+    borderRadius: 30,
+    marginTop: 20,
+  },
+  buttonText: {
+    color: "white",
+    fontSize: 22,
+    fontWeight: "bold",
+    
+  },
+  benefits: {
+    marginTop: 30,
+  },
+  benefitText: {
+    color: "white",
+    fontSize: 16,
+    textAlign: "center",
+    marginVertical: 5,
   },
 });
 

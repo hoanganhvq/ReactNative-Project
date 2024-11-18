@@ -100,9 +100,7 @@ const BookingDetails = ({ navigation, route }) => {
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
 
-                {/* <TouchableOpacity style={styles.confirmButton} onPress={getBooking} >
-                    <Text style={styles.confirmText}>ĐẶT NGAY</Text>
-                </TouchableOpacity> */}
+        
 
                 <View style={styles.hotel}>
                     <View style={{ flexDirection: 'row' }}>
@@ -270,7 +268,7 @@ const BookingDetails = ({ navigation, route }) => {
                         <Dropdown
                             style={styles.dropdown}
                             placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle} s
+                            selectedTextStyle={styles.selectedTextStyle} 
                             iconStyle={styles.iconStyle}
                             data={DigitalPayment}
                             maxHeight={300}
@@ -304,25 +302,7 @@ const BookingDetails = ({ navigation, route }) => {
                     <Text style={styles.confirmText}>ĐẶT NGAY</Text>
                 </TouchableOpacity>
 
-                <Modal
-                    animationType="slide"
-                    transparent={true}
-                    visible={successfullyModal}
-                    onRequestClose={() => setSuccessfullyModal(false)}
-                >
-                    <View style={styles.modalOverlay}>
-                        <View style={styles.modalContent}>
-                            <AntDesign name="checkcircle" size={80} color="#4BB543" style={styles.successIcon} />
-                            <Text style={styles.successText}>Thanh Toán Thành Công!</Text>
-                            <Text style={styles.message}>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</Text>
-
-                            <TouchableOpacity style={styles.closeButton} onPress={getHome}>
-                                <Text style={styles.closeButtonText}>Đóng</Text>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
-
+               
             </ScrollView>
         </SafeAreaView>
     );
@@ -731,7 +711,8 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         borderRadius: 40,
-        marginTop: 10
+        marginTop: 10,
+        marginBottom:20
     },
     confirmText: {
         fontSize: 20,
