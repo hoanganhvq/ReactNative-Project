@@ -1,8 +1,10 @@
-import React, { useState } from 'react';
+import React, { useLayoutEffect, useState } from 'react';
 import { View, Text, TouchableOpacity, FlatList, StyleSheet } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
 import Icon from 'react-native-vector-icons/MaterialIcons';
 import color from '../assets/color.json';
+import { collection, getDoc , getDocs} from 'firebase/firestore';
+import { db } from '../config/firebase';
 
 
 export default function VoucherScreen({ route, navigation }) {
@@ -10,15 +12,46 @@ export default function VoucherScreen({ route, navigation }) {
   const [selectedVoucher, setSelectedVoucher] = useState(null);
   const [selectedOption, setSelectedOption] = useState({});
   const { onGoBack } = route.params;
+  const [vouchers, setVouchers] = useState([]);
 
   
-  const vouchers = [
-    { id: '1', discount: '10%', code: 'MKB10', condition: 'Đơn từ 500.000 đ', applicable: total > 500 ? true: false },
-    { id: '2', discount: '22%', code: 'MKB22', condition: 'Đơn từ 550.000 đ', applicable: total > 550 ? true: false },
-    { id: '3', discount: '35%', code: 'MKB35', condition: 'Đơn từ 3.000.000 đ', applicable: total > 3000 ? true: false },
-    { id: '4', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: total > 5000 ? true: false },
-  ];
+  // const vouchers = [
+  //   { id: '1', discount: '10%', code: 'MKB10', condition: 'Đơn từ 500.000 đ', applicable: total > 500 ? true: false },
+  //   { id: '2', discount: '22%', code: 'MKB22', condition: 'Đơn từ 550.000 đ', applicable: total > 550 ? true: false },
+  //   { id: '3', discount: '35%', code: 'MKB35', condition: 'Đơn từ 3.000.000 đ', applicable: total > 3000 ? true: false },
+  //   { id: '4', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: total > 5000 ? true: false },
+  // ];
 
+  const fetchVoucher =async()=>{
+    try {
+      const voucherCollection = collection(db, 'vouchers');
+      
+      const voucherSnapshot = await getDocs(voucherCollection);
+      
+      const voucherList = voucherSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          code: data.code,
+          condition: data.condition,
+          discount: data.discount,
+          applicable: data.applicable,
+          applicable: total >= data.applicable
+        };
+      });
+  
+      console.log("Vouchers: ", voucherList);
+      setVouchers(voucherList);      
+    } catch (error) {
+      console.error("Error fetching vouchers: ", error);
+      throw error;
+    }
+   
+  }
+
+  useLayoutEffect(()=>{
+    fetchVoucher();
+  })
   const handleSelectVoucher = (voucher) => {
     setSelectedVoucher(voucher);
     if (onGoBack) {

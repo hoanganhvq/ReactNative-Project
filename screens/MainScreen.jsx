@@ -13,9 +13,7 @@ import LoadingScreen from './LoadingScreen.jsx';
 
 
 const width = Dimensions.get('window').width;
-const ITEM_WIDTH = width / 2 - 15;
 const ITEM_SIZE = width * 0.72;
-const SPACER_ITEM_SIZE = (width - ITEM_SIZE) / 2
 export default function MainScreen({ navigation }) {
   const [token, setToken] = useState(null);
   const [photo, setPhoto] = useState('');

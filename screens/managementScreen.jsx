@@ -1,6 +1,6 @@
 import React, { useEffect, useState, useLayoutEffect } from 'react';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, ScrollView, Button, FlatList, Image, Modal } from 'react-native';
+import { View, Text, StyleSheet, TouchableOpacity, TextInput, Dimensions, ScrollView, Button, FlatList, Image, Modal, Alert } from 'react-native';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import LoadingScreen from './LoadingScreen.jsx';
 import color from "../assets/color.json";
@@ -8,7 +8,7 @@ import Carousel from "react-native-reanimated-carousel";
 import * as ImagePicker from 'expo-image-picker';
 
 import EvilIcons from '@expo/vector-icons/EvilIcons';
-import { doc, updateDoc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { doc, updateDoc, getDoc, collection, getDocs, addDoc, setDoc, deleteDoc} from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../config/firebase.js';
 
@@ -35,6 +35,11 @@ export const ManagementScreen = ({ route }) => {
   const [bedQuantity, setBedQuantity] = useState(0);
   const [roomPrice, setRoomPrice] = useState(0);
 
+  const [code, setCode] = useState("");
+  const [discount, setDiscount] = useState("");
+  const [condition, setCondition] = useState("");
+  const [applicable, setApplicable] = useState(0);
+
   // const [hotelImages, setHotelImages] = useState([]);
   // const [hotelImageCover, setHotelImageCover] = useState("");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -46,13 +51,15 @@ export const ManagementScreen = ({ route }) => {
 
   const [utility, setUtility] = useState('');
   const [utilities, setUtilities] = useState([]);
+  const [vouchers, setVouchers] = useState([]);
 
-  const vouchers = [
-    { id: '1', discount: '10%', code: 'MKB10', condition: 'Đơn từ 500.000 đ', applicable: true },
-    { id: '2', discount: '22%', code: 'MKB22', condition: 'Đơn từ 550.000 đ', applicable: true },
-    { id: '3', discount: '35%', code: 'MKB35', condition: 'Đơn từ 3.000.000 đ', applicable: false },
-    { id: '4', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: false },
-  ]; //Data t fake de lam. m nhớ tạo voucher data rồi pull dữ liệu về xử lý nhe
+
+  // const vouchers = [
+  //   { id: '1', discount: '10%', code: 'MKB10', condition: 'Đơn từ 500.000 đ', applicable: true },
+  //   { id: '2', discount: '22%', code: 'MKB22', condition: 'Đơn từ 550.000 đ', applicable: true },
+  //   { id: '3', discount: '35%', code: 'MKB35', condition: 'Đơn từ 3.000.000 đ', applicable: false },
+  //   { id: '4', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: false },
+  // ]; //Data t fake de lam. m nhớ tạo voucher data rồi pull dữ liệu về xử lý nhe
 
   const hotelId = "67047e37640239aaa10d370a";
 
@@ -63,6 +70,32 @@ export const ManagementScreen = ({ route }) => {
     }
 
   };
+  const fetchVoucher = async () => {
+    try {
+      const voucherCollection = collection(db, 'vouchers');
+
+      const voucherSnapshot = await getDocs(voucherCollection);
+
+      const voucherList = voucherSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          code: data.code,
+          condition: data.condition,
+          discount: data.discount,
+          applicable: data.applicable,
+          applicable: true
+        };
+      });
+
+      console.log("Vouchers: ", voucherList);
+      setVouchers(voucherList);
+    } catch (error) {
+      console.error("Error fetching vouchers: ", error);
+      throw error;
+    }
+
+  }
 
 
   const renderVoucherItem = ({ item, index }) => {
@@ -72,8 +105,9 @@ export const ManagementScreen = ({ route }) => {
           <Text style={styles.discountText}>Giảm {item.discount}</Text>
           <Text style={styles.codeText}>Mã voucher: {item.code}</Text>
           <Text style={styles.conditionText}>Điều kiện: {item.condition}</Text>
+          <Text style={styles.conditionText}>index: {item.id}</Text>
         </View>
-        <TouchableOpacity onPress={() => onDeleteVoucher(index)} style={styles.deleteVoucherButton}>
+        <TouchableOpacity onPress={() => onDeleteVoucher(item.id)} style={styles.deleteVoucherButton}>
           <FontAwesome name="minus" style={styles.deleteVoucherButtonText} />
         </TouchableOpacity>
       </TouchableOpacity>
@@ -91,13 +125,20 @@ export const ManagementScreen = ({ route }) => {
   }
 
 
-  const handleAddVoucher = () => {
-    console.log("Add voucher s1uccessfully");
-  }
 
-  const onDeleteVoucher = (index) => {
-    console.log("Xóa voucher ở ", index);
-  }
+  const onDeleteVoucher = async (voucherId) => {
+    try {
+      const voucherRef = doc(db, 'vouchers', voucherId.toString()); // Ensure voucherId is passed correctly
+      await deleteDoc(voucherRef);
+      console.log(`Voucher ${voucherId} deleted successfully`);
+      Alert.alert("Xóa voucher thành công");
+      fetchVoucher();
+    } catch (error) {
+      console.error("Error deleting voucher: ", error);
+      throw error;
+    }
+  };
+  
 
 
   setTimeout(() => {
@@ -105,7 +146,7 @@ export const ManagementScreen = ({ route }) => {
   }, 3000)
 
   useLayoutEffect(() => {
-    console.log("hotel Data in management Screen: ", hotel)
+    fetchVoucher();
   }, []);
 
 
@@ -251,7 +292,7 @@ export const ManagementScreen = ({ route }) => {
 
   }
 
-  const handleDeleteRoom=(index)=>{
+  const handleDeleteRoom = (index) => {
     console.log("deleteroom at ", index);
   }
   const renderAmenities = ({ item }) => (
@@ -295,7 +336,7 @@ export const ManagementScreen = ({ route }) => {
               <Text style={styles.roomInfoText}>{item.bedQuantity} giường lớn</Text>
 
             </View>
-            <TouchableOpacity style={styles.deleteRoom} onPress={()=>{handleDeleteRoom(index)}}>
+            <TouchableOpacity style={styles.deleteRoom} onPress={() => { handleDeleteRoom(index) }}>
               <Text style={styles.txtDeleteButton}>Xóa phòng</Text>
             </TouchableOpacity>
           </View>
@@ -340,6 +381,47 @@ export const ManagementScreen = ({ route }) => {
       handleSaveUtilityUpdated();
     }
   }
+
+
+  const addVoucher = async () => {
+    try {
+      const voucherCollection = collection(db, "vouchers");
+      
+      // Get all documents to find highest ID
+      const querySnapshot = await getDocs(voucherCollection);
+      
+
+      let highestId = 0;
+      querySnapshot.forEach((doc) => {
+
+        const docIdNum = parseInt(doc.id);
+        
+        // Update highestId if we find a larger number
+        if (!isNaN(docIdNum) && docIdNum > highestId) {
+          highestId = docIdNum;
+        }
+      });
+  
+      const newId = (highestId + 1);
+      const newVoucherRef = doc(voucherCollection, newId.toString());
+  
+      await setDoc(newVoucherRef, {
+        id: newId,
+        applicable: applicable,
+        code: code,
+        condition: condition,
+        discount: discount,
+      });
+  
+      console.log(`Voucher added successfully with ID: ${newId}`);
+      Alert.alert('Thêm voucher thành công');
+      setModalVoucher(false);
+      fetchVoucher();
+    } catch (error) {
+      console.error("Error adding voucher:", error);
+      throw error;
+    }
+  };
 
   return (
     <SafeAreaView style={styles.container}>
@@ -680,7 +762,7 @@ export const ManagementScreen = ({ route }) => {
 
         <View style={styles.voucherContainer}>
           <View>
-            <Text style={styles.headerImage}>Chọn Voucher</Text>
+            <Text style={styles.headerImage}>Thêm Voucher</Text>
             <FlatList
               data={vouchers}
               renderItem={renderVoucherItem}
@@ -716,6 +798,7 @@ export const ManagementScreen = ({ route }) => {
                     style={styles.infoInput}
                     placeholder="Nhập mã voucher"
                     placeholderTextColor="gray"
+                    onChangeText={(text) => { setCode(text) }}
                   />
                 </View>
 
@@ -726,6 +809,7 @@ export const ManagementScreen = ({ route }) => {
                     placeholder="80"
                     placeholderTextColor="gray"
                     keyboardType="numeric"
+                    onChangeText={(text) => { setDiscount(text) }}
                   />
                   <Text style={styles.unitLabel}>%</Text>
                 </View>
@@ -740,12 +824,14 @@ export const ManagementScreen = ({ route }) => {
                     placeholder="100000"
                     placeholderTextColor="gray"
                     keyboardType="numeric"
+                    onChangeText={(text) => { setCondition(`Đơn từ ${text}đ`), setApplicable(parseInt(text, 10)) }}
+
                   />
                   <Text style={styles.unitLabel}>đ</Text>
                 </View>
 
                 {/* Save Button */}
-                <TouchableOpacity style={styles.saveButton} onPress={() => console.log('Voucher saved')}>
+                <TouchableOpacity style={styles.saveButton} onPress={() => addVoucher()}>
                   <Text style={styles.saveButtonText}>Lưu</Text>
                 </TouchableOpacity>
               </View>
@@ -1326,7 +1412,7 @@ const styles = StyleSheet.create({
     borderColor: '#ccc',
     borderRadius: 5,
     padding: 10,
-    color: '#333',
+    color: 'white',
     textAlign: 'center',
   },
   unitLabel: {

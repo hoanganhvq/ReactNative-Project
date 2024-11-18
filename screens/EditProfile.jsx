@@ -105,7 +105,7 @@ const uploadProfilePicture = async () => {
             profileUrl: downloadURL,
         });
         console.log("Profile picture uploaded successfully!");
-
+        
     } catch (error) {
         console.error("Error uploading profile picture:", error);
     }

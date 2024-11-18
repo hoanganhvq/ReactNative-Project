@@ -15,7 +15,7 @@ const BookingDetails = ({ navigation, route }) => {
     const { roomId, hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice } = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
     const days = checkInDate==checkOutDate? 1: Math.floor((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1;
-    const total = roomCount * roomPrice;
+    const total = roomCount * roomPrice * days;
     const [selectedPayment, setSelectedPayment] = useState('hotel');
     const [value, setValue] = useState(null);
     const [selected, setSelected] = useState("Cash");

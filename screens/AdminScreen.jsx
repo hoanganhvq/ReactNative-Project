@@ -13,6 +13,7 @@ export const AdminScreen = ({ navigation }) => {
   const [hotel, setHotel] = useState(null);
   const [hotelImages, setHotelImages] = useState([]);
   const [hotelImageCover, setHotelImageCover] = useState("");
+
   const [loading, setLoading] = useState(false); // Trạng thái loading
   const hotelId = "67047e37640239aaa10d370a";
 
@@ -25,6 +26,8 @@ export const AdminScreen = ({ navigation }) => {
       return null;
     }
   };
+
+
 
   const fetchData = async () => {
     const res = await getData();
