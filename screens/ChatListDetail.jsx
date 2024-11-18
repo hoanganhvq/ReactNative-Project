@@ -51,13 +51,13 @@ const ChatListDetails = ({ item }) => {
                 <TouchableOpacity onPress={onHandleRouter} style={styles.touchableOpacity}>
                     <Image
                         source={{
-                            uri: item?.profileUrl,
+                            uri: item.profileUrl,
                         }}
                         style={styles.image}
                     />
                     <View style={styles.viewContainer}>
                         <View style={styles.viewRow}>
-                            <Text style={styles.textName}>{item?.name}</Text>
+                            <Text style={styles.textName}>{item.name}</Text>
                             <Text style={styles.textTime}>Time</Text>
                         </View>
                         <Text style={styles.textMessage}>{message}</Text>
@@ -99,7 +99,8 @@ const styles = StyleSheet.create({
     textName: {
         fontSize: 18,
         fontWeight: '600', // font-semibold
-        color: '#2C2C2C', // text-neutral-800
+        color: 'white', // text-neutral-800
+
     },
     textTime: {
         fontSize: 16,
@@ -109,6 +110,6 @@ const styles = StyleSheet.create({
     textMessage: {
         fontSize: 16,
         fontWeight: '500', // font-medium
-        color: '#6B7280', // text-neutral-500
+        color: '#999', // text-neutral-500
     },
 });

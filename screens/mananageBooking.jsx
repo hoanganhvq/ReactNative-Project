@@ -44,12 +44,7 @@ export default function Component({ navigation }) {
 
   const renderBookingItem = ({ item }) => (
     <View style={styles.bookingCard}>
-      <View style={styles.cardHeader}>
-        <TouchableOpacity>
-          <FontAwesome name="times" size={20} color="#999" />
-        </TouchableOpacity>
-      </View>
-      <View style={styles.divider} />
+      
       <View style={styles.infoRow}>
         <Text style={styles.label}>Tên:  </Text>
         <Text style={styles.value}>{item.user.name}</Text>

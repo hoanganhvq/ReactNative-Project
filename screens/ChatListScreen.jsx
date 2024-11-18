@@ -4,6 +4,7 @@ import { useNavigation } from '@react-navigation/native';
 import { collection, doc, query, getDocs, orderBy, onSnapshot, where } from 'firebase/firestore';
 import { auth, db } from '../config/firebase';
 import { getRoomId } from '../utils/getId';
+import color from "../assets/color.json";
 import ChatListDetails from './ChatListDetail';
 
 const ChatItem = () => {
@@ -38,10 +39,10 @@ const ChatItem = () => {
 
     return (
         <>
-            <SafeAreaView>
+            <SafeAreaView style={styles.container}>
                 <ScrollView>
 
-                    <View className={styles.container}>
+                    <View >
                         <FlatList
                             data={users}
                             contentContainerStyle={styles.content}
@@ -65,10 +66,11 @@ export default ChatItem
 const styles = StyleSheet.create({
     container: {
         flex: 1,
-
+        backgroundColor: color.background_dark
     },
     content: {
         flex: 1,
-        paddingVertical: 25
+        paddingVertical: 25,
+        color:"white"
     }
 })

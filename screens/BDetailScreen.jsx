@@ -15,19 +15,19 @@ const BookingDetails = ({ navigation, route }) => {
     const { roomId, hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice } = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
     const days = checkInDate == checkOutDate ? 1 : Math.floor((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1;
-    const total = roomCount * roomPrice * days;
+    const [total, setTotal] = useState(roomCount * roomPrice * days);
     const [selectedPayment, setSelectedPayment] = useState('hotel');
     const [value, setValue] = useState(null);
     const [selected, setSelected] = useState("Cash");
     const [successfullyModal, setSuccessfullyModal] = useState(false);
     const [voucher, setVoucher] = useState(null);
-    const discount = voucher ? (parseInt(voucher.discount.replace('%', '')) / 100) * total : 0;
+    const [discount, setDiscount] = useState(0);
 
 
 
     const getBooking = async () => {
         const token = await AsyncStorage.getItem("userToken");
-
+        console.log("total: " , total);
         let methodPayment = "Cash";
 
         if (selected == 'Credit Card' && selectedPayment != 'hotel') {
@@ -41,23 +41,31 @@ const BookingDetails = ({ navigation, route }) => {
         console.log(methodPayment);
 
         console.log(roomId);
+        const calculatedTotal = (roomCount * roomPrice * days) - discount;
+         setTotal(calculatedTotal);
 
         const rs = await postBooking(token, hotel._id, roomId, checkInDate, checkOutDate, roomCount, total, methodPayment, voucher);
 
         if (rs.data.status == 'success') {
             setSuccessfullyModal(true);
         }
-
+        navigation.navigate("HomeScreen");
     };
 
-    const getHome = () => {
-        setSuccessfullyModal(false);
-        navigation.navigate("HomeScreen");
-    }
 
     const handleSelectVoucher = (voucher) => {
         setVoucher(voucher);
-    }
+    
+        if (voucher) {
+            const discountValue = (parseInt(voucher.discount.replace('%', '')) / 100) * (roomCount * roomPrice * days);
+            setDiscount(discountValue); // Cập nhật discount
+            setTotal((roomCount * roomPrice * days) - discountValue); // Trừ discount khỏi total
+        } else {
+            setDiscount(0); // Không có voucher thì giảm giá = 0
+            setTotal(roomCount * roomPrice * days); // Tổng trở lại giá trị gốc
+        }
+    };
+    
 
     const DigitalPayment = [
         {
@@ -170,7 +178,7 @@ const BookingDetails = ({ navigation, route }) => {
                         }} />
                     <View style={styles.finalSection}>
                         <Text style={styles.finalLabel}>Giá tiền</Text>
-                        <Text style={styles.finalAmount}>{(roomPrice * roomCount) - discount}</Text>
+                        <Text style={styles.finalAmount}>{total}</Text>
                     </View>
                 </View>
 

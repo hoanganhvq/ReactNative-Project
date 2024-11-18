@@ -31,7 +31,7 @@ function EditProfile({ navigation , route}) {
                     size={29}
                     color="#fff" 
                     style={{ marginLeft: 5 }} 
-                    onPress={() => navigation.navigate("UserProfile")} 
+                    onPress={() => navigation.goBack()} 
                 />
             ),
             headerStyle: {

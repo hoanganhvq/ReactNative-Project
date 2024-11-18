@@ -1,10 +1,12 @@
-import React, { useEffect, useLayoutEffect, useState } from 'react';
+import React, { useEffect, useLayoutEffect, useState} from 'react';
 import { StyleSheet, Text, View, Image, SafeAreaView, Animated, Dimensions, ScrollView, TouchableOpacity, useColorScheme } from 'react-native';
 import { SearchBar } from 'react-native-elements';
 import EvilIcons from '@expo/vector-icons/EvilIcons';
 import { MasonryFlashList } from '@shopify/flash-list';
 import { home } from '../handleAPI/viewAPI.js';
 import AsyncStorage from '@react-native-async-storage/async-storage';
+import { useFocusEffect } from '@react-navigation/native';
+
 import { doc, updateDoc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db, storage, auth } from '../config/firebase';
 import color from '../assets/color.json';
@@ -106,6 +108,15 @@ export default function MainScreen({ navigation }) {
       fetchToken();
     })
   }, []);
+
+  
+  useFocusEffect(
+    React.useCallback(() => {
+      fetchToken();
+      fetchImages();
+      fetchData();
+    }, [])
+  );
 
 
   useLayoutEffect(() => {
