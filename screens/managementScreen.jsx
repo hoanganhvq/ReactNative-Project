@@ -234,23 +234,26 @@ export const ManagementScreen = ({ route }) => {
     }
   };
 
-  const updateCity = async() =>{
-    if (!hotelCity){
+  const updateCity = async () => {
+    if (!hotelCity) {
       console.log("User ID or new name is missing");
       return;
     }
-    const hotelRef = doc(db,"hotels", hotelId);
+    const hotelRef = doc(db, "hotels", hotelId);
     try {
-      await updateDoc(hotelRef,{
+      await updateDoc(hotelRef, {
         city: hotelCity
       });
       console.log("String field updated successfully!");
-    } catch (error){
+    } catch (error) {
       console.log("Error updating string field:", error);
     }
-    
-   }
 
+  }
+
+  const handleDeleteRoom=(index)=>{
+    console.log("deleteroom at ", index);
+  }
   const renderAmenities = ({ item }) => (
     <View style={styles.amenityContainer}>
       <FontAwesome name="check" size={15} color={color.tilte} />
@@ -258,7 +261,7 @@ export const ManagementScreen = ({ route }) => {
     </View>
   );
 
-  const renderContent = ({ item }) => {
+  const renderContent = ({ item, index }) => {
     return (
       <>
         <View style={styles.headerKindRoom}>
@@ -292,7 +295,9 @@ export const ManagementScreen = ({ route }) => {
               <Text style={styles.roomInfoText}>{item.bedQuantity} giường lớn</Text>
 
             </View>
-
+            <TouchableOpacity style={styles.deleteRoom} onPress={()=>{handleDeleteRoom(index)}}>
+              <Text style={styles.txtDeleteButton}>Xóa phòng</Text>
+            </TouchableOpacity>
           </View>
         </View>
       </>
@@ -918,7 +923,24 @@ const styles = StyleSheet.create({
     fontWeight: "600",
     color: "#ccc"
   },
-
+  deleteRoom: {
+    backgroundColor: '#FF6B6B', // Màu đỏ nhạt
+    paddingVertical: 12,
+    paddingHorizontal: 24,
+    borderRadius: 8,
+    alignItems: 'center',
+    justifyContent: 'center',
+    shadowColor: '#000', // Bóng đổ
+    shadowOffset: { width: 0, height: 2 },
+    shadowOpacity: 0.2,
+    shadowRadius: 4,
+    elevation: 3, // Đổ bóng trên Android
+  },
+  txtDeleteButton: {
+    color: '#FFFFFF', // Màu trắng
+    fontWeight: '600',
+    fontSize: 16,
+  },
   addRoomContainer: {
     padding: 15,
     backgroundColor: color.item_background_dark, // Darker background for better contrast
