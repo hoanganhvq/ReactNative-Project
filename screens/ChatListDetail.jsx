@@ -18,6 +18,9 @@ const ChatListDetails = ({ item }) => {
 
     };
 
+    console.log(item);
+
+
 
     useEffect(() => {
         const user = auth.currentUser;
@@ -44,22 +47,23 @@ const ChatListDetails = ({ item }) => {
 
     return (
         <>
-            <TouchableOpacity onPress={onHandleRouter} style={styles.touchableOpacity}>
-                <Image
-                    source={{
-                        uri: item?.profileUrl,
-                    }}
-                    style={styles.image}
-                />
-                <View style={styles.viewContainer}>
-                    <View style={styles.viewRow}>
-                        <Text style={styles.textName}>{item?.name}</Text>
-                        <Text style={styles.textTime}>Time</Text>
+            <View style={styles.container}>
+                <TouchableOpacity onPress={onHandleRouter} style={styles.touchableOpacity}>
+                    <Image
+                        source={{
+                            uri: item?.profileUrl,
+                        }}
+                        style={styles.image}
+                    />
+                    <View style={styles.viewContainer}>
+                        <View style={styles.viewRow}>
+                            <Text style={styles.textName}>{item?.name}</Text>
+                            <Text style={styles.textTime}>Time</Text>
+                        </View>
+                        <Text style={styles.textMessage}>{message}</Text>
                     </View>
-                    <Text style={styles.textMessage}>{message}</Text>
-                </View>
-            </TouchableOpacity>
-
+                </TouchableOpacity>
+            </View>
         </>
     )
 }
@@ -67,6 +71,9 @@ const ChatListDetails = ({ item }) => {
 export default ChatListDetails
 
 const styles = StyleSheet.create({
+    container: {
+        flex: 1
+    },
     touchableOpacity: {
         flexDirection: 'row',
         justifyContent: 'space-between',

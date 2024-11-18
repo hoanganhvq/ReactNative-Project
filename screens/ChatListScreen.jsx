@@ -1,4 +1,4 @@
-import { StyleSheet, TouchableOpacity, View, Text, Image, FlatList, SafeAreaView } from 'react-native'
+import { StyleSheet, TouchableOpacity, View, Text, Image, FlatList, SafeAreaView, ScrollView } from 'react-native'
 import React, { useState, useEffect, useContext } from 'react'
 import { useNavigation } from '@react-navigation/native';
 import { collection, doc, query, getDocs, orderBy, onSnapshot, where } from 'firebase/firestore';
@@ -39,19 +39,22 @@ const ChatItem = () => {
     return (
         <>
             <SafeAreaView>
-                <View className={styles.container}>
-                    <FlatList
-                        data={users}
-                        contentContainerStyle={styles.content}
-                        keyExtractor={item => Math.random()}
-                        showsVerticalScrollIndicator={false}
-                        renderItem={(
-                            { item, index }) => <ChatListDetails
-                                item={item}
-                                index={index} />
-                        }
-                    />
-                </View>
+                <ScrollView>
+
+                    <View className={styles.container}>
+                        <FlatList
+                            data={users}
+                            contentContainerStyle={styles.content}
+                            keyExtractor={(item) => item.userId}
+                            showsVerticalScrollIndicator={false}
+                            renderItem={(
+                                { item, index }) => <ChatListDetails
+                                    item={item}
+                                    index={index} />
+                            }
+                        />
+                    </View>
+                </ScrollView>
             </SafeAreaView>
         </>
     )
@@ -61,7 +64,8 @@ export default ChatItem
 
 const styles = StyleSheet.create({
     container: {
-        flex: 1
+        flex: 1,
+
     },
     content: {
         flex: 1,
