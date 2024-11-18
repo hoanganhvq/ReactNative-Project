@@ -124,3 +124,8 @@ export const addRoomforHotel = async (IdHotel, name, bedQuantity, area, price, q
 
     return data;
 }
+
+export const getBookingForHotelier = async (id) => {
+    const data = await axios.get(`${api}/BE_React/getBooking/${id}`);
+    return data;
+}
