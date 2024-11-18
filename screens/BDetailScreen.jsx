@@ -14,7 +14,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 const BookingDetails = ({ navigation, route }) => {
     const { roomId, hotel, checkInDate, checkOutDate, roomCount, roomName, roomPrice } = route.params;
     const rating = hotel.ratingsAverage ? hotel.ratingsAverage.toFixed(1) : 0;
-    const days = checkInDate==checkOutDate? 1: Math.floor((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1;
+    const days = checkInDate == checkOutDate ? 1 : Math.floor((checkOutDate - checkInDate) / (1000 * 60 * 60 * 24)) + 1;
     const total = roomCount * roomPrice * days;
     const [selectedPayment, setSelectedPayment] = useState('hotel');
     const [value, setValue] = useState(null);
@@ -43,7 +43,6 @@ const BookingDetails = ({ navigation, route }) => {
         console.log(roomId);
 
         const rs = await postBooking(token, hotel._id, roomId, checkInDate, checkOutDate, roomCount, total, methodPayment, voucher);
-
 
         if (rs.data.status == 'success') {
             setSuccessfullyModal(true);
@@ -100,7 +99,7 @@ const BookingDetails = ({ navigation, route }) => {
         <SafeAreaView style={styles.container}>
             <ScrollView showsVerticalScrollIndicator={false}>
 
-        
+
 
                 <View style={styles.hotel}>
                     <View style={{ flexDirection: 'row' }}>
@@ -268,7 +267,7 @@ const BookingDetails = ({ navigation, route }) => {
                         <Dropdown
                             style={styles.dropdown}
                             placeholderStyle={styles.placeholderStyle}
-                            selectedTextStyle={styles.selectedTextStyle} 
+                            selectedTextStyle={styles.selectedTextStyle}
                             iconStyle={styles.iconStyle}
                             data={DigitalPayment}
                             maxHeight={300}
@@ -302,7 +301,26 @@ const BookingDetails = ({ navigation, route }) => {
                     <Text style={styles.confirmText}>ĐẶT NGAY</Text>
                 </TouchableOpacity>
 
-               
+                <Modal
+                    animationType="slide"
+                    transparent={true}
+                    visible={successfullyModal}
+                    onRequestClose={() => setSuccessfullyModal(false)}
+                >
+                    <View style={styles.modalOverlay}>
+                        <View style={styles.modalContent}>
+                            <AntDesign name="checkcircle" size={80} color="#4BB543" style={styles.successIcon} />
+                            <Text style={styles.successText}>Thanh Toán Thành Công!</Text>
+                            <Text style={styles.message}>Cảm ơn bạn đã sử dụng dịch vụ của chúng tôi.</Text>
+
+                            <TouchableOpacity style={styles.closeButton} onPress={() => setSuccessfullyModal(false)}>
+                                <Text style={styles.closeButtonText}>Đóng</Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
+
+
             </ScrollView>
         </SafeAreaView>
     );
@@ -712,7 +730,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         borderRadius: 40,
         marginTop: 10,
-        marginBottom:20
+        marginBottom: 20
     },
     confirmText: {
         fontSize: 20,

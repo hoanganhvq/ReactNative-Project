@@ -197,7 +197,7 @@ export default function MainScreen({ navigation }) {
 
 
   const Content = () => {
-    if (!data && loading) {
+    if (!data && loading && !hotels) {
       return (
         <LoadingScreen />
       );

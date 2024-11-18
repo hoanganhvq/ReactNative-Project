@@ -91,42 +91,53 @@ const MyTour = () => {
   };
   const [checkText, setCheckText] = useState(false);
 
-  if (!myBooking) {
+ 
+  if (myBooking === null) {
+    // Loading state
     return (
       <SafeAreaView style={styles.container}>
         <LoadingScreen />
       </SafeAreaView>
     );
-  } else if (doneFetch) {
+  }
+  
+  if (myBooking.length === 0) {
+    // No bookings state
     return (
-       <SafeAreaView style={styles.container}>
-      <ImageBackground
-        source={{ uri: "https://hips.hearstapps.com/hmg-prod/images/banff-517747003-1494616292.jpg?crop=0.9997418022205009xw:1xh;center,top&resize=980:*" }}
-        style={styles.backgroundImage}
-        resizeMode="cover"
-      >
-        <View style={styles.overlay}> 
-          <Text style={{fontSize:16, color:"white" , marginBottom:20}}>Bạn chưa có chuyến đi nào !</Text>
-          <Text style={styles.slogan}>
-            "Khám phá thế giới - Hành trình của bạn bắt đầu tại đây!"
-          </Text>
-          {/* <TouchableOpacity style={styles.bookButton}>
-            <Text style={styles.buttonText}>Đặt ngay</Text>
-          </TouchableOpacity> */}
-      
-        </View>
-      </ImageBackground>
-    </SafeAreaView>
-    )
-
-  } else {
-    return (
-      <View style={styles.container}>
-        <View style={{ height: 60 }}></View>
-        <FlatList data={myBooking} renderItem={renderHotel} />
-      </View>
+      <SafeAreaView style={styles.container}>
+        <ImageBackground
+          source={{
+            uri: "https://hips.hearstapps.com/hmg-prod/images/banff-517747003-1494616292.jpg?crop=0.9997418022205009xw:1xh;center,top&resize=980:*",
+          }}
+          style={styles.backgroundImage}
+          resizeMode="cover"
+        >
+          <View style={styles.overlay}>
+            <Text style={{ fontSize: 16, color: "white", marginBottom: 20 }}>
+              Bạn chưa có chuyến đi nào!
+            </Text>
+            <Text style={styles.slogan}>
+              "Khám phá thế giới - Hành trình của bạn bắt đầu tại đây!"
+            </Text>
+            <TouchableOpacity style={styles.bookButton}>
+              <Text style={styles.buttonText}>Đặt ngay</Text>
+            </TouchableOpacity>
+          </View>
+        </ImageBackground>
+      </SafeAreaView>
     );
   }
+  
+  // Booking list state
+  return (
+    <SafeAreaView style={styles.container}>
+      <FlatList
+        data={myBooking}
+        renderItem={renderHotel}
+      />
+    </SafeAreaView>
+  );
+  
 
 };
 const styles = StyleSheet.create({
@@ -221,7 +232,7 @@ const styles = StyleSheet.create({
   },
   buttonText: {
     color: "white",
-    fontSize: 22,
+    fontSize: 20,
     fontWeight: "bold",
     
   },
