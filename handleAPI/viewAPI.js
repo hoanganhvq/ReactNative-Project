@@ -118,7 +118,7 @@ export const addUtilityForHotel = async (IdHotel, utilities) => {
 
 
 export const addRoomforHotel = async (IdHotel, name, bedQuantity, area, price, quantity) => {
-    const data = await axios.post(`${api}/BE_React/${IdHotel}`, {
+    const data = await axios.post(`${api}/BE_React/hotel/${IdHotel}`, {
         name, bedQuantity, area, price, quantity
     });
 

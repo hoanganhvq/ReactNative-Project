@@ -65,7 +65,6 @@ export const ManagementScreen = () => {
       setUtilities([...utilities, utility.trim()]);
       setUtility('');
     }
-
   };
 
 
@@ -77,7 +76,6 @@ export const ManagementScreen = () => {
           <Text style={styles.discountText}>Giảm {item.discount}</Text>
           <Text style={styles.codeText}>Mã voucher: {item.code}</Text>
           <Text style={styles.conditionText}>Điều kiện: {item.condition}</Text>
-          <Text style={styles.conditionText}>index: {item.id}</Text>
         </View>
         <TouchableOpacity onPress={() => onDeleteVoucher(item.id)} style={styles.deleteVoucherButton}>
           <FontAwesome name="minus" style={styles.deleteVoucherButtonText} />
@@ -113,9 +111,7 @@ export const ManagementScreen = () => {
 
 
 
-  // setTimeout(() => {
-  //   setModalSuccessSave(false);
-  // }, 5000)
+
 
 
 
@@ -239,6 +235,8 @@ export const ManagementScreen = () => {
       }
       console.log("Profile picture uploaded successfully!");
       fetchHotels()
+
+      setModalSuccessSave(true);
     } catch (error) {
       console.error("Error uploading profile picture:", error);
     }
@@ -254,7 +252,7 @@ export const ManagementScreen = () => {
       await updateDoc(hotelRef, {
         city: hotelCity
       });
-      console.log("String field updated successfully!");
+      console.log("update City!");
     } catch (error) {
       console.log("Error updating string field:", error);
     }
@@ -316,42 +314,46 @@ export const ManagementScreen = () => {
 
   const updateName = async () => {
     const hotelId = "67047e37640239aaa10d370a";
+
     const rs = await updateNameHotel(hotelId, hotelName);
     if (rs.data.status == 'success') {
-      setModalSuccessSave(true)
+      setModalSuccessSave(true);
+      setModalNameHotel(false);
     }
-
+    fetchData();
   }
 
   const updateInformationHotel = async () => {
-
-    const rs = await updateInforHotel(hotelId, hotelLocation, hotelCity, hotelDescription);
+    const updatedLocation = hotelLocation || hotel.address;
+    const updatedCity = hotelCity || hotel.city;
+    const updatedDescription = hotelDescription || hotel.description;
+  
+    const rs = await updateInforHotel(hotelId, updatedLocation, updatedCity, updatedDescription);
+    
     updateCity();
+  
     if (rs.data.status == 'success') {
-      setModalSuccessSave(true)
+      setModalSuccessSave(true);
     }
-
-  }
+  };
+  
 
   // Sai api capaj nhat kh dc
   const addRoom = async () => {
-    setModalAddRoom(false);
-    console.log("Phan ANh");
     const rs = await addRoomforHotel(hotelId, roomName, bedQuantity, roomArea, roomPrice)
-    console.log("Cuong vuong")
     if (rs.data.status == 'success') {
-
       setModalSuccessSave(true)
+      setModalAddRoom(false);
     }
+    fetchData();
   }
 
   const addingUtility = async () => {
     const rs = await addUtilityForHotel(hotelId, utilities);
-
     if (rs.data.status == 'success') {
       setModalSuccessSave(true);
-      handleSaveUtilityUpdated();
     }
+    fetchData();
   }
 
 
@@ -368,7 +370,6 @@ export const ManagementScreen = () => {
 
         const docIdNum = parseInt(doc.id);
 
-        // Update highestId if we find a larger number
         if (!isNaN(docIdNum) && docIdNum > highestId) {
           highestId = docIdNum;
         }
@@ -386,7 +387,7 @@ export const ManagementScreen = () => {
       });
 
       console.log(`Voucher added successfully with ID: ${newId}`);
-      Alert.alert('Thêm voucher thành công');
+      setModalSuccessSave(true);
       setModalVoucher(false);
       fetchVoucher();
     } catch (error) {
@@ -394,6 +395,34 @@ export const ManagementScreen = () => {
       throw error;
     }
   };
+
+  const fetchVoucher = async () => {
+    try {
+      const voucherCollection = collection(db, 'vouchers');
+
+      const voucherSnapshot = await getDocs(voucherCollection);
+
+      const voucherList = voucherSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          code: data.code,
+          condition: data.condition,
+          discount: data.discount,
+          applicable: data.applicable,
+          applicable: true
+        };
+      });
+
+      console.log("Vouchers: ", voucherList);
+      setVouchers(voucherList);
+    } catch (error) {
+      console.error("Error fetching vouchers: ", error);
+      throw error;
+    }
+
+  }
+
 
   const getData = async () => {
     try {
@@ -591,16 +620,24 @@ export const ManagementScreen = () => {
           <Text style={styles.headerInfo}>Các thông tin liên quan</Text>
           <View>
             <View style={{ flexDirection: "row", marginBottom: 10 }}>
-              <Text style={styles.infoLabel}>Địa chỉ: </Text>
-              <TextInput style={styles.inputInfo} placeholder={hotel.address} placeholderTextColor="gray" onChangeText={(text) => setHotelLocation(text)}></TextInput>
+              <Text style={styles.infoLabelCityDescriptionAddress}>Địa chỉ: </Text>
+              <TextInput style={styles.inputCityDescriptionAddress} 
+              placeholder={hotel.address} 
+              placeholderTextColor="gray" onChangeText={(text) => setHotelLocation(text)}></TextInput>
             </View>
             <View style={{ flexDirection: "row", marginBottom: 10 }} >
-              <Text style={styles.infoLabel}>Thành phố: </Text>
-              <TextInput style={styles.inputInfo} placeholder={hotel.city} placeholderTextColor="gray" onChangeText={(text) => setHotelCity(text)}></TextInput>
+              <Text style={styles.infoLabelCityDescriptionAddress}>Thành phố: </Text>
+              <TextInput style={styles.inputCityDescriptionAddress} 
+              placeholder={hotel.city} 
+              placeholderTextColor="gray" 
+              onChangeText={(text) => setHotelCity(text)}></TextInput>
             </View>
             <View style={{ flexDirection: "row", marginBottom: 10 }}>
-              <Text style={styles.infoLabel}>Mô tả: </Text>
-              <TextInput style={styles.inputInfo} placeholder={hotel.description} placeholderTextColor="gray" onChangeText={(text) => setHotelDescription(text)}></TextInput>
+              <Text style={styles.infoLabelCityDescriptionAddress}>Mô tả: </Text>
+              <TextInput style={styles.inputCityDescriptionAddress} 
+              placeholder={hotel.description} 
+              placeholderTextColor="gray" 
+              onChangeText={(text) => setHotelDescription(text)}></TextInput>
             </View>
             <TouchableOpacity style={styles.openButton} onPress={updateInformationHotel}>
               <Text style={styles.txtButtonModify}>Lưu thông tin</Text>
@@ -983,19 +1020,35 @@ const styles = StyleSheet.create({
     color: color.tilte
   },
   infoLabel: {
-    fontWeight: "700",
-    fontSize: 20,
-    color: "white"
+    fontSize: 22,
+    color: "white",
+    marginTop:1.2
   },
   inputInfo: {
-    marginTop: 1.3,
+    marginTop: 1.2,
     width: width * 0.7,
     fontSize: 16,
     color: "white",
     flexWrap: "wrap",
     flex: 1,
     paddingRight: 10,
-    fontSize: 20
+    fontSize: 22,
+    fontWeight:"700"
+  },
+  infoLabelCityDescriptionAddress:{
+    fontSize: 20,
+    color: "white",
+    marginTop:1.2
+  },
+  inputCityDescriptionAddress:{
+    marginTop: 1.2,
+    width: width * 0.7,
+    color: "white",
+    flexWrap: "wrap",
+    flex: 1,
+    paddingRight: 10,
+    fontSize: 20,
+    fontWeight:"500"
   },
   buttonModify: {
     backgroundColor: "black",
@@ -1303,6 +1356,7 @@ const styles = StyleSheet.create({
     borderRadius: 8,
     paddingHorizontal: 10,
     marginBottom: 15,
+    color:"#ccc"
   },
   addButton: {
     backgroundColor: '#28a745',
@@ -1310,7 +1364,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     marginBottom: 15,
     alignItems: 'center',
-
+    marginTop:10
   },
   addButtonText: {
     color: '#fff',
@@ -1318,16 +1372,16 @@ const styles = StyleSheet.create({
     fontWeight: 'bold',
   },
   utilityItem: {
-    backgroundColor: '#f0f0f0',
     padding: 10,
     borderRadius: 5,
     marginVertical: 5,
-    flexDirection: "row"
-
+    flexDirection: "row",
+    borderWidth:1,
+    borderColor:"#ccc"
   },
   utilityText: {
     fontSize: 16,
-    color: '#333',
+    color: '#ccc',
   },
   deleteButton: {
     backgroundColor: '#FF6347', // Màu đỏ cho nút xóa
