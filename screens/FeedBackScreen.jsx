@@ -16,7 +16,7 @@ import { Icon } from 'react-native-elements';
 import color from '../assets/color.json';
 
 export default function RatingScreen({ route, navigation }) {
-  const { reviews } = route.params;
+  const { reviews, tokenUser } = route.params;
 
   const [selectedRating, setSelectedRating] = useState(null);
   const [filteredReviews, setFilteredReviews] = useState(reviews);
@@ -62,7 +62,7 @@ export default function RatingScreen({ route, navigation }) {
         review: newReview,
         createAt: new Date(),
         user: {
-          name: 'Anonymous',
+          name: 'Phan Hoang Anh',
           photo: 'default_photo.png'
         }
       };
@@ -146,7 +146,7 @@ export default function RatingScreen({ route, navigation }) {
           ))}
         </View>
 
-        <View style={styles.newReviewContainer}>
+        {tokenUser &&<View style={styles.newReviewContainer}>
           <Text style={styles.newReviewTitle}>Thêm Đánh Giá </Text>
           <View style={styles.starsContainer}>
             {Array.from({ length: 5 }, (_, index) => (
@@ -170,7 +170,7 @@ export default function RatingScreen({ route, navigation }) {
           <TouchableOpacity style={styles.openButton} onPress={handleSubmitReview}>
             <Text style={styles.openButtonText}>Gửi đánh giá</Text>
           </TouchableOpacity>
-        </View>
+        </View>}
 
 
         <FlatList
@@ -354,7 +354,7 @@ const styles = StyleSheet.create({
   },
   newReviewTitle: {
     fontSize: 18,
-    color: 'white',
+    color: color.tilte,
     fontWeight: 'bold',
     marginBottom: 10,
   },

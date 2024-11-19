@@ -305,9 +305,6 @@ const BookingDetails = ({ navigation, route }) => {
                     </Text>
                 </View>
 
-                <TouchableOpacity style={styles.confirmButton} onPress={getBooking} >
-                    <Text style={styles.confirmText}>ĐẶT NGAY</Text>
-                </TouchableOpacity>
 
                 <Modal
                     animationType="slide"
@@ -328,6 +325,10 @@ const BookingDetails = ({ navigation, route }) => {
                     </View>
                 </Modal>
 
+
+                <TouchableOpacity style={styles.confirmButton} onPress={getBooking} >
+                    <Text style={styles.confirmText}>ĐẶT NGAY</Text>
+                </TouchableOpacity>
 
             </ScrollView>
         </SafeAreaView>

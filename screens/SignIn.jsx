@@ -124,6 +124,7 @@ function SignIn({ navigation }) {
           />
           <TextInput style={styles.txtBox}
             placeholder="Email"
+            placeholderTextColor="#666"
             autoCapitalize="none"
             keyboardType="email-address"
             textContentType="emailAddress"
@@ -144,6 +145,7 @@ function SignIn({ navigation }) {
           />
           <TextInput
             placeholder="Mật khẩu"
+            placeholderTextColor="#666"
             autoCapitalize="none"
             autoCorrect={false}
             autoFocus={false}

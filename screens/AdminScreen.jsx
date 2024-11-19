@@ -79,7 +79,6 @@ export const AdminScreen = ({ navigation }) => {
     fetchAllData();
   }, []);
 
-  const Content = () => {
     if (loading) {
       return (
         <LoadingScreen />
@@ -134,9 +133,8 @@ export const AdminScreen = ({ navigation }) => {
         </View>
       </SafeAreaView>
     );
-  };
+  
 
-  return <Content />;
 };
 
 const styles = StyleSheet.create({

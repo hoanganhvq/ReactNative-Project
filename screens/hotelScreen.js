@@ -48,6 +48,7 @@ export default function HotelScreen({ navigation, route }) {
   const checkToken = async () => {
     const Token = await AsyncStorage.getItem('userToken');
     setToken(Token);
+    console.log("token: ", tokenUser);
   };
 
   const getData = async () => {
@@ -170,7 +171,6 @@ export default function HotelScreen({ navigation, route }) {
                       uri: item,
                     }}
                     style={styles.image}
-                  // resizeMode="cover"
                   />
                 </TouchableOpacity>
               )}
@@ -198,7 +198,7 @@ export default function HotelScreen({ navigation, route }) {
                 <FontAwesome name="comments" size={24} color="#fff" />
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews }); }}>
+            <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews , tokenUser:tokenUser}); }}>
               <Text style={styles.rating}>{rating} / {hotelData.ratingScale} ⭐</Text>
               <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>
             </TouchableOpacity>

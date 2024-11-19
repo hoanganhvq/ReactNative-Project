@@ -105,6 +105,7 @@ const uploadProfilePicture = async () => {
             profileUrl: downloadURL,
         });
         console.log("Profile picture uploaded successfully!");
+        Alert.alert("Cập nhật ảnh đại diện thành công");
         
     } catch (error) {
         console.error("Error uploading profile picture:", error);

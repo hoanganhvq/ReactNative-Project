@@ -8,9 +8,11 @@ import Carousel from "react-native-reanimated-carousel";
 import * as ImagePicker from 'expo-image-picker';
 
 import EvilIcons from '@expo/vector-icons/EvilIcons';
-import { doc, updateDoc, getDoc, collection, getDocs, addDoc, setDoc, deleteDoc} from 'firebase/firestore';
+import { doc, updateDoc, getDoc, collection, getDocs, addDoc, setDoc, deleteDoc } from 'firebase/firestore';
 import { getStorage, ref, uploadBytesResumable, getDownloadURL, uploadBytes } from 'firebase/storage';
 import { db, storage } from '../config/firebase.js';
+import { hotelDetail } from '../handleAPI/viewAPI.js';
+
 
 import AntDesign from "@expo/vector-icons/AntDesign";
 import { addRoomforHotel, addUtilityForHotel, updateInforHotel, updateNameHotel } from '../handleAPI/viewAPI.js';
@@ -21,11 +23,9 @@ const IMG_WIDTH = width * 0.9;
 const IMG_HEIGHT = IMG_WIDTH * 0.5;
 const ITEM_WIDTH = width;
 
-export const ManagementScreen = ({ route }) => {
-  // Ensure route.params is defined
-  const { hotel, hotelImageCover, hotelImages } = route.params || {}; // Default to an empty object if undefined
+export const ManagementScreen = () => {
 
-
+  const [loading, setLoading] = useState(false); // Trạng thái loading
   const [hotelName, setHotelName] = useState("");
   const [hotelLocation, setHotelLocation] = useState("");
   const [hotelCity, setHotelCity] = useState("");
@@ -40,8 +40,7 @@ export const ManagementScreen = ({ route }) => {
   const [condition, setCondition] = useState("");
   const [applicable, setApplicable] = useState(0);
 
-  // const [hotelImages, setHotelImages] = useState([]);
-  // const [hotelImageCover, setHotelImageCover] = useState("");
+
   const [activeIndex, setActiveIndex] = useState(0);
   const [modalAddRoom, setModalAddRoom] = useState(false);
   const [modalUtilities, setModalUtilities] = useState(false);
@@ -54,14 +53,12 @@ export const ManagementScreen = ({ route }) => {
   const [vouchers, setVouchers] = useState([]);
 
 
-  // const vouchers = [
-  //   { id: '1', discount: '10%', code: 'MKB10', condition: 'Đơn từ 500.000 đ', applicable: true },
-  //   { id: '2', discount: '22%', code: 'MKB22', condition: 'Đơn từ 550.000 đ', applicable: true },
-  //   { id: '3', discount: '35%', code: 'MKB35', condition: 'Đơn từ 3.000.000 đ', applicable: false },
-  //   { id: '4', discount: '40%', code: 'MKB40', condition: 'Đơn từ 5.000.000 đ', applicable: false },
-  // ]; //Data t fake de lam. m nhớ tạo voucher data rồi pull dữ liệu về xử lý nhe
+  const [hotel, setHotel] = useState(null);
+  const [hotelImages, setHotelImages] = useState([]);
+  const [hotelImageCover, setHotelImageCover] = useState("");
 
   const hotelId = "67047e37640239aaa10d370a";
+
 
   const addUtility = () => {
     if (utility.trim()) {
@@ -70,32 +67,7 @@ export const ManagementScreen = ({ route }) => {
     }
 
   };
-  const fetchVoucher = async () => {
-    try {
-      const voucherCollection = collection(db, 'vouchers');
 
-      const voucherSnapshot = await getDocs(voucherCollection);
-
-      const voucherList = voucherSnapshot.docs.map(doc => {
-        const data = doc.data();
-        return {
-          id: doc.id,
-          code: data.code,
-          condition: data.condition,
-          discount: data.discount,
-          applicable: data.applicable,
-          applicable: true
-        };
-      });
-
-      console.log("Vouchers: ", voucherList);
-      setVouchers(voucherList);
-    } catch (error) {
-      console.error("Error fetching vouchers: ", error);
-      throw error;
-    }
-
-  }
 
 
   const renderVoucherItem = ({ item, index }) => {
@@ -128,7 +100,7 @@ export const ManagementScreen = ({ route }) => {
 
   const onDeleteVoucher = async (voucherId) => {
     try {
-      const voucherRef = doc(db, 'vouchers', voucherId.toString()); // Ensure voucherId is passed correctly
+      const voucherRef = doc(db, 'vouchers', voucherId.toString());
       await deleteDoc(voucherRef);
       console.log(`Voucher ${voucherId} deleted successfully`);
       Alert.alert("Xóa voucher thành công");
@@ -138,16 +110,13 @@ export const ManagementScreen = ({ route }) => {
       throw error;
     }
   };
-  
 
 
-  setTimeout(() => {
-    setModalSuccessSave(false);
-  }, 3000)
 
-  useLayoutEffect(() => {
-    fetchVoucher();
-  }, []);
+  // setTimeout(() => {
+  //   setModalSuccessSave(false);
+  // }, 5000)
+
 
 
   const renderImageItem = ({ item, index }) => (
@@ -364,16 +333,19 @@ export const ManagementScreen = ({ route }) => {
 
   }
 
+  // Sai api capaj nhat kh dc
   const addRoom = async () => {
-
+    setModalAddRoom(false);
+    console.log("Phan ANh");
     const rs = await addRoomforHotel(hotelId, roomName, bedQuantity, roomArea, roomPrice)
+    console.log("Cuong vuong")
     if (rs.data.status == 'success') {
+
       setModalSuccessSave(true)
     }
   }
 
   const addingUtility = async () => {
-
     const rs = await addUtilityForHotel(hotelId, utilities);
 
     if (rs.data.status == 'success') {
@@ -386,25 +358,25 @@ export const ManagementScreen = ({ route }) => {
   const addVoucher = async () => {
     try {
       const voucherCollection = collection(db, "vouchers");
-      
+
       // Get all documents to find highest ID
       const querySnapshot = await getDocs(voucherCollection);
-      
+
 
       let highestId = 0;
       querySnapshot.forEach((doc) => {
 
         const docIdNum = parseInt(doc.id);
-        
+
         // Update highestId if we find a larger number
         if (!isNaN(docIdNum) && docIdNum > highestId) {
           highestId = docIdNum;
         }
       });
-  
+
       const newId = (highestId + 1);
       const newVoucherRef = doc(voucherCollection, newId.toString());
-  
+
       await setDoc(newVoucherRef, {
         id: newId,
         applicable: applicable,
@@ -412,7 +384,7 @@ export const ManagementScreen = ({ route }) => {
         condition: condition,
         discount: discount,
       });
-  
+
       console.log(`Voucher added successfully with ID: ${newId}`);
       Alert.alert('Thêm voucher thành công');
       setModalVoucher(false);
@@ -423,11 +395,87 @@ export const ManagementScreen = ({ route }) => {
     }
   };
 
+  const getData = async () => {
+    try {
+      const data = await hotelDetail(hotelId); // Fetch thông tin khách sạn
+      return data.data.doc;
+    } catch (error) {
+      console.error("Error fetching data:", error);
+      return null;
+    }
+  };
+
+
+
+  const fetchData = async () => {
+    console.log("hello");
+
+    const res = await getData();
+    if (res) {
+      setHotel(res);
+      console.log("fetchData database ok:", res);
+    }
+  };
+
+  const fetchHotels = async () => {
+    try {
+      console.log("hello");
+      const hotelsCollection = collection(db, 'hotels');
+      const hotelsSnapshot = await getDocs(hotelsCollection);
+      const hotelsList = hotelsSnapshot.docs.map(doc => {
+        const data = doc.data();
+        return {
+          id: doc.id,
+          images: Object.values(data.images || {}),
+          name: data.name,
+          imgCover: data.imgCover || "",
+        };
+      });
+
+      const currentHotel = hotelsList.find(hotel => hotel.id === hotelId);
+      if (currentHotel) {
+        setHotelImages(currentHotel.images);
+        setHotelImageCover(currentHotel.imgCover);
+        console.log("fetch firebase ok: ", currentHotel)
+      } else {
+        console.warn("Không tìm thấy khách sạn!");
+      }
+    } catch (error) {
+      console.error("Error fetching hotels:", error);
+    }
+  };
+
+  useEffect(() => {
+    const fetchAllData = async () => {
+      setLoading(true);
+      try {
+        await Promise.all([fetchData(), fetchHotels(), fetchVoucher()]);
+      } catch (error) {
+        console.error("Error fetching all data:", error);
+      } finally {
+        setLoading(false);
+      }
+    };
+
+    fetchAllData();
+  }, []);
+
+  if (!hotel ) {
+    return (
+      <LoadingScreen />
+    );
+  }
+  if (!hotel && !hotelImages) {
+    return (
+      <View style={{ flex: 1, justifyContent: 'center', alignItems: 'center' }}>
+        <Text style={{ color: color.text_dark }}>Không có dữ liệu khách sạn!</Text>
+      </View>
+    );
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
         <View style={styles.hotelNameContainer}>
-
 
           <View >
 
@@ -480,7 +528,7 @@ export const ManagementScreen = ({ route }) => {
                   <View style={{ flexDirection: "row", marginBottom: 10 }}>
                     <Text style={styles.infoLabel}>Tên: </Text>
                     <TextInput style={styles.inputInfo} placeholder={hotel?.name || "Nhập tên khách sạn"}
-                      placeholderTextColor="gray" onChangeText={(text) => setHotelName(text)}
+                      placeholderTextColor="gray" onChangeText={(text) => { setHotelName(text) }}
                     ></TextInput>
                   </View>
 
@@ -612,7 +660,7 @@ export const ManagementScreen = ({ route }) => {
               </View>
 
               <View style={styles.modalDivider} />
-              <View style={{ flexDirection: "row" }}>
+              <View style={{ flexDirection: "row", justifyContent: "center" }}>
                 <View style={styles.modalInput}>
 
                   <View style={{ flexDirection: "column", marginBottom: 20 }}>
@@ -620,7 +668,7 @@ export const ManagementScreen = ({ route }) => {
                     <View style={{ flexDirection: "row" }}>
                       <TextInput style={{
                         borderWidth: 1,
-                        width: 180,
+                        width: 290,
                         height: 30,
                         marginRight: 7,
                         borderRadius: 5,
@@ -637,7 +685,16 @@ export const ManagementScreen = ({ route }) => {
                   <View style={{ flexDirection: "column", marginBottom: 20 }}>
                     <Text style={styles.modalTitleInput}>Diện tích: </Text>
                     <View style={{ flexDirection: "row" }}>
-                      <TextInput style={styles.modalInputInfo} keyboardType='numeric'
+                      <TextInput style={{
+                        borderWidth: 1,
+                        width: 290,
+                        height: 30,
+                        marginRight: 7,
+                        borderRadius: 5,
+                        borderColor: "gray",
+                        color: "white",
+                        paddingLeft: 5
+                      }} keyboardType='numeric'
                         onChangeText={(text) => setRoomArea(text)}
                       ></TextInput>
                       <Text style={styles.modalUnit}> m²</Text>
@@ -658,7 +715,16 @@ export const ManagementScreen = ({ route }) => {
                   <View style={{ flexDirection: "column", marginBottom: 20 }}>
                     <Text style={styles.modalTitleInput}>Giá</Text>
                     <View style={{ flexDirection: "row" }}>
-                      <TextInput style={styles.modalInputInfo} keyboardType='numeric'
+                      <TextInput style={{
+                        borderWidth: 1,
+                        width: 290,
+                        height: 30,
+                        marginRight: 7,
+                        borderRadius: 5,
+                        borderColor: "gray",
+                        color: "white",
+                        paddingLeft: 5
+                      }} keyboardType='numeric'
                         onChangeText={(text) => setRoomPrice(text)}
                       ></TextInput>
                       <Text style={styles.modalUnit}>đ</Text>
@@ -675,15 +741,15 @@ export const ManagementScreen = ({ route }) => {
               </View>
 
               <View style={{ justifyContent: "center" }}>
-                <TouchableOpacity style={styles.buttonAdd} onPress={addRoom}>
+                <TouchableOpacity style={styles.buttonAdd} onPress={() => { addRoom() }}>
                   <Text style={styles.txtButtonAdd}>Thêm</Text>
                 </TouchableOpacity>
               </View>
             </View>
           </View>
-
-
         </Modal>
+
+
         <View style={styles.amenitiesContainer}>
           <Text style={styles.headerImage}>Tiện Nghi</Text>
           <FlatList
@@ -809,7 +875,7 @@ export const ManagementScreen = ({ route }) => {
                     placeholder="80"
                     placeholderTextColor="gray"
                     keyboardType="numeric"
-                    onChangeText={(text) => { setDiscount(text) }}
+                    onChangeText={(text) => { setDiscount(`${text}%`) }}
                   />
                   <Text style={styles.unitLabel}>%</Text>
                 </View>
@@ -922,7 +988,7 @@ const styles = StyleSheet.create({
     color: "white"
   },
   inputInfo: {
-    marginTop: 2,
+    marginTop: 1.3,
     width: width * 0.7,
     fontSize: 16,
     color: "white",
@@ -1083,7 +1149,7 @@ const styles = StyleSheet.create({
 
   },
   modalContent: {
-    width: width * 0.95,
+    width: width * 0.9,
     maxHeight: height * 0.95,
     backgroundColor: color.background_dark,
     borderRadius: 15,
@@ -1124,7 +1190,7 @@ const styles = StyleSheet.create({
   },
   modalInputInfo: {
     borderWidth: 1,
-    width: 135,
+    width: 260,
     height: 30,
     marginRight: 7,
     borderRadius: 5,
