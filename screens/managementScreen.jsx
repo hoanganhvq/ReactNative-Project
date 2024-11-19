@@ -15,7 +15,7 @@ import { hotelDetail } from '../handleAPI/viewAPI.js';
 
 
 import AntDesign from "@expo/vector-icons/AntDesign";
-import { addRoomforHotel, addUtilityForHotel, updateInforHotel, updateNameHotel } from '../handleAPI/viewAPI.js';
+import { addRoomforHotel, addUtilityForHotel, updateInforHotel, updateNameHotel , deleteRoomforHotel} from '../handleAPI/viewAPI.js';
 
 
 const { width, height } = Dimensions.get("window");
@@ -90,9 +90,6 @@ export const ManagementScreen = () => {
     updatedUtilities.splice(index, 1);
     setUtilities(updatedUtilities);
   };
-  const handleSaveUtilityUpdated = () => {
-    setModalUtilities(false)
-  }
 
 
 
@@ -108,11 +105,6 @@ export const ManagementScreen = () => {
       throw error;
     }
   };
-
-
-
-
-
 
 
   const renderImageItem = ({ item, index }) => (
@@ -259,9 +251,7 @@ export const ManagementScreen = () => {
 
   }
 
-  const handleDeleteRoom = (index) => {
-    console.log("deleteroom at ", index);
-  }
+
   const renderAmenities = ({ item }) => (
     <View style={styles.amenityContainer}>
       <FontAwesome name="check" size={15} color={color.tilte} />
@@ -303,7 +293,7 @@ export const ManagementScreen = () => {
               <Text style={styles.roomInfoText}>{item.bedQuantity} giường lớn</Text>
 
             </View>
-            <TouchableOpacity style={styles.deleteRoom} onPress={() => { handleDeleteRoom(index) }}>
+            <TouchableOpacity style={styles.deleteRoom} onPress={() => { handleDeleteRoom(item._id) }}>
               <Text style={styles.txtDeleteButton}>Xóa phòng</Text>
             </TouchableOpacity>
           </View>
@@ -347,6 +337,19 @@ export const ManagementScreen = () => {
     }
     fetchData();
   }
+
+  
+  const handleDeleteRoom = async (roomId) => {
+    try {
+        console.log("Attempting to delete room with ID:", roomId); 
+        const result = await deleteRoomforHotel(hotelId, roomId);
+        console.log("Room deleted successfully:", result);
+        fetchData(); // Refresh the data after deletion
+    } catch (error) {
+        console.error("Failed to delete room:", error);
+        alert("Không thể xóa phòng. Vui lòng thử lại!");
+    }
+};
 
   const addingUtility = async () => {
     const rs = await addUtilityForHotel(hotelId, utilities);
@@ -437,12 +440,11 @@ export const ManagementScreen = () => {
 
 
   const fetchData = async () => {
-    console.log("hello");
 
     const res = await getData();
     if (res) {
       setHotel(res);
-      console.log("fetchData database ok:", res);
+      console.log("fetchData database ok:", res.rooms);
     }
   };
 

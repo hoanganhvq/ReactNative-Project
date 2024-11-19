@@ -124,6 +124,17 @@ export const addRoomforHotel = async (IdHotel, name, bedQuantity, area, price, q
 
     return data;
 }
+export const deleteRoomforHotel = async (IdHotel, Idroom) => {
+    try {
+        const response = await axios.delete(`${api}/BE_React/hotel/${IdHotel}/room/${Idroom}`);
+        console.log("Attempting to delete room with ID:", Idroom);
+        return response.data; 
+    } catch (error) {
+        console.error("Failed to delete room:", error.response?.data || error.message);
+        throw error; 
+    }
+};
+
 
 export const getBookingForHotelier = async (id) => {
     const data = await axios.get(`${api}/BE_React/getBooking/${id}`);

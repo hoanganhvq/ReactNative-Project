@@ -31,6 +31,8 @@ exports.getRoom = catchAsync(async (req, res, next) => {
 });
 
 
+
+
 exports.createRoom = catchAsync(async (req, res, next) => {
     const hotelId = req.params.hotelId;
     const { name, bedQuantity, area, price, utilities } = req.body
@@ -66,10 +68,11 @@ exports.updateRoom = catchAsync(async (req, res, next) => {
 });
 
 exports.deleteRoom = catchAsync(async (req, res, next) => {
-    const doc = await Room.findByIdAndDelete(req.params.id);
+    const roomId = req.params.roomId;
+    const doc = await Room.findByIdAndDelete(roomId);
 
     if (!doc) {
-        return next(new CreateError(`No Room with ${req.params.id}`, 404));
+        return next(new CreateError(`No Room with ID ${roomId}`, 404));
     }
 
     res.status(200).json({
