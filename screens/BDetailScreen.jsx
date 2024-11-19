@@ -159,15 +159,15 @@ const BookingDetails = ({ navigation, route }) => {
                         </TouchableOpacity>
                     </View>
                     <View style={styles.totalSection}>
-                        <Text style={styles.totalLabel}>Giá phòng</Text>
+                        <Text style={styles.totalLabel}>    Giá phòng</Text>
                         <Text style={styles.totalAmount}>{roomPrice * roomCount}</Text>
                     </View>
                     <View style={styles.sale}>
-                        <Text style={styles.saleLable}>Số ngày</Text>
+                        <Text style={styles.saleLable}>    Số ngày</Text>
                         <Text style={styles.saleAmount}>x {days}</Text>
                     </View>
                     <View style={styles.sale}>
-                        <Text style={styles.saleLable}>Giảm giá</Text>
+                        <Text style={styles.discoountLable}>    Giảm giá</Text>
                         <Text style={styles.saleAmount}>- {discount}</Text>
                     </View>
                     <View style={
@@ -496,6 +496,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
 
     },
+    discoountLable:{
+        fontSize: 18,
+        color: "red",
+        fontWeight: 'bold',
+
+    },
     saleAmount: {
         fontSize: 18,
         fontWeight: 'bold',
@@ -508,13 +514,13 @@ const styles = StyleSheet.create({
     },
     finalLabel: {
         fontSize: 18,
-        color: "white",
+        color: color.tilte,
         fontWeight: 'bold',
     },
     finalAmount: {
         fontSize: 18,
         fontWeight: 'bold',
-        color: '#FF5722',
+        color: color.tilte,
     },
     paymentMethodSection: {
         flexDirection: 'column',

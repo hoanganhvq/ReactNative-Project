@@ -209,7 +209,6 @@ const BookingScreen = ({ navigation, route }) => {
             animationType="slide"
             transparent={true}
             visible={isDetailModalVisible}
-            onRequestClose={() => setDetailModalVisible(false)}
           >
             <View style={styles.modalOverlay}>
               <View style={styles.detailModalContent}>

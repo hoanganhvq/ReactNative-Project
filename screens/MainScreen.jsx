@@ -217,14 +217,14 @@ export default function MainScreen({ navigation }) {
     return (
       <>
         {!token ? (
-          <TouchableOpacity onPress={() => navigation.navigate('SignIn')}>
+          <TouchableOpacity style={{backgroundColor:color.tilte, width:90, marginLeft:260,marginTop:10, borderRadius:30}} onPress={() => navigation.navigate('SignIn')}>
             <View style={styles.row}>
               <Text style={styles.textLogin}>Login</Text>
             </View>
           </TouchableOpacity>
 
         ) : (
-          <TouchableOpacity onPress={() => navigation.navigate('UserProfile')} style={{ marginTop: 20 }}>
+          <TouchableOpacity onPress={() => navigation.navigate('UserProfile')} style={{ marginTop: 20, marginLeft:10 }}>
             <View style={styles.row}>
               <Image
                 source={{ uri: photo }}
@@ -362,7 +362,8 @@ const styles = StyleSheet.create({
     borderColor: 'white',
     backgroundColor: 'transparent',
     borderWidth: 0,
-    marginVertical: 16,
+    marginBottom:16,
+    marginTop:5,
     borderBlockColor: color.background_dark,
   },
   searchBarInput: {

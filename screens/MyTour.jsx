@@ -6,10 +6,12 @@ import FontAwesome5 from "@expo/vector-icons/FontAwesome5";
 import color from "../assets/color.json";
 import { getMyBooking } from "../handleAPI/viewAPI";
 import AsyncStorage from "@react-native-async-storage/async-storage";
+import { useFocusEffect } from '@react-navigation/native';
+
 import LoadingScreen from "./LoadingScreen";
 // cái này tự lấy data nha này t demo thôi
 
-const MyTour = () => {
+const MyTour = ({navigation}) => {
   const [myBooking, setMyBooking] = useState(null);
   const [doneFetch, setDoneFetch] = useState(false);
 
@@ -28,12 +30,19 @@ const MyTour = () => {
   const fetchData = async () => {
     const res = await getData();
     setMyBooking(res.data);
+    console.log("myBooking: ", myBooking)
     setDoneFetch(true);
   };
 
   useEffect(() => {
     fetchData();
   }, [])
+
+  useFocusEffect(
+    React.useCallback(() => {
+        fetchData();
+    }, [])
+);
 
 
 
@@ -47,7 +56,7 @@ const MyTour = () => {
   const renderHotel = ({ item }) => {
     let checkIn = new Date(item.checkInDate).toLocaleDateString()
     let checkOut = new Date(item.checkOutDate).toLocaleDateString()
-    let status = (item.status == true) ? "Đã thanh toán" : "Chưa thanh toán";
+    let status = (item.method == 'Credit Card') ? "Đã thanh toán" : "Chưa thanh toán";
 
 
 
@@ -119,9 +128,7 @@ const MyTour = () => {
             <Text style={styles.slogan}>
               "Khám phá thế giới - Hành trình của bạn bắt đầu tại đây!"
             </Text>
-            <TouchableOpacity style={styles.bookButton}>
-              <Text style={styles.buttonText}>Đặt ngay</Text>
-            </TouchableOpacity>
+      
           </View>
         </ImageBackground>
       </SafeAreaView>
