@@ -198,7 +198,7 @@ export default function HotelScreen({ navigation, route }) {
                 <FontAwesome name="comments" size={24} color="#fff" />
               </TouchableOpacity>
             )}
-            <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", { reviews: hotel.reviews , tokenUser:tokenUser}); }}>
+            <TouchableOpacity style={styles.ratingContainer} onPress={() => { navigation.navigate("FeedBack", {hotelId:hotelId , tokenUser:tokenUser, rating: rating}); }}>
               <Text style={styles.rating}>{rating} / {hotelData.ratingScale} ⭐</Text>
               <Text style={styles.ratingSubtitle}>({hotel.ratingsQuantity})</Text>
             </TouchableOpacity>

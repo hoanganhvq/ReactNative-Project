@@ -30,8 +30,7 @@ const MyTour = ({navigation}) => {
   const fetchData = async () => {
     const res = await getData();
     setMyBooking(res.data);
-    console.log("myBooking: ", myBooking)
-    setDoneFetch(true);
+    console.log("myBooking: ", res.data)
   };
 
   useEffect(() => {

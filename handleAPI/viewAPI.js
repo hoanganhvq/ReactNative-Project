@@ -124,11 +124,11 @@ export const addRoomforHotel = async (IdHotel, name, bedQuantity, area, price, q
 
     return data;
 }
-export const deleteRoomforHotel = async (IdHotel, Idroom) => {
+export const deleteRoomforHotel = async (idHotel, idRoom) => {
     try {
-        const response = await axios.delete(`${api}/BE_React/hotel/${IdHotel}/room/${Idroom}`);
-        console.log("Attempting to delete room with ID:", Idroom);
-        return response.data; 
+        const data = await axios.delete(`${api}/BE_React/hotel/${idHotel}/room/${idRoom}`);
+        console.log("Attempting to delete room with ID:", idRoom);
+        return data; 
     } catch (error) {
         console.error("Failed to delete room:", error.response?.data || error.message);
         throw error; 
@@ -138,5 +138,12 @@ export const deleteRoomforHotel = async (IdHotel, Idroom) => {
 
 export const getBookingForHotelier = async (id) => {
     const data = await axios.get(`${api}/BE_React/getBooking/${id}`);
+    return data;
+}
+
+export const createReviewForHotel = async(token,idHotel,title,review,rating)=>{
+    const data = await axios.post(`${api}/BE_React/hotel/${idHotel}/review`,{title,review,rating},{
+        headers: { authorization: `Bearer ${token}` }
+    });
     return data;
 }

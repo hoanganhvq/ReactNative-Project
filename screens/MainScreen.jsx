@@ -74,34 +74,39 @@ export default function MainScreen({ navigation }) {
   };
 
   const fetchToken = async () => {
-    const storedToken = await AsyncStorage.getItem('userToken');
-    if (!storedToken) {
-      return;
-    } else {
-      try {
-        const currentUser = auth.currentUser;
-        if (!currentUser) {
-          console.log("No user is currently");
-          return;
-        }
-
-        const userRef = doc(db, "users", currentUser.uid);
-        const userDoc = await getDoc(userRef);
-
-        if (userDoc.exists()) {
-          const data = userDoc.data();
-          setPhoto(data.profileUrl);
-          setName(data.name);
-        }
-      } catch (error) {
-        console.error("Error fetching profile picture:", error);
-      } finally {
-        setToken(storedToken);
-        setIsLoading(false);
+    try {
+      const storedToken = await AsyncStorage.getItem('userToken');
+      if (!storedToken) {
+        setIsLoading(false); 
+        return;
       }
+  
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.log("No user is currently logged in.");
+        setIsLoading(false); // Cập nhật trạng thái nếu không có người dùng
+        return;
+      }
+  
+      const userRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userRef);
+  
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setPhoto(data.profileUrl || "defaultProfileUrl"); 
+        setName(data.name || "Anonymous"); 
+      } else {
+        console.log("User document does not exist.");
+      }
+  
+      setToken(storedToken); 
+    } catch (error) {
+      console.error("Error fetching profile data:", error);
+    } finally {
+      setIsLoading(false);
     }
-
   };
+  
 
   React.useEffect(() => {
     navigation.addListener('focus', () => {
@@ -208,7 +213,7 @@ export default function MainScreen({ navigation }) {
 
 
   const Content = () => {
-    if (!data && loading && !hotels) {
+    if (!data && loading && !hotels ) {
       return (
         <LoadingScreen />
       );

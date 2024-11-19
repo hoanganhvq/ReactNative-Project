@@ -4,26 +4,6 @@ import { FontAwesome } from '@expo/vector-icons';
 import color from "../assets/color.json";
 import { getBookingForHotelier } from '../handleAPI/viewAPI';
 
-const bookingData = [
-  {
-    id: '1',
-    name: 'Guest Name',
-    email: 'email@example.com',
-    phone: '0123456789',
-    roomType: 'Standard Room',
-    checkIn: '2023-11-20',
-    checkOut: '2023-11-25',
-  },
-  {
-    id: '2',
-    name: 'Guest Name',
-    email: 'email@example.com',
-    phone: '0123456789',
-    roomType: 'Deluxe Room',
-    checkIn: '2023-11-22',
-    checkOut: '2023-11-24',
-  },
-];
 
 export default function Component({ navigation }) {
   const hotelId = "67047e37640239aaa10d370a";
@@ -35,6 +15,7 @@ export default function Component({ navigation }) {
   const getBooking = async () => {
     const data = await getBookingForHotelier(hotelId);
     setBooking(data.data.data);
+    console.log("Booking", data.data.data);
   }
 
   useEffect(() => {

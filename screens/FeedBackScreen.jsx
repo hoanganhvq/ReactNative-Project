@@ -1,4 +1,4 @@
-import React, { useState, useLayoutEffect } from 'react';
+import React, { useState, useLayoutEffect ,useEffect} from 'react';
 import {
   View,
   Text,
@@ -8,21 +8,27 @@ import {
   TouchableOpacity,
   SafeAreaView,
   ScrollView, TextInput,
-   Button
+  Alert
 } from 'react-native';
 import { hotelData } from '../Data/hotelData';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Icon } from 'react-native-elements';
 import color from '../assets/color.json';
+import { hotelDetail, createReviewForHotel } from '../handleAPI/viewAPI.js';
+import { doc, updateDoc, getDoc, collection, getDocs } from 'firebase/firestore';
+import { db, storage, auth } from '../config/firebase';
+import LoadingScreen from './LoadingScreen';
 
 export default function RatingScreen({ route, navigation }) {
-  const { reviews, tokenUser } = route.params;
-
+  const { hotelId, tokenUser, rating } = route.params;
+  const [reviews, setReviews] = useState(null)
+  const [token, setToken] = useState(null);
+  const [name, setName] = useState('');
   const [selectedRating, setSelectedRating] = useState(null);
-  const [filteredReviews, setFilteredReviews] = useState(reviews);
+  const [filteredReviews, setFilteredReviews] = useState(null);
   const [newReview, setNewReview] = useState('');  // Feedback input
   const [newRating, setNewRating] = useState(0);   // Rating input
-
+  const [newTitle, setNewTitle] = useState(''); //
   useLayoutEffect(() => {
     navigation.setOptions({
         headerLeft: () => (
@@ -41,6 +47,65 @@ export default function RatingScreen({ route, navigation }) {
     });
 }, [navigation]);
 
+const getData = async () => {
+  try {
+    const data = await hotelDetail(hotelId);
+    return data.data.doc;
+
+  } catch (error) {
+    console.error("Error fetching data:", error);
+    return null;
+  }
+};
+
+const fetchData = async () => {
+  
+  const res = await getData();
+  console.log("Avb", res.reviews);
+  setFilteredReviews(res.reviews);
+  setReviews(res.reviews);
+};
+
+useEffect(() => {
+  fetchToken();
+  fetchData();
+}, [])
+
+
+const fetchToken = async () => {
+  const storedToken = await AsyncStorage.getItem('userToken');
+  if (!storedToken) {
+    return;
+  } else {
+    try {
+      const currentUser = auth.currentUser;
+      if (!currentUser) {
+        console.log("No user is currently");
+        return;
+      }
+
+      const userRef = doc(db, "users", currentUser.uid);
+      const userDoc = await getDoc(userRef);
+
+      if (userDoc.exists()) {
+        const data = userDoc.data();
+        setName(data.name);
+      }
+    } catch (error) {
+      console.error("Error fetching profile picture:", error);
+    } finally {
+      setToken(storedToken);
+    }
+  }
+
+};
+
+React.useEffect(() => {
+  navigation.addListener('focus', () => {
+    fetchToken();
+  })
+}, []);
+
   const handleStarPress = (rating) => {
     setSelectedRating(rating);
     if (rating === selectedRating) {
@@ -52,23 +117,40 @@ export default function RatingScreen({ route, navigation }) {
     }
   };
 
-  const handleSubmitReview = () => {
+  const handleSubmitReview = async() => {
+    // if (newReview && newRating) {
+    //   const newReviewData = {
+    //     id: Math.random().toString(),
+    //     title: 'New Review',
+    //     rating: newRating,
+    //     review: newReview,
+    //     createAt: new Date(),
+    //     user: {
+    //       name: 'Phan Hoang Anh',
+    //       photo: 'default_photo.png'
+    //     }
+    //   };
+    //   setFilteredReviews([...reviews, newReviewData]);
+    //   setNewReview('');
+    //   setNewRating(0);  // Reset after submit
+    // }
+
     if (newReview && newRating) {
-      // Add the new review
-      const newReviewData = {
-        id: Math.random().toString(),
-        title: 'New Review',
-        rating: newRating,
-        review: newReview,
-        createAt: new Date(),
-        user: {
-          name: 'Phan Hoang Anh',
-          photo: 'default_photo.png'
-        }
-      };
-      setFilteredReviews([...reviews, newReviewData]);
-      setNewReview('');
-      setNewRating(0);  // Reset after submit
+      try {
+        console.log('token: ',tokenUser);
+        console.log('hotelId: ',hotelId);
+        console.log('newReview',newReview);
+        console.log('newRating',newRating);
+        console.log('newtitle',newTitle);
+        await createReviewForHotel(tokenUser,hotelId, newTitle, newReview, newRating);
+        Alert.alert('Review submitted successfully!');
+        fetchData();
+        setNewRating();
+        setNewReview('');
+        setNewTitle('');
+      } catch (error) {
+        console.error('Error submitting review:', error);
+      }
     }
   };
 
@@ -104,14 +186,16 @@ export default function RatingScreen({ route, navigation }) {
     const total = reviews.reduce((acc, review) => acc + review.rating, 0);
     return (total / reviews.length).toFixed(1);
   };
-
+  if(!reviews){
+    return <LoadingScreen/>
+  }
   return (
     <SafeAreaView style={styles.container}>
       <ScrollView>
 
 
         <View style={styles.overallRatingContainer}>
-          <Text style={styles.averageRating}>{hotelData.rating}/5</Text>
+          <Text style={styles.averageRating}>{rating}/5</Text>
           <View style={styles.starsContainer}>
             {Array.from({ length: 5 }, (_, index) => (
               <FontAwesome
@@ -159,6 +243,16 @@ export default function RatingScreen({ route, navigation }) {
               </TouchableOpacity>
             ))}
           </View>
+          <TextInput 
+            placeholder='Tiêu đề'
+            style={styles.titlefeedbackInput}
+            placeholderTextColor="white"
+    
+            value={newTitle}
+            onChangeText={setNewTitle}
+          >
+            
+          </TextInput>
           <TextInput
             style={styles.feedbackInput}
             placeholder="Viết phản hồi của bạn..."
@@ -357,6 +451,17 @@ const styles = StyleSheet.create({
     color: color.tilte,
     fontWeight: 'bold',
     marginBottom: 10,
+  },
+  titlefeedbackInput:{
+    height: 30,
+    width: 100,
+    backgroundColor: '#999',
+    color: '#333',
+    marginVertical: 10,
+    borderRadius: 8,
+    paddingLeft: 10,  
+    alignSelf:'flex-start',
+    
   },
   feedbackInput: {
     height: 100,
