@@ -14,9 +14,11 @@ import { hotelData } from '../Data/hotelData';
 import FontAwesome from 'react-native-vector-icons/FontAwesome';
 import { Icon } from 'react-native-elements';
 import color from '../assets/color.json';
-import { hotelDetail, createReviewForHotel } from '../handleAPI/viewAPI.js';
+import { hotelDetail, createReviewForHotel ,getBookingForHotelier} from '../handleAPI/viewAPI.js';
 import { doc, updateDoc, getDoc, collection, getDocs } from 'firebase/firestore';
 import { db, storage, auth } from '../config/firebase';
+import AsyncStorage from '@react-native-async-storage/async-storage';
+
 import LoadingScreen from './LoadingScreen';
 
 export default function RatingScreen({ route, navigation }) {
@@ -29,6 +31,8 @@ export default function RatingScreen({ route, navigation }) {
   const [newReview, setNewReview] = useState('');  // Feedback input
   const [newRating, setNewRating] = useState(0);   // Rating input
   const [newTitle, setNewTitle] = useState(''); //
+  const [booking, setBooking] = useState([]);
+
   useLayoutEffect(() => {
     navigation.setOptions({
         headerLeft: () => (
@@ -58,6 +62,14 @@ const getData = async () => {
   }
 };
 
+
+
+const getBooking = async () => {
+  const data = await getBookingForHotelier(hotelId);
+  setBooking(data.data.data);
+  console.log("Booking", booking);
+}
+
 const fetchData = async () => {
   
   const res = await getData();
@@ -67,9 +79,23 @@ const fetchData = async () => {
 };
 
 useEffect(() => {
-  fetchToken();
-  fetchData();
-}, [])
+  const fetchAllData = async () => {
+    try {
+      // Thực hiện tất cả các hàm bất đồng bộ
+      await Promise.all([
+        fetchToken(),
+        fetchData(),
+        getBooking()
+      ]);
+      console.log("All data fetched successfully!");
+    } catch (error) {
+      console.error("Error while fetching data:", error);
+    }
+  };
+
+  fetchAllData();
+}, []);
+
 
 
 const fetchToken = async () => {
@@ -91,6 +117,7 @@ const fetchToken = async () => {
         const data = userDoc.data();
         setName(data.name);
       }
+      console.log("Update");
     } catch (error) {
       console.error("Error fetching profile picture:", error);
     } finally {
@@ -118,22 +145,6 @@ React.useEffect(() => {
   };
 
   const handleSubmitReview = async() => {
-    // if (newReview && newRating) {
-    //   const newReviewData = {
-    //     id: Math.random().toString(),
-    //     title: 'New Review',
-    //     rating: newRating,
-    //     review: newReview,
-    //     createAt: new Date(),
-    //     user: {
-    //       name: 'Phan Hoang Anh',
-    //       photo: 'default_photo.png'
-    //     }
-    //   };
-    //   setFilteredReviews([...reviews, newReviewData]);
-    //   setNewReview('');
-    //   setNewRating(0);  // Reset after submit
-    // }
 
     if (newReview && newRating) {
       try {
@@ -229,42 +240,55 @@ React.useEffect(() => {
             </TouchableOpacity>
           ))}
         </View>
-
-        {tokenUser &&<View style={styles.newReviewContainer}>
-          <Text style={styles.newReviewTitle}>Thêm Đánh Giá </Text>
-          <View style={styles.starsContainer}>
-            {Array.from({ length: 5 }, (_, index) => (
-              <TouchableOpacity key={index} onPress={() => setNewRating(index + 1)}>
-                <FontAwesome
-                  name="star"
-                  size={30}
-                  color={index < newRating ? '#FFD700' : '#CCCCCC'}
-                />
-              </TouchableOpacity>
-            ))}
-          </View>
-          <TextInput 
-            placeholder='Tiêu đề'
-            style={styles.titlefeedbackInput}
-            placeholderTextColor="white"
+        {tokenUser && booking.length > 0 ? (
+  <View style={styles.newReviewContainer}>
+    <Text style={styles.newReviewTitle}>Thêm Đánh Giá</Text>
     
-            value={newTitle}
-            onChangeText={setNewTitle}
-          >
-            
-          </TextInput>
-          <TextInput
-            style={styles.feedbackInput}
-            placeholder="Viết phản hồi của bạn..."
-            placeholderTextColor="white"
-            multiline
-            value={newReview}
-            onChangeText={setNewReview}
+    <View style={styles.starsContainer}>
+      {Array.from({ length: 5 }, (_, index) => (
+        <TouchableOpacity key={index} onPress={() => setNewRating(index + 1)}>
+          <FontAwesome
+            name="star"
+            size={30}
+            color={index < newRating ? '#FFD700' : '#CCCCCC'}
           />
-          <TouchableOpacity style={styles.openButton} onPress={handleSubmitReview}>
-            <Text style={styles.openButtonText}>Gửi đánh giá</Text>
-          </TouchableOpacity>
-        </View>}
+        </TouchableOpacity>
+      ))}
+    </View>
+
+    <TextInput
+      placeholder="Tiêu đề"
+      style={styles.titlefeedbackInput}
+      placeholderTextColor="white"
+      value={newTitle}
+      onChangeText={setNewTitle}
+    />
+
+    <TextInput
+      style={styles.feedbackInput}
+      placeholder="Viết phản hồi của bạn..."
+      placeholderTextColor="white"
+      multiline
+      value={newReview}
+      onChangeText={setNewReview}
+    />
+
+    <TouchableOpacity style={styles.openButton} onPress={handleSubmitReview}>
+      <Text style={styles.openButtonText}>Gửi đánh giá</Text>
+    </TouchableOpacity>
+  </View>
+) : tokenUser && booking.length === 0 ? (
+  <View style={styles.noBookingContainer}>
+    <Text style={styles.noBookingText}>Bạn chưa có thông tin đặt phòng để đánh giá. Vui lòng thực hiện đặt phòng trước.</Text>
+  </View>
+) : (
+  <View style={styles.noLoginContainer}>
+    <Text style={styles.noLoginText}>Vui lòng đăng nhập để có thể đánh giá.</Text>
+  </View>
+)}
+
+
+
 
 
         <FlatList
